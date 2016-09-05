@@ -4,8 +4,8 @@
               [nexus.routes :as routes]
               [nexus.templates.header :refer [header]]
               [nexus.templates.editor :refer [editor]]
+              [nexus.templates.home :refer [home]]
               [re-com.core :as re-com]))
-
 
 ; (defn title []
 ;   (let [name (re-frame/subscribe [:name])]
@@ -19,12 +19,6 @@
 ;     [re-com/v-box
 ;      :height "100%"
 ;      :children [[title]]]))
-
-(defn home []
-  (fn []
-   [:div
-     [:h1 "HOME PAGE"]
-     [:div [:a {:href (routes/url-for :editor)} "go to About Page"]]]))
 
 (defmulti panels identity)
 (defmethod panels :home [] [home])

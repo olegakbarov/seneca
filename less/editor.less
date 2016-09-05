@@ -16,6 +16,22 @@
 .days_wrapper {
   width: 100%;
   background-color: @graphite;
+  display: flex;
+  padding: 10px;
+  padding-left: 0px;
+}
+
+@dayh: 80px;
+.day_item {
+  width: @dayh;
+  height: @dayh;
+  background-color: @light-graphite;
+  border-radius: @radius;
+  color: @graphite;
+  margin-left: 10px;
+  font-size: @dayh / 1.4; // cause y not?
+  line-height: @dayh;
+  text-align: center;
 }
 
 .editor_wrapper {

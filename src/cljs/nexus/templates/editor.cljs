@@ -37,15 +37,26 @@
 (defn lister-msg []
    [msg-list (range 4)])
 
-(defn days-row []
+;; ---------------------------------
+;; Days row
+
+(defn days-list [items]
   [:div.days_wrapper
-    "dayz"])
+    (for [id items]
+       ^{:key id}
+       [:div.day_item
+         id])])
+
+(defn days-row []
+    [days-list (range 7)])
+
+;; ---------------------------------
+;; Editor
 
 (defn editor []
   (fn []
     [:div.editor
-      [:div.days_wrapper
-        [days-row]]
+      [days-row]
       [:div.editor_wrapper
         [:div.editor_messenger_wrapper
           [show-state]
