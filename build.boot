@@ -14,8 +14,8 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cljs-http "0.1.39"]
 
-                 [ring/ring-core "1.4.0"]
-                 [ring/ring-jetty-adapter "1.4.0"]
+                ;  [ring/ring-core "1.4.0"]
+                ;  [ring/ring-jetty-adapter "1.4.0"]
 
                  [bidi "2.0.10"]
                  [kibu/pushy "0.3.6"]
@@ -24,7 +24,7 @@
 
                  [re-frame "0.8.0"]
 
-                 [reagent "0.5.0"]
+                 [reagent "0.6.0-rc"]
                  [reagent-utils "0.2.0"]
                  [deraen/boot-less "0.2.1" :scope "test"]])
 
@@ -45,7 +45,7 @@
 (deftask run []
   (comp (serve)
         (watch)
-        ; (cljs-repl)
+        (cljs-repl)
         (reload)
         (build)))
 
@@ -56,7 +56,7 @@
 
 (deftask development []
   (task-options! cljs   {:optimizations :none :source-map true}
-                 reload {:on-jsload 'nexus.app/init}
+                 reload {:on-jsload 'nexus.core/init}
                  less   {:source-map  true})
   identity)
 
