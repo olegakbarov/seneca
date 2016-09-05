@@ -4,14 +4,14 @@
             [pushy.core :as pushy]
             [re-frame.core :as re-frame]))
 
-(def routes ["/" {""      :home
+(def routes ["/" {""       :home
                   "editor" :editor}])
 
 (defn- parse-url [url]
   (bidi/match-route routes url))
 
 (defn- dispatch-route [matched-route]
-  (let [panel-name (keyword (str (name (:handler matched-route)) "-panel"))]
+  (let [panel-name (keyword (str (name (:handler matched-route))))]
     (re-frame/dispatch [:set-active-panel panel-name])))
 
 (defn app-routes []
