@@ -2,8 +2,9 @@
 (ns nexus.views
     (:require [re-frame.core :as re-frame]
               [nexus.routes :as routes]
-              [nexus.templates.header :as header]))
-              ; [re-com.core :as re-com]))
+              [nexus.templates.header :refer [header]]
+              [nexus.templates.editor :refer [editor]]
+              [re-com.core :as re-com]))
 
 
 ; (defn title []
@@ -21,12 +22,9 @@
 
 (defn home []
   (fn []
-   [:div [:a {:href (routes/url-for :editor)} "go to About Page"]]))
-
-(defn editor []
-  (fn []
-    [:div "This is the About Page."
-     [:div [:a {:href (routes/url-for :home)} "go to Home Page"]]]))
+   [:div
+     [:h1 "HOME PAGE"]
+     [:div [:a {:href (routes/url-for :editor)} "go to About Page"]]]))
 
 (defmulti panels identity)
 (defmethod panels :home [] [home])
@@ -36,4 +34,6 @@
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [:active-panel])]
     (fn []
-      (panels @active-panel))))
+      [:div
+        [header]
+        (panels @active-panel)])))

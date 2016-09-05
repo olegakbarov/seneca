@@ -4,8 +4,8 @@
             [pushy.core :as pushy]
             [re-frame.core :as re-frame]))
 
-(def routes ["/" {""       :home
-                  "editor" :editor}])
+(def routes ["/" {""       :editor
+                  "editor" :home}])
 
 (defn- parse-url [url]
   (bidi/match-route routes url))

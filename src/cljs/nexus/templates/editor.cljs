@@ -42,14 +42,15 @@
     "dayz"])
 
 (defn editor []
-  [:div.editor
-    [:div.days_wrapper
-      [days-row]]
-    [:div.editor_wrapper
-      [:div.editor_messenger_wrapper
-        [show-state]
-        [:div.editor_messenger
-          [lister-msg]]]
-      [:div.editor_tools_wrapper
-        [:div.editor_tools
-          "top"]]]])
+  (fn []
+    [:div.editor
+      [:div.days_wrapper
+        [days-row]]
+      [:div.editor_wrapper
+        [:div.editor_messenger_wrapper
+          [show-state]
+          [:div.editor_messenger
+            [lister-msg]]]
+        [:div.editor_tools_wrapper
+          [:div.editor_tools
+            "top"]]]]))

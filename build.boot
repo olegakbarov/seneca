@@ -23,6 +23,7 @@
                  [binaryage/devtools "0.6.1"]
 
                  [re-frame "0.8.0"]
+                 [re-com "0.8.3"]
 
                  [reagent "0.6.0-rc"]
                  [reagent-utils "0.2.0"]

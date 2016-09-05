@@ -1,7 +1,9 @@
 
-(ns nexus.templates.header)
+(ns nexus.templates.header
+    (:require [nexus.routes :as routes]))
 
 (defn header []
-  [:div.header
-   [:a {:href "/"}
-     [:div.header_logo]]])
+  (fn []
+    [:div.header
+      [:a {:href (routes/url-for :home)}
+        [:div.header_logo]]]))
