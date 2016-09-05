@@ -21,6 +21,7 @@
               [nexus.subs]
 
               [nexus.routes :as routes]
+              [nexus.views :as views]
               [nexus.config :as config]))
 
 (enable-console-print!)
@@ -47,8 +48,12 @@
     (devtools/install!)))
 
 (defn mount-root []
-  (r/render [routes/main-route]
+  (r/render [views/main-panel]
     (.getElementById js/document "container")))
+
+; (defn mount-root []
+;   (r/render [routes/main-route]
+;     (.getElementById js/document "container")))
 
 (defn ^:export init []
   (routes/app-routes)
