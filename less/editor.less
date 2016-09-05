@@ -1,0 +1,62 @@
+
+@import 'colors.less';
+
+@radius: 4px;
+@padding: 7px;
+
+.md-shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.editor {
+  border-top: @light-graphite;
+}
+
+.days_wrapper {
+  width: 100%;
+  background-color: @graphite;
+}
+
+.editor_wrapper {
+  padding: 40px 20px 0;
+  margin: 0 auto;
+  max-width: 1320px;
+  display: flex;
+}
+
+.editor_messenger_wrapper {
+  width: 70%;
+  position: relative;
+}
+
+.editor_messenger {
+  width: 600px;
+  margin: 0 auto;
+  background-color: @white;
+  border: 1px solid @gray;
+  border-radius: @radius;
+}
+
+.editor_tools_wrapper {
+  width: 30%;
+}
+
+.editor_tools {
+  background-color: @white;
+  border: 1px solid @gray;
+  border-radius: @radius;
+}
+
+.list_message {
+  text-align: center;
+  border-bottom: 1px solid @gray;
+  font-size: 70px;
+  line-height: 120px;
+  color: rgb(214, 214, 214);
+
+
+  &:hover {
+    .md-shadow
+  }
+}
