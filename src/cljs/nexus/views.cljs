@@ -3,7 +3,7 @@
     (:require [re-frame.core :as re-frame]
               [nexus.routes :as routes]
               [nexus.templates.header :refer [header]]
-              [nexus.templates.editor :refer [editor]]
+              [nexus.templates.editor.core :refer [editor]]
               [nexus.templates.home :refer [home]]
               [re-com.core :as re-com]))
 

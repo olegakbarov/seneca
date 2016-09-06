@@ -1,7 +1,7 @@
 
 @import 'colors.less';
+@import 'globals.less';
 
-@radius: 4px;
 @padding: 7px;
 
 .md-shadow {
@@ -13,6 +13,8 @@
   border-top: @light-graphite;
 }
 
+// DAYS ROW
+
 .days_wrapper {
   width: 100%;
   background-color: @graphite;
@@ -23,16 +25,20 @@
 
 @dayh: 80px;
 .day_item {
-  width: @dayh;
-  height: @dayh;
   background-color: @light-graphite;
   border-radius: @radius;
   color: @graphite;
   margin-left: 10px;
-  font-size: @dayh / 1.4; // cause y not?
-  line-height: @dayh;
   text-align: center;
+  transition: all .222s ease;
+  &:hover {
+    background-color: @graphite;
+    color: @light-graphite;
+    cursor: pointer;
+  }
 }
+
+// EDITOR WRAPPER
 
 .editor_wrapper {
   padding: 40px 20px 0;
@@ -58,11 +64,35 @@
   width: 30%;
 }
 
+// TOOLS
+
 .editor_tools {
   background-color: @white;
   border: 1px solid @gray;
   border-radius: @radius;
+  padding: 10px;
 }
+
+.wrap-mxn {
+  border: 1px solid @gray;
+  border-radius: 4px;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.msg_type_wrapper {
+  .wrap-mxn
+}
+
+.msg_type_title {
+  text-align: center;
+}
+
+.msg_type_item {
+  background-color: red;
+}
+
+// MESSAGES
 
 .list_message {
   text-align: center;

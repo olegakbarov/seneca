@@ -1,7 +1,6 @@
 (set-env!
  :source-paths    #{"src/cljs" "less"}
  :resource-paths  #{"resources"}
- ; :libs            #{"externs.js"} ???
  :dependencies '[[adzerk/boot-cljs          "1.7.228-1"  :scope "test"]
                  [adzerk/boot-cljs-repl     "0.3.0"      :scope "test"]
                  [adzerk/boot-reload        "0.4.8"      :scope "test"]

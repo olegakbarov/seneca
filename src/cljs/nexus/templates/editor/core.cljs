@@ -1,8 +1,10 @@
 
-(ns nexus.templates.editor
+(ns nexus.templates.editor.core
   (:require
     [reagent.core :as r]
-    [nexus.helpers.core :refer [log]]))
+    [nexus.templates.editor.days_row :refer [days-row]]
+    [nexus.helpers.core :refer [log]]
+    [nexus.templates.tools :refer [tools]]))
 
 ;; ---------------------------------
 ;; State
@@ -35,20 +37,7 @@
          id])])
 
 (defn lister-msg []
-   [msg-list (range 4)])
-
-;; ---------------------------------
-;; Days row
-
-(defn days-list [items]
-  [:div.days_wrapper
-    (for [id items]
-       ^{:key id}
-       [:div.day_item
-         id])])
-
-(defn days-row []
-    [days-list (range 7)])
+   [msg-list (range 7)])
 
 ;; ---------------------------------
 ;; Editor
@@ -59,9 +48,7 @@
       [days-row]
       [:div.editor_wrapper
         [:div.editor_messenger_wrapper
-          [show-state]
+          ; [show-state]
           [:div.editor_messenger
             [lister-msg]]]
-        [:div.editor_tools_wrapper
-          [:div.editor_tools
-            "top"]]]]))
+        [tools]]]))
