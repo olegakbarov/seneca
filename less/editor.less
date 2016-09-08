@@ -43,6 +43,7 @@
 .editor_wrapper {
   padding: 140px 20px 0;
   margin: 0 auto;
+  padding-bottom: 40px;
   max-width: 1320px;
   display: flex;
 }
@@ -86,10 +87,18 @@
 
 .msg_type_title {
   text-align: center;
+  padding-bottom: 10px;
+  color: @midgray;
 }
 
+@itheight: 150px;
 .msg_type_item {
-  .border
+  background-color: @gray;
+  border-radius: 18px;
+  height: @itheight;
+  text-align: center;
+  line-height: @itheight;
+  color: @midgray;
 }
 
 // MESSAGES

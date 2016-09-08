@@ -24,10 +24,8 @@
 (def days-style (r/atom days-basic))
 
 (def row-basic {:position "absolute"})
-(def row-folded {:position "fixed" :top 0 :z-index 9999})
+(def row-folded {:position "fixed" :top "65px" :z-index 9999})
 (def row-style (r/atom row-basic))
-
-
 
 (defn days [items]
   [:div.days_wrapper {:style @row-style}
@@ -58,7 +56,7 @@
     (go-loop []
              (let [y (<! chan)]
                (reset! prev-scroll-y @cur-scroll-y)
-               (if (> y 100)
+               (if (> y 0)
                  (do
                    (reset! row-style row-folded)        ;; This sucks.
                    (reset! days-style days-folded))

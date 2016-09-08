@@ -5,25 +5,25 @@
   [:div.msg_type_wrapper
     [:div.msg_type_title "Button template"]
     [:div.msg_type_item
-      "item contents"]])
+      "button"]])
 
 (defn quick-reply []
   [:div.msg_type_wrapper
     [:div.msg_type_title "Quick reply"]
     [:div.msg_type_item
-      "Quick reply"]])
+      "QR"]])
 
 (defn image-attach []
   [:div.msg_type_wrapper
     [:div.msg_type_title "Image reply"]
     [:div.msg_type_item
-      "Image attach"]])
+      "image"]])
 
 (defn video-attach []
   [:div.msg_type_wrapper
     [:div.msg_type_title "Video reply"]
     [:div.msg_type_item
-      "Video attach"]])
+      "vidto"]])
 
 (defn tools-list []
   [:div.editor_tools_wrapper

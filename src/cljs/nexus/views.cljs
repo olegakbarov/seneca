@@ -30,4 +30,5 @@
     (fn []
       [:div
         [header]
-        (panels @active-panel)])))
+        [:div.content
+          (panels @active-panel)]])))
