@@ -2,9 +2,10 @@
 (ns nexus.templates.editor.core
   (:require
     [reagent.core :as r]
-    [nexus.templates.editor.days_row :refer [days-row]]
     [nexus.helpers.core :refer [log]]
-    [nexus.templates.tools :refer [tools]]))
+    [nexus.templates.editor.days_row :refer [days-row]]
+    [nexus.templates.editor.messages :refer [lister]]
+    [nexus.templates.editor.tools :refer [tools-list]]))
 
 ;; ---------------------------------
 ;; State
@@ -27,19 +28,6 @@
            :on-click #(.log js/console (clj->js @state))}])
 
 ;; ---------------------------------
-;; Courses
-
-(defn msg-list [items]
-  [:div.list_messages
-    (for [id items]
-       ^{:key id}
-       [:div.list_message
-         id])])
-
-(defn lister-msg []
-   [msg-list (range 7)])
-
-;; ---------------------------------
 ;; Editor
 
 (defn editor []
@@ -50,5 +38,5 @@
         [:div.editor_messenger_wrapper
           ; [show-state]
           [:div.editor_messenger
-            [lister-msg]]]
-        [tools]]]))
+            [lister]]]
+        [tools-list]]]))

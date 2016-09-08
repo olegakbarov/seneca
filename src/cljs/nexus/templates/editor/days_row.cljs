@@ -8,8 +8,6 @@
     [goog.events.EventType :as EventType]
     [goog.dom :as dom]))
 
-;; days list is unfolded, unless page is scrolled
-
 
 (def days-basic {:height "100px"
                  :width "100px"
@@ -25,7 +23,7 @@
 
 (def days-style (r/atom days-basic))
 
-(def row-basic {:position "relative"})
+(def row-basic {:position "absolute"})
 (def row-folded {:position "fixed" :top 0 :z-index 9999})
 (def row-style (r/atom row-basic))
 

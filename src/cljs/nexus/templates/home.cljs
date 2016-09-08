@@ -1,5 +1,6 @@
 
-(ns nexus.templates.home)
+(ns nexus.templates.home
+    (:require [nexus.routes :as routes]))
 
 (defn home []
   (fn []

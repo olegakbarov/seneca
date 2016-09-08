@@ -4,13 +4,11 @@
 
 @padding: 7px;
 
-.md-shadow {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-}
-
 .editor {
   border-top: @light-graphite;
+  position: relative;
+  min-width: 980px;
+  overflow: scroll;
 }
 
 // DAYS ROW
@@ -21,6 +19,8 @@
   display: flex;
   padding: 10px;
   padding-left: 0px;
+  position: absolute;
+  top: 0;
 }
 
 @dayh: 80px;
@@ -30,7 +30,7 @@
   color: @graphite;
   margin-left: 10px;
   text-align: center;
-  transition: all .222s ease;
+  transition: all .333s ease;
   &:hover {
     background-color: @graphite;
     color: @light-graphite;
@@ -41,7 +41,7 @@
 // EDITOR WRAPPER
 
 .editor_wrapper {
-  padding: 40px 20px 0;
+  padding: 140px 20px 0;
   margin: 0 auto;
   max-width: 1320px;
   display: flex;
@@ -67,15 +67,15 @@
 // TOOLS
 
 .editor_tools {
+  .border
+}
+
+.editor_tools {
   background-color: @white;
-  border: 1px solid @gray;
-  border-radius: @radius;
   padding: 10px;
 }
 
 .wrap-mxn {
-  border: 1px solid @gray;
-  border-radius: 4px;
   padding: 5px;
   margin-bottom: 10px;
 }
@@ -89,7 +89,7 @@
 }
 
 .msg_type_item {
-  background-color: red;
+  .border
 }
 
 // MESSAGES
@@ -100,9 +100,17 @@
   font-size: 70px;
   line-height: 120px;
   color: rgb(214, 214, 214);
-
+  position: relative;
 
   &:hover {
     .md-shadow
   }
+
+  &:hover {
+    cursor: grab;
+  }
+}
+
+.msg_dragged {
+  visibility: hidden;
 }

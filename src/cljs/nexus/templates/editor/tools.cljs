@@ -1,5 +1,5 @@
 
-(ns nexus.templates.tools)
+(ns nexus.templates.editor.tools)
 
 (defn button-template []
   [:div.msg_type_wrapper
@@ -25,7 +25,7 @@
     [:div.msg_type_item
       "Video attach"]])
 
-(defn tools []
+(defn tools-list []
   [:div.editor_tools_wrapper
     [:div.editor_tools
       [button-template]
