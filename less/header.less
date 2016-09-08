@@ -1,19 +1,33 @@
 
 @import 'colors.less';
 
-@hheight: 100px;
+@hheight: 65px;
 
 .header {
   width: 100%;
   height: @hheight;
   background-color: @graphite;
-  color: @white;
+  color: @lightgray;
   border-bottom: 1px solid @light-graphite;
   line-height: @hheight;
+  display: flex;
 }
 
 .header_logo {
   width: @hheight;
   height: @hheight;
+  display: inline-block;
   background-color: @light-graphite;
+}
+
+ul.header_crumbs {
+  padding: 0;
+  max-width: 600px;
+  font-size: 15px;
+}
+
+ul.header_crumbs li {
+  line-height: @hheight;
+  padding-left: 70px;
+  display: inline-block;
 }
