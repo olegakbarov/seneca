@@ -9,20 +9,27 @@
   background-color: @graphite;
   color: @lightgray;
   border-bottom: 1px solid @light-graphite;
+}
+
+.header_wrapper {
   line-height: @hheight;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header_left {
   display: flex;
 }
 
 .header_logo {
+  display: block;
   width: @hheight;
   height: @hheight;
-  display: inline-block;
   background-color: @light-graphite;
 }
 
 ul.header_crumbs {
   padding: 0;
-  max-width: 600px;
   font-size: 15px;
 }
 
@@ -30,4 +37,18 @@ ul.header_crumbs li {
   line-height: @hheight;
   padding-left: 70px;
   display: inline-block;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+ul.header_crumbs li a {
+  text-decoration: none;
+}
+
+// PROFILE
+
+.header_right  a {
+  text-decoration: none;
+  padding-right: 30px;
 }

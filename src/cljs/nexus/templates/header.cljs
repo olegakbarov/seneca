@@ -5,8 +5,13 @@
 (defn header []
   (fn []
     [:div.header
-      [:a.header_logo {:href (routes/url-for :home)}]
-      [:ul.header_crumbs
-        [:li "My Bots"]
-        [:li "Weather Bot"]]
-      [:div.header_profile]]))
+      [:div.header_wrapper
+        [:div.header_left
+          [:a.header_logo {:href (routes/url-for :home)}]
+          [:ul.header_crumbs
+            [:li
+              [:a {:href (routes/url-for :home)} "My Bots"]]
+            [:li
+              [:a {:href (routes/url-for :home)} "Weather bot"]]]]
+        [:div.header_right
+          [:a {:href (routes/url-for :home)} "Oleg Akbarov"]]]]))
