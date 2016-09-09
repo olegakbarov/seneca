@@ -4,10 +4,7 @@
   (:require
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
-    [goog.events :as events]
-    [goog.events.EventType :as EventType]
-    [goog.dom :as dom]))
-
+    [nexus.chans :refer [scroll-chan cur-scroll-y prev-scroll-y]]))
 
 (def days-basic {:height "100px"
                  :width "100px"
@@ -36,33 +33,18 @@
 (defn days-row []
   [days (range 7)])
 
-;; SCROLL MACHINERY
-
-(def cur-scroll-y (r/atom 0))
-(def prev-scroll-y (r/atom 0))
-
-(defn- get-scroll []
-  (-> (dom/getDocumentScroll) (.-y)))
-
-(defn- events->chan [el event-type c]
-  (events/listen el event-type #(put! c %))
-  c)
-
-(defn scroll-chan []
-  (events->chan js/window EventType/SCROLL (chan 1 (map get-scroll))))
-
 (defn listen! []
   (let [chan (scroll-chan)]
     (go-loop []
-             (let [y (<! chan)]
-               (reset! prev-scroll-y @cur-scroll-y)
-               (if (> y 0)
-                 (do
-                   (reset! row-style row-folded)        ;; This sucks.
-                   (reset! days-style days-folded))
-                 (do
-                   (reset! row-style row-basic)
-                   (reset! days-style days-basic)))
-               (recur)))))
+         (let [y (<! chan)]
+           (reset! prev-scroll-y @cur-scroll-y)
+           (if (> y 0)
+             (do
+               (reset! row-style row-folded)        ;; This sucks.
+               (reset! days-style days-folded))
+             (do
+               (reset! row-style row-basic)
+               (reset! days-style days-basic))))
+         (recur))))
 
 (listen!)

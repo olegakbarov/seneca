@@ -1,5 +1,13 @@
 
-(ns nexus.templates.editor.tools)
+(ns nexus.templates.editor.tools
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require
+    [reagent.core :as r]
+    [nexus.chans :refer [scroll-chan cur-scroll-y prev-scroll-y]]))
+
+(def tools (r/atom {}))
+(def normal {:position "relative"})
+(def sticky {:position "fixed" :top "150px" :right "60px"})
 
 (defn button-template []
   [:div.msg_type_wrapper
@@ -27,8 +35,20 @@
 
 (defn tools-list []
   [:div.editor_tools_wrapper
-    [:div.editor_tools
+    [:div.editor_tools {:style @tools}
       [button-template]
       [quick-reply]
       [image-attach]
       [video-attach]]])
+
+(defn listen! []
+  (let [chan (scroll-chan)]
+    (go-loop []
+       (let [y (<! chan)]
+         (reset! prev-scroll-y @cur-scroll-y)
+         (if (> y 50)
+           (do (reset! tools sticky))
+           (do (reset! tools normal))))
+      (recur))))
+
+(listen!)

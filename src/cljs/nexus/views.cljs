@@ -5,6 +5,7 @@
               [nexus.templates.header :refer [header]]
               [nexus.templates.editor.core :refer [editor]]
               [nexus.templates.home :refer [home]]
+              [nexus.templates.profile :refer [profile]]
               [re-com.core :as re-com]))
 
 ; (defn title []
@@ -23,6 +24,7 @@
 (defmulti panels identity)
 (defmethod panels :home [] [home])
 (defmethod panels :editor [] [editor])
+(defmethod panels :profile [] [profile])
 (defmethod panels :default [] [:div])
 
 (defn main-panel []

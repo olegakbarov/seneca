@@ -4,7 +4,7 @@
               [re-frame.core :as re-frame]
               [devtools.core :as devtools]
 
-              ;; must require them in root file
+              ;; must require both in root file
               [nexus.handlers]
               [nexus.subs]
 

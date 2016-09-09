@@ -39,8 +39,12 @@ ul.header_crumbs li {
   line-height: @hheight;
   padding-left: 70px;
   display: inline-block;
+
   &:hover {
     cursor: pointer;
+  }
+  &:first-child {
+    padding-left: 40px;
   }
 }
 
@@ -48,9 +52,38 @@ ul.header_crumbs li a {
   text-decoration: none;
 }
 
-// PROFILE
+.header_right {
+  display: flex;
+  align-items: center;;
+}
 
 .header_right  a {
   text-decoration: none;
   padding-right: 30px;
+}
+
+.header_userpic {
+  border: 1px solid @lightgray;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  margin-right: 20px;
+}
+
+.header_test_button {
+  margin-right: 20px;
+  &:hover {
+    background-color: @fbblue;
+    border: 1px solid @fbblue;
+    color: @white;
+  }
+}
+
+.header_save_button {
+  margin-right: 20px;
+  &:hover {
+    background-color: @green;
+    border: 1px solid @green;
+    color: @white;
+  }
 }

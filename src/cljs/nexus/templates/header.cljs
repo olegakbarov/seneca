@@ -5,7 +5,7 @@
 
 (defn header []
   (fn []
-    [:div.header 
+    [:div.header
       [:div.header_wrapper
         [:div.header_left
           [:a.header_logo {:href (routes/url-for :home)}]
@@ -15,4 +15,10 @@
             [:li
               [:a {:href (routes/url-for :home)} "Weather bot"]]]]
         [:div.header_right
-          [:a {:href (routes/url-for :home)} "Oleg Akbarov"]]]]))
+          [:div.btn.header_save_button
+            "Save"]
+          [:div.btn.header_test_button
+            "Test"]
+          [:div.header_userpic]
+          [:a {:href (routes/url-for :profile)}
+             "Oleg Akbarov"]]]]))
