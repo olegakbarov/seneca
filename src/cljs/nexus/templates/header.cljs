@@ -1,7 +1,10 @@
 
 (ns nexus.templates.header
   (:require
-    [nexus.routes :as routes]))
+    [nexus.routes :as routes]
+    [re-frame.core :refer [dispatch
+                           dispatch-sync
+                           subscribe]]))
 
 (defn header []
   (fn []
@@ -11,13 +14,14 @@
           [:a.header_logo {:href (routes/url-for :home)}]
           [:ul.header_crumbs
             [:li
-              [:a {:href (routes/url-for :home)} "My Bots"]]
+              [:a {:href (routes/url-for :editor)} "My Bots"]]
             [:li
-              [:a {:href (routes/url-for :home)} "Weather bot"]]]]
+              [:a {:href (routes/url-for :editor)} "Weather bot"]]]]
         [:div.header_right
           [:div.btn.header_save_button
             "Save"]
           [:div.btn.header_test_button
+            {:on-click #(dispatch [:show_state])}
             "Test"]
           [:div.header_userpic]
           [:a {:href (routes/url-for :profile)}

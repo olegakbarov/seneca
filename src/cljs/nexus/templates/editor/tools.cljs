@@ -45,10 +45,11 @@
   (let [chan (scroll-chan)]
     (go-loop []
        (let [y (<! chan)]
-         (reset! prev-scroll-y @cur-scroll-y)
-         (if (> y 50)
-           (do (reset! tools sticky))
-           (do (reset! tools normal))))
+         (reset! prev-scroll-y @cur-scroll-y))
+        ; TODO stick on scroll
+        ;  (if (> y 50)
+        ;    (do (reset! tools sticky))
+        ;    (do (reset! tools normal))))
       (recur))))
 
 (listen!)

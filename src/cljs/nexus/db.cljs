@@ -3,6 +3,8 @@
   (:require
     [reagent.core :as r]))
 
+(def initial-state {})
+
 (def state
     {:router {:current ""}
 
@@ -27,20 +29,13 @@
               :errors {:editor {:type "error" ;; warning etc
                                 :text "Can't be blank"}}}
 
-     :courses {:UUID {:title "Life hacks kek"
-                      :subtitle "ke-ke-ke"
-                      :days [{:order 1 ;; order in course
-                              :UUID 123123;; we need this?
-                              :type "button-template"
-                              :text "Some txt kk"
-                              :buttons {:title "User see this" ;; TODO. ordered map?
-                                        :payload "UUID"}}
+     :curr-course 123
 
-                             {:order 2
-                              :UUID 123123
-                              :type "quick-reply"
-                              :text "Text for QR"
-                              :quick_replies {:title "User see this" ;; TODO. ordered map?
-                                              :payload "UUID"}}]}}})
+     :curr-day 1
 
-(def current-route (r/cursor state [:router :current]))
+     :courses {123 {:title "Life hacks kek"
+                    :subtitle "ke-ke-ke"
+                    :days {1 {:UUID 123123
+                              :messages [{:id "11" :order 1 :title "Topkek"}
+                                         {:id "22" :order 2 :title "Normkek"}
+                                         {:id "33" :order 3 :title "Mehkek"}]}}}}})
