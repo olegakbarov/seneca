@@ -1,3 +1,4 @@
+
 (ns nexus.handlers
     (:require [re-frame.core :as re-frame]
               [nexus.db :as db]
@@ -7,6 +8,13 @@
  :initialize-db
  (fn  [_ _]
    db/state))
+
+;; naīve logging
+(re-frame/reg-event-db
+  :show_state
+  (fn [db [_]]
+    (log db)
+    db))
 
 (re-frame/reg-event-db
   :set-active-panel
@@ -20,7 +28,7 @@
         d (:days cc)
         cd (get-in d [(:curr-day db)])
         arr (:messages cd)]
-    (inc (max (map key arr)))))
+    (inc (apply max (map key arr)))))
 
 (re-frame/reg-event-db
   :add_msg
@@ -34,9 +42,35 @@
          :order (inc-prop db :order)
          :title title}))))
 
-;; naīve logging
+
+;; DND magic ---------------
+
+; (defn swap-items [msgs order]
+;   (let [next (first (filter (fn [x] (= (:order x) (inc order))) msgs))
+;         current (first (filter fn [x] (= (:order x) (inc order)) msgs))
+;         step-one (conj msgs)]))
+
 (re-frame/reg-event-db
-  :show_state
-  (fn [db [_]]
-    (log db)
-    db))
+  :reorder_msg
+  (fn [db [_ order type]]
+    (prn "lets reorder!")
+    (let [course (:curr-course db)
+          day (:curr-day db)
+          msgs (get-in db [:courses course :days day :messages])]
+      (condp = type
+        :inc (assoc-in db [:courses course :days day :messages]
+               (map (fn [item]
+                      (cond
+                        (= (:order item) order) (update-in item [:order] inc)
+                        (= (:order item) (inc order)) (update-in item [:order] dec)
+                        :else item))
+                msgs))
+        :dec (assoc-in db [:courses course :days day :messages]
+               (map (fn [item]
+                      (cond
+                        (= (:order item) order) (update-in item [:order] dec)
+                        (= (:order item) (inc order)) (update-in item [:order] inc)
+                        :else item))
+                msgs))))))
+
+;;

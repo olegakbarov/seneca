@@ -36,6 +36,7 @@
      :courses {123 {:title "Life hacks kek"
                     :subtitle "ke-ke-ke"
                     :days {1 {:UUID 123123
-                              :messages [{:id "11" :order 1 :title "Topkek"}
-                                         {:id "22" :order 2 :title "Normkek"}
-                                         {:id "33" :order 3 :title "Mehkek"}]}}}}})
+                              :messages [{:id 11 :order 0 :title "Topkek"}
+                                         {:id 22 :order 1 :title "Normkek"}
+                                         {:id 33 :order 2 :title "Alien"}
+                                         {:id 44 :order 3 :title "Mehkek"}]}}}}})

@@ -11,7 +11,7 @@
 
 (re-frame/reg-sub
   :msgs
-  (fn [db [_ course-id day-id]]
+  (fn [db [_ course-id day-id]] ;; TODO change to bound to current day etc
     (get-in db [:courses course-id :days day-id :messages])))
 
 
