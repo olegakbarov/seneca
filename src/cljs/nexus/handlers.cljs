@@ -50,27 +50,41 @@
 ;         current (first (filter fn [x] (= (:order x) (inc order)) msgs))
 ;         step-one (conj msgs)]))
 
+(defn rearrange [arr a b]
+  "a and b are both indexes in arr is vector"
+  (let [right (if (> a b) a b)
+        left (if (> a b) b a)
+        l-item (nth arr left)
+        r-item (nth arr right)]
+    (if (= a b)
+        arr
+        (let [b4-a (subvec arr 0 left)
+              btwn (subvec arr (+ left 1) right)
+              aftr-b (subvec arr (+ right 1))]
+           (into [] (concat b4-a btwn [r-item] [l-item] aftr-b))))))
+
+(defn should-rearrange? [drag hover]
+  (let [dix (:index drag)
+        hix (:index hover)
+        dy (:middle-y drag)
+        dh (:middle-y hover)]
+    (cond
+      (and (< dix hix) (< dy dh)) false
+      (and (> dix hix) (> dy dh)) false
+      :else true)))
+
 (re-frame/reg-event-db
   :reorder_msg
-  (fn [db [_ order type]]
-    (prn "lets reorder!")
+  (fn [db [_ drag hover]]
     (let [course (:curr-course db)
           day (:curr-day db)
-          msgs (get-in db [:courses course :days day :messages])]
-      (condp = type
-        :inc (assoc-in db [:courses course :days day :messages]
-               (map (fn [item]
-                      (cond
-                        (= (:order item) order) (update-in item [:order] inc)
-                        (= (:order item) (inc order)) (update-in item [:order] dec)
-                        :else item))
-                msgs))
-        :dec (assoc-in db [:courses course :days day :messages]
-               (map (fn [item]
-                      (cond
-                        (= (:order item) order) (update-in item [:order] dec)
-                        (= (:order item) (inc order)) (update-in item [:order] inc)
-                        :else item))
-                msgs))))))
+          msgs (get-in db [:courses course :days day :messages])
+          drag-index (:index drag)
+          hover-index (:index hover)
+          updated (rearrange msgs drag-index hover-index)]
+      (log (should-rearrange? drag hover))
+      (if (should-rearrange? drag hover)
+        (assoc-in db [:courses course :days day :messages] updated)
+        db))))
 
 ;;

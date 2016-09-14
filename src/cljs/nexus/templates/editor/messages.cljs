@@ -5,7 +5,9 @@
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
     [nexus.helpers.core :refer [log]]
-    [nexus.templates.editor.dnd :refer [on-drag-start drag-id]]
+    [nexus.templates.editor.dnd :refer [on-drag-start
+                                        on-drag-over
+                                        dnd-store]]
     [nexus.templates.editor.add_msg :refer [add-msg]]
     [re-frame.core :refer [reg-event-db
                            path
@@ -20,16 +22,16 @@
           ; current-course (subscribe :course)
           ; curr-day (subscribe (current-course))
       [:div#msg_wrapper.list_messages
-        [add-msg]
+        ; [add-msg]
         (doall
-          (for [sorted (sort-by :order @msgs)
-                :let [{:keys [title order]} sorted]]
-             ^{:key order}
-             [:div.list_message
-              {:draggable true
-               :class (if (= order @drag-id) "msg_dragged" "")
-               :data-order order}
-              ;  :on-drag-start on-drag-start}
-              ;  :on-drag-end on-drag-end}
-              ;  :on-mouse-down mouse-down-handler}
-              title]))])))
+          (map-indexed
+            (fn [ix, item]
+              (let [{:keys [title]} item]
+                 ^{:key ix}
+                 [:div.list_message
+                  {:draggable true
+                   :class (if (= ix (:current @dnd-store)) "msg_dragged" "")
+                   :on-drag-over on-drag-over
+                   :data-index ix
+                   :data-dragtype "msg"}
+                  title])) @msgs))])))
