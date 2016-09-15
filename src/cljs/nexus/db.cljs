@@ -1,7 +1,5 @@
 
-(ns nexus.db
-  (:require
-    [reagent.core :as r]))
+(ns nexus.db)
 
 (def initial-state {})
 

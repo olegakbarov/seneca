@@ -30,7 +30,7 @@
                  ^{:key ix}
                  [:div.list_message
                   {:draggable true
-                   :class (if (= ix (:current @dnd-store)) "msg_dragged" "")
+                   :class (if (= ix (:drag-index @dnd-store)) "msg_dragged" "")
                   ;  :on-drag-over on-drag-over
                    :data-index ix
                    :data-dragtype "msg"}

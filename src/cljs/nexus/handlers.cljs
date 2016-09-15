@@ -52,7 +52,7 @@
         left (if (> a b) b a)
         l-item (nth arr left)
         r-item (nth arr right)]
-    (swap! dnd-store assoc :drag-id b)
+    (swap! dnd-store assoc :drag-index b)
     (if (= a b)
         arr
         (let [b4-a (subvec arr 0 left)
@@ -80,7 +80,6 @@
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
           hover-index (:index hover)]
-      (log (should-rearrange? drag-id hover client-y))
       (if (should-rearrange? drag-id hover client-y)
           (assoc-in db [:courses course :days day :messages] (rearrange msgs drag-id hover-index))
           db))))
