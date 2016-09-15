@@ -31,7 +31,7 @@
                  [:div.list_message
                   {:draggable true
                    :class (if (= ix (:current @dnd-store)) "msg_dragged" "")
-                   :on-drag-over on-drag-over
+                  ;  :on-drag-over on-drag-over
                    :data-index ix
                    :data-dragtype "msg"}
                   title])) @msgs))])))

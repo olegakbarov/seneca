@@ -2,7 +2,8 @@
 (ns nexus.handlers
     (:require [re-frame.core :as re-frame]
               [nexus.db :as db]
-              [nexus.helpers.core :refer [log]]))
+              [nexus.helpers.core :refer [log]]
+              [nexus.templates.editor.dnd :refer [dnd-store]]))
 
 (re-frame/reg-event-db
  :initialize-db
@@ -42,20 +43,16 @@
          :order (inc-prop db :order)
          :title title}))))
 
-
 ;; DND magic ---------------
-
-; (defn swap-items [msgs order]
-;   (let [next (first (filter (fn [x] (= (:order x) (inc order))) msgs))
-;         current (first (filter fn [x] (= (:order x) (inc order)) msgs))
-;         step-one (conj msgs)]))
+;; const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
 (defn rearrange [arr a b]
-  "a and b are both indexes in arr is vector"
+  "`a` and `b` are both indexes; arr is a vector"
   (let [right (if (> a b) a b)
         left (if (> a b) b a)
         l-item (nth arr left)
         r-item (nth arr right)]
+    (swap! dnd-store assoc :drag-id b)
     (if (= a b)
         arr
         (let [b4-a (subvec arr 0 left)
@@ -63,28 +60,28 @@
               aftr-b (subvec arr (+ right 1))]
            (into [] (concat b4-a btwn [r-item] [l-item] aftr-b))))))
 
-(defn should-rearrange? [drag hover]
-  (let [dix (:index drag)
+(defn should-rearrange? [drag-id hover client-y]
+  (let [dix drag-id
         hix (:index hover)
-        dy (:middle-y drag)
-        dh (:middle-y hover)]
+        hover-mid (/ (- (:brect-bottom hover) (:brect-top hover)) 2)
+        hov-cli-y (- client-y (:brect-top hover))]
+    ; (log (str dix " " hix " " hover-mid " " hov-cli-y))
+    ; (log hover-mid)
     (cond
-      (and (< dix hix) (< dy dh)) false
-      (and (> dix hix) (> dy dh)) false
-      :else true)))
+      (and (< dix hix) (< hov-cli-y hover-mid)) true
+      (and (> dix hix) (> hov-cli-y hover-mid)) true
+      (nil? hover) false
+      :else false)))
 
 (re-frame/reg-event-db
   :reorder_msg
-  (fn [db [_ drag hover]]
+  (fn [db [_ drag-id hover client-y]]
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
-          drag-index (:index drag)
-          hover-index (:index hover)
-          updated (rearrange msgs drag-index hover-index)]
-      (log (should-rearrange? drag hover))
-      (if (should-rearrange? drag hover)
-        (assoc-in db [:courses course :days day :messages] updated)
-        db))))
-
+          hover-index (:index hover)]
+      (log (should-rearrange? drag-id hover client-y))
+      (if (should-rearrange? drag-id hover client-y)
+          (assoc-in db [:courses course :days day :messages] (rearrange msgs drag-id hover-index))
+          db))))
 ;;
