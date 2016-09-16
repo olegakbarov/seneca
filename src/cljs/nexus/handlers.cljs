@@ -22,32 +22,12 @@
   (fn [db [_ active-panel]]
     (assoc-in db [:router :current] active-panel)))
 
-;; just for lulz, should do it on the databases
-(defn inc-prop [db key]
-  (let [c (:courses db)
-        cc (get-in c [(:curr-course db)])
-        d (:days cc)
-        cd (get-in d [(:curr-day db)])
-        arr (:messages cd)]
-    (inc (apply max (map key arr)))))
-
-(re-frame/reg-event-db
-  :add_msg
-  (fn [db [_ title]]
-    (let [course (:curr-course db)
-          day (:curr-day db)]
-      (update-in db
-        [:courses course :days day :messages]
-        conj
-        {:id (inc-prop db :id)
-         :order (inc-prop db :order)
-         :title title}))))
-
-;; DND magic ---------------
-;; const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+;; DND STARTS HERE
 
 (defn rearrange [arr a b]
   "`a` and `b` are both indexes; arr is a vector"
+  (prn (str "a "))
+  (prn (str "b "))
   (let [right (if (> a b) a b)
         left (if (> a b) b a)
         l-item (nth arr left)
@@ -76,6 +56,8 @@
 (re-frame/reg-event-db
   :reorder_msg
   (fn [db [_ drag-id hover client-y]]
+    ; (prn "drag-id" drag-id)
+    ; (prn "hover" hover)
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
@@ -83,4 +65,29 @@
       (if (should-rearrange? drag-id hover client-y)
           (assoc-in db [:courses course :days day :messages] (rearrange msgs drag-id hover-index))
           db))))
+
+;; ADD CARD
+(defn insert-at [v item index]
+  (let [left (subvec v 0 index)
+        right (subvec v index)]
+      (into [] (concat left [item] right))))
+
+(re-frame/reg-event-db
+  :add_msg
+  (log "add msg!")
+  (fn [db [_ type drag-index hover client-y]]
+    (log drag-index)
+    (let [course (:curr-course db)
+          day (:curr-day db)
+          msgs (get-in db [:courses course :days day :messages])
+          hover-index (:index hover)
+          updated (insert-at msgs {:title "New!" :id 55} (:index hover))]
+        ;; TODO insert-at here i guess
+        (assoc-in db [:courses course :days day :messages] updated))))
+
+
+
+
+
+
 ;;

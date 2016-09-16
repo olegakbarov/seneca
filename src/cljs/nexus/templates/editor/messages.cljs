@@ -7,6 +7,9 @@
     [nexus.helpers.core :refer [log]]
     [nexus.templates.editor.dnd :refer [on-drag-start
                                         on-drag-over
+                                        ; on-drop
+                                        on-drag-leave
+                                        on-drag-enter
                                         dnd-store]]
     [nexus.templates.editor.add_msg :refer [add-msg]]
     [re-frame.core :refer [reg-event-db
@@ -22,6 +25,8 @@
           ; current-course (subscribe :course)
           ; curr-day (subscribe (current-course))
       [:div#msg_wrapper.list_messages
+        {:on-drag-enter on-drag-enter
+         :on-drag-leave on-drag-leave}
         ; [add-msg]
         (doall
           (map-indexed
@@ -31,7 +36,11 @@
                  [:div.list_message
                   {:draggable true
                    :class (if (= ix (:drag-index @dnd-store)) "msg_dragged" "")
-                  ;  :on-drag-over on-drag-over
+                   :droppable true
                    :data-index ix
                    :data-dragtype "msg"}
                   title])) @msgs))])))
+
+; (defn draggable []
+;   (reagent/create-class {:reagent-render draggable-render
+;                          :component-did-mount draggable-did-mount}))

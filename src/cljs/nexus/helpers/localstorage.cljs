@@ -1,6 +1,6 @@
 (ns nexus.helpers.localstorage
   (:require [cljs.reader :as reader]
-            [frontend.utils :as utils :include-macros true]
+            ; [frontend.utils :as utils :include-macros true]
             [goog.storage.mechanism.HTML5LocalStorage]))
 
 (defn is-available? [localstorage-imp]
