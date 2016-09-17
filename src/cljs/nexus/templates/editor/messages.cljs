@@ -40,7 +40,3 @@
                    :data-index ix
                    :data-dragtype "msg"}
                   title])) @msgs))])))
-
-; (defn draggable []
-;   (reagent/create-class {:reagent-render draggable-render
-;                          :component-did-mount draggable-did-mount}))

@@ -33,13 +33,13 @@
 (def dnd-types ["button-template"])
 
 (defn on-drag-start [e]
-  (let [index (int (.-index (.-dataset (.-target e))))
-        brect-bottom (.-bottom (.getBoundingClientRect (.-target e)))
-        brect-top (.-top (.getBoundingClientRect (.-target e)))
+  (let [index (-> e .-target .-dataset .-index int)
+        brect-top (-> e .-target .getBoundingClientRect .-top)
+        brect-bottom  (-> e .-target .getBoundingClientRect .-bottom)
         middle-y (/ (- brect-bottom brect-top) 2)
         type (.-type (.-dataset (.-target e)))]
-      ; (log type)
-      ; (log (some #(= type %) dnd-types))
+
+      ;; if existing items start shuffle
       (if-not (some #(= type %) dnd-types)
         (swap! dnd-store assoc :drag-index index))))
 
@@ -48,11 +48,13 @@
 
 (defn on-drag-over [e]
   (.preventDefault e) ;; needed for drop event
-  (let [index (int (.-index (.-dataset (.-target e))))
-        brect-bottom (.-bottom (.getBoundingClientRect (.-target e)))
-        brect-top (.-top (.getBoundingClientRect (.-target e)))
+  (let [index (-> e .-target .-dataset .-index int)
+        brect-top (-> e .-target .getBoundingClientRect .-top)
+        brect-bottom  (-> e .-target .getBoundingClientRect .-bottom)
         middle-y (/ (- brect-bottom brect-top) 2)
         client-y (.-clientY e)]
+
+      (prn index brect-top brect-bottom)
 
       (swap! dnd-store assoc :client-y client-y)
 
@@ -87,9 +89,10 @@
         (swap! dnd-store assoc :msg-added true))))
 
 (defn on-drag-leave [e]
-  (.preventDefault e) ;; needed for drop event
-  (let [index (int (.-index (.-dataset (.-target e))))]))
-    ; (log index)))
+  (.preventDefault e) ;; needed for drop eve
+  (swap! dnd-store assoc :msg-added false)
+  (dispatch [:remove_msg]))
+      ; (log index)))
       ; (do
       ;   (swap! dnd-store assoc :drag-index index)
       ;   (if (:msg-added @dnd-store)

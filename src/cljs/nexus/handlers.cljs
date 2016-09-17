@@ -67,7 +67,7 @@
           db))))
 
 ;; ADD CARD
-(defn insert-at [v item index]
+(defn- insert-at [v item index]
   (let [left (subvec v 0 index)
         right (subvec v index)]
       (into [] (concat left [item] right))))
@@ -82,12 +82,23 @@
           msgs (get-in db [:courses course :days day :messages])
           hover-index (:index hover)
           updated (insert-at msgs {:title "New!" :id 55} (:index hover))]
-        ;; TODO insert-at here i guess
         (assoc-in db [:courses course :days day :messages] updated))))
 
+(defn- remove-at [v i]
+  "Removes item with index `i` from vector `v`"
+  (let [left (subvec v 0 (- i 1))
+        right (subvec v i)]
+    (into [] (concat left right))))
 
-
-
-
+(re-frame/reg-event-db
+  :remove_msg
+  (log "remove msg!")
+  (fn [db [_ index]]
+    (let [course (:curr-course db)
+          day (:curr-day db)
+          msgs (get-in db [:courses course :days day :messages])
+          updated (remove-at msgs (:drag-index @dnd-store))]
+      (log @dnd-store)
+      (assoc-in db [:courses course :days day :messages] updated))))
 
 ;;
