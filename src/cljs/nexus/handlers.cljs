@@ -84,11 +84,15 @@
           updated (insert-at msgs {:title "New!" :id 55} (:index hover))]
         (assoc-in db [:courses course :days day :messages] updated))))
 
-(defn- remove-at [v i]
+(defn remove-at [v i]
   "Removes item with index `i` from vector `v`"
-  (let [left (subvec v 0 (- i 1))
-        right (subvec v i)]
-    (into [] (concat left right))))
+  (if (or (>= i (count v)) (< i 0))
+    "Index out of bounds"
+    (if (= 0 i)
+      (subvec v 1)
+      (let [left (subvec v 0 i)
+            right (subvec v (+ i 1))]
+        (into [] (concat left right))))))
 
 (re-frame/reg-event-db
   :remove_msg
