@@ -5,118 +5,134 @@
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
     [nexus.helpers.core :refer [log]]
-    [goog.dom :as g-dom]
     [goog.events :as events]
     [re-frame.core :refer [dispatch]])
   (:import [goog.events EventType]))
 
-;; HELPERS
-
 (defn set-cursor! [cursor-type]
   (aset js/document "body" "style" "cursor" (name cursor-type)))
 
-;; e
-;; clientY = 301 // от верха window
-;; offsetY = 7   // от верха кликнутого элемента до места клика
-;; screenY = 408 // весь экран
-
-;; boundingRect
-;; .top = 294 // от верха элемента до window
-;; .bottom = // от низа до window
+;; --------------------------
+;; STATE:
 
 (def dnd-chan (chan))
-(def dnd-store (r/atom {:drag-index nil    ;; the item we drag
-                        :hover nil         ;; the item we hover on
-                        :client-y nil
-                        :msg-added false}))
 
 (def dnd-types ["button-template"])
 
-(defn on-drag-start [e]
-  (let [index (-> e .-target .-dataset .-index int)
-        brect-top (-> e .-target .getBoundingClientRect .-top)
-        brect-bottom  (-> e .-target .getBoundingClientRect .-bottom)
-        middle-y (/ (- brect-bottom brect-top) 2)
-        type (.-type (.-dataset (.-target e)))]
+(def state (r/atom {:dix nil           ;; the item we drag
+                    :hix nil           ;; the item we hover on
+                    :y nil             ;; user;'s clientY
+                    :msg-added false   ;; msg already added?
+                    :item-type nil}))  ;; type of item we drag
 
-      ;; if existing items start shuffle
-      (if-not (some #(= type %) dnd-types)
-        (swap! dnd-store assoc :drag-index index))))
+;; --------------------------
+;; HELPERS:
 
-(defn on-drag [e]
+(defn parse-event [e]
+  (prn (-> e .-type))
+  ; (cond = (-> e .-type)
+  ;   "dragenter" (.preventDefault e)
+  ;   "dragleave" (.preventDefault e))
+  (let [ix (-> e .-target .-dataset .-index int)
+        dix (if (nil? (:dix @state)) ix (:dix @state))
+        bottom (-> e .-target .getBoundingClientRect .-bottom)
+        top (-> e .-target .getBoundingClientRect .-top)
+        parsed {:dix dix
+                :hix ix
+                :top top
+                :bottom bottom
+                :mid (/ (- bottom top) 2)
+                :item-type  (-> e .-target .-dataset .-type)
+                :event-type (-> e .-type)}]
+      (put! dnd-chan parsed)))
+
+(defn should-reorder? [hover]
+  "`bottom`, `top`, `mid` of hovered el"
+  (let [{:keys [dix hix y]} @state
+        {:keys [bottom top]} hover
+        mid (/ (- bottom top) 2)
+        hover-y (- y top)]
+    (cond
+      (and (< dix hix) (< hover-y mid)) true
+      (and (> dix hix) (> hover-y mid)) true
+      ; (nil? hover) false  ;; ?????
+      :else false)))
+
+;; --------------------------
+;; EVENTS:
+
+(defn on-event [e]
+  (put! dnd-chan (parse-event e)))
+
+;; -----------------------------------
+;; HANDLERS
+
+(defn handle-drag-start [e]
+  (let [{:keys [dix item-type]} (parse-event e)]
+    (if (some #(= item-type %) dnd-types)
+      (swap! state assoc :item-type item-type)
+      (swap! state assoc :dix dix))))
+
+;; set dix
+(defn handle-drag-enter [e]
+  (let [{:keys [dix hix]} @state]
+    (if (:msg-added @state)
+      (do ;; remove message
+        (swap! state assoc :msg-added false)
+        (dispatch [:remove_msg dix]))
+      (do ;; add message
+        (swap! state assoc :msg-added true)
+        (dispatch [:add_msg dix hix])))))
+
+;; set dix
+(defn handle-drag-leave [e]
+  (let [{:keys [dix hix]} @state]
+    (do
+      (swap! state assoc :msg-added false)
+      (dispatch [:remove_msg dix]))))
+
+;; delete from list
+(defn handle-drag-end [e]
+  (do
+    (swap! state assoc :msg-added false)
+    (swap! state assoc :dix nil)))
+
+(defn handle-drag [e]
+  (log @state)
+  (swap! state assoc :y (.-clientY e)))
+
+;; reorder
+(defn handle-drag-over [e]
+  (log (:item-type e))
+  (let [{:keys [dix hix]} @state]
+    (if (:msg-added @state)
+      (let [dix (if (nil? dix) hix)
+            hix (if (nil? dix) (inc hix))]
+          (when-not (= dix hix)
+            (dispatch [:reorder_msg dix hix])))
+      (do
+        (swap! state assoc :msg-added true)
+        (dispatch [:add_msg type dix hix])))))
+
+(defn handle-drop [e]
   "nimp")
 
-(defn on-drag-over [e]
-  (.preventDefault e) ;; needed for drop event
-  (let [index (-> e .-target .-dataset .-index int)
-        brect-top (-> e .-target .getBoundingClientRect .-top)
-        brect-bottom  (-> e .-target .getBoundingClientRect .-bottom)
-        middle-y (/ (- brect-bottom brect-top) 2)
-        client-y (.-clientY e)]
-
-      (prn index brect-top brect-bottom)
-
-      (swap! dnd-store assoc :client-y client-y)
-
-      (if (and index brect-top brect-bottom middle-y)
-          (put! dnd-chan {:client-y client-y
-                          :hover {:index index
-                                  :brect-bottom brect-bottom
-                                  :brect-top brect-top
-                                  :middle-y middle-y}}))))
-
-(defn on-drag-end [e]
-  (do
-    (swap! dnd-store assoc :msg-added false)
-    (swap! dnd-store assoc :drag-index nil)))
-
-(defn on-drag-enter [e]
-  (log "ON DRAG_ENTER")
-  (.preventDefault e) ;; needed for drop event
-  (let [index (int (.-index (.-dataset (.-target e))))
-        drag-index (:drag-index @dnd-store)
-        brect-bottom (.-bottom (.getBoundingClientRect (.-target e)))
-        brect-top (.-top (.getBoundingClientRect (.-target e)))
-        middle-y (/ (- brect-bottom brect-top) 2)]
-    ; (if (some #(= type %) dnd-types) ;; drag from tools
-      (do
-        (swap! dnd-store assoc :drag-index index)
-        (if-not (:msg-added @dnd-store)
-          (dispatch [:add_msg "kek" drag-index {:index index
-                                                :brect-bottom brect-bottom
-                                                :brect-top brect-top
-                                                :middle-y middle-y}]))
-        (swap! dnd-store assoc :msg-added true))))
-
-(defn on-drag-leave [e]
-  (.preventDefault e) ;; needed for drop eve
-  (swap! dnd-store assoc :msg-added false)
-  (dispatch [:remove_msg]))
-      ; (log index)))
-      ; (do
-      ;   (swap! dnd-store assoc :drag-index index)
-      ;   (if (:msg-added @dnd-store)
-      ;     (dispatch [:add_msg "kek"]))
-      ;   (swap! dnd-store assoc :msg-added true))))
-
-(defn on-drop [e]
-  (log e))
-    ;; if current drag source match current drop target, handle the drop!
-
 (defn listen! []
-  (events/listen js/window EventType.DRAGSTART on-drag-start)
-  (events/listen js/window EventType.DRAGOVER on-drag-over)
-  (events/listen js/window EventType.DRAGEND on-drag-end)
-  ; (events/listen js/window EventType.DRAGENTER on-drag-enter)
-  (events/listen js/window EventType.DRAGOVER on-drag-over)
-  ; (events/listen js/window EventType.DROP on-drop)
-
+  (events/listen js/window EventType.DRAGSTART on-event)
+  (events/listen js/window EventType.DRAGOVER  on-event)
+  (events/listen js/window EventType.DRAGEND   on-event)
+  (events/listen js/window EventType.DRAG      on-event)
   (go-loop []
      (let [e (<! dnd-chan)
-           {:keys [hover client-y]} e
-           drag-index (:drag-index @dnd-store)]
-        (when-not (= drag-index (:index hover))
-          (dispatch [:reorder_msg drag-index hover client-y]))
+           {:keys [event-type]} e]
+        (cond = event-type
+          "dragenter" (handle-drag-enter e)
+          "dragstart" (handle-drag-start e)
+          "dragover"  (handle-drag-over e)
+          "drag"      (handle-drag e)
+          "drop"      (handle-drop e)
+          :default    (log event-type))
        (recur))))
 
+;; fire up!
 (listen!)

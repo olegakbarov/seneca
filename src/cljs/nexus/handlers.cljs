@@ -2,8 +2,7 @@
 (ns nexus.handlers
     (:require [re-frame.core :as re-frame]
               [nexus.db :as db]
-              [nexus.helpers.core :refer [log]]
-              [nexus.templates.editor.dnd :refer [dnd-store]]))
+              [nexus.helpers.core :refer [log]]))
 
 (re-frame/reg-event-db
  :initialize-db
@@ -24,15 +23,12 @@
 
 ;; DND STARTS HERE
 
-(defn rearrange [arr a b]
+(defn reorder [arr a b]
   "`a` and `b` are both indexes; arr is a vector"
-  (prn (str "a "))
-  (prn (str "b "))
   (let [right (if (> a b) a b)
         left (if (> a b) b a)
         l-item (nth arr left)
         r-item (nth arr right)]
-    (swap! dnd-store assoc :drag-index b)
     (if (= a b)
         arr
         (let [b4-a (subvec arr 0 left)
@@ -40,48 +36,31 @@
               aftr-b (subvec arr (+ right 1))]
            (into [] (concat b4-a btwn [r-item] [l-item] aftr-b))))))
 
-(defn should-rearrange? [drag-id hover client-y]
-  (let [dix drag-id
-        hix (:index hover)
-        hover-mid (/ (- (:brect-bottom hover) (:brect-top hover)) 2)
-        hov-cli-y (- client-y (:brect-top hover))]
-    ; (log (str dix " " hix " " hover-mid " " hov-cli-y))
-    ; (log hover-mid)
-    (cond
-      (and (< dix hix) (< hov-cli-y hover-mid)) true
-      (and (> dix hix) (> hov-cli-y hover-mid)) true
-      (nil? hover) false
-      :else false)))
-
 (re-frame/reg-event-db
   :reorder_msg
-  (fn [db [_ drag-id hover client-y]]
-    ; (prn "drag-id" drag-id)
-    ; (prn "hover" hover)
+  (fn [db [_ dix hix]]
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
-          hover-index (:index hover)]
-      (if (should-rearrange? drag-id hover client-y)
-          (assoc-in db [:courses course :days day :messages] (rearrange msgs drag-id hover-index))
-          db))))
+          updated (reorder msgs dix hix)]
+      (assoc-in db [:courses course :days day :messages] updated))))
 
 ;; ADD CARD
 (defn- insert-at [v item index]
-  (let [left (subvec v 0 index)
-        right (subvec v index)]
-      (into [] (concat left [item] right))))
+  (if (= index (+ 1 (count v)))
+    (concat v [item])
+    (let [left (subvec v 0 index)
+          right (subvec v index)]
+        (into [] (concat left [item] right)))))
 
 (re-frame/reg-event-db
   :add_msg
   (log "add msg!")
-  (fn [db [_ type drag-index hover client-y]]
-    (log drag-index)
+  (fn [db [_ type dix hix]]
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
-          hover-index (:index hover)
-          updated (insert-at msgs {:title "New!" :id 55} (:index hover))]
+          updated (insert-at msgs {:title "New!" :id 55} hix)]
         (assoc-in db [:courses course :days day :messages] updated))))
 
 (defn remove-at [v i]
@@ -97,12 +76,11 @@
 (re-frame/reg-event-db
   :remove_msg
   (log "remove msg!")
-  (fn [db [_ index]]
+  (fn [db [_ i]]
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
-          updated (remove-at msgs (:drag-index @dnd-store))]
-      (log @dnd-store)
+          updated (remove-at msgs i)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
 ;;

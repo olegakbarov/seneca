@@ -5,12 +5,8 @@
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
     [nexus.helpers.core :refer [log]]
-    [nexus.templates.editor.dnd :refer [on-drag-start
-                                        on-drag-over
-                                        ; on-drop
-                                        on-drag-leave
-                                        on-drag-enter
-                                        dnd-store]]
+    [nexus.templates.editor.dnd :refer [on-event
+                                        state]]
     [nexus.templates.editor.add_msg :refer [add-msg]]
     [re-frame.core :refer [reg-event-db
                            path
@@ -22,11 +18,9 @@
 (defn lister []
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]
-          ; current-course (subscribe :course)
-          ; curr-day (subscribe (current-course))
       [:div#msg_wrapper.list_messages
-        {:on-drag-enter on-drag-enter
-         :on-drag-leave on-drag-leave}
+        {:on-drag-enter on-event
+         :on-drag-leave on-event}
         ; [add-msg]
         (doall
           (map-indexed
@@ -35,7 +29,7 @@
                  ^{:key ix}
                  [:div.list_message
                   {:draggable true
-                   :class (if (= ix (:drag-index @dnd-store)) "msg_dragged" "")
+                   :class (if (= ix (:dix @state)) "msg_dragged" "")
                    :droppable true
                    :data-index ix
                    :data-dragtype "msg"}
