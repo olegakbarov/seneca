@@ -25,11 +25,23 @@
                     :msg-added false   ;; msg already added?
                     :item-type nil}))  ;; type of item we drag
 
+(defn update-state! [key val]
+  (swap! state assoc key val))
+
+;; --------------------------
+;; WTF:
+
+;; reorder
+;; add on dragendeter (wrapper)
+;; remove on dragleave
+;; sort on dragenter (item)
+
 ;; --------------------------
 ;; HELPERS:
 
 (defn parse-event [e]
-  (prn (-> e .-type))
+  ; (log e)
+  ; (prn (-> e .-type))
   ; (cond = (-> e .-type)
   ;   "dragenter" (.preventDefault e)
   ;   "dragleave" (.preventDefault e))
@@ -37,14 +49,17 @@
         dix (if (nil? (:dix @state)) ix (:dix @state))
         bottom (-> e .-target .getBoundingClientRect .-bottom)
         top (-> e .-target .getBoundingClientRect .-top)
-        parsed {:dix dix
-                :hix ix
-                :top top
-                :bottom bottom
-                :mid (/ (- bottom top) 2)
-                :item-type  (-> e .-target .-dataset .-type)
-                :event-type (-> e .-type)}]
-      (put! dnd-chan parsed)))
+        event-type (-> e .-type)]
+
+    (prn "index from e " ix)
+
+    {:dix dix
+     :hix ix
+     :top top
+     :bottom bottom
+     :mid (/ (- bottom top) 2)
+     :item-type  (-> e .-target .-dataset .-type)
+     :event-type event-type}))
 
 (defn should-reorder? [hover]
   "`bottom`, `top`, `mid` of hovered el"
@@ -68,51 +83,56 @@
 ;; HANDLERS
 
 (defn handle-drag-start [e]
-  (let [{:keys [dix item-type]} (parse-event e)]
+  (let [{:keys [dix item-type]} e]
     (if (some #(= item-type %) dnd-types)
-      (swap! state assoc :item-type item-type)
-      (swap! state assoc :dix dix))))
+      (update-state! :item-type item-type)
+      (update-state! :dix dix))))
 
 ;; set dix
 (defn handle-drag-enter [e]
   (let [{:keys [dix hix]} @state]
     (if (:msg-added @state)
       (do ;; remove message
-        (swap! state assoc :msg-added false)
+        (update-state! :msg-added false)
         (dispatch [:remove_msg dix]))
       (do ;; add message
-        (swap! state assoc :msg-added true)
+        (update-state! :msg-added true)
         (dispatch [:add_msg dix hix])))))
 
 ;; set dix
 (defn handle-drag-leave [e]
   (let [{:keys [dix hix]} @state]
     (do
-      (swap! state assoc :msg-added false)
+      (update-state! :msg-added false)
       (dispatch [:remove_msg dix]))))
 
 ;; delete from list
 (defn handle-drag-end [e]
   (do
-    (swap! state assoc :msg-added false)
-    (swap! state assoc :dix nil)))
+    (update-state! :msg-added false)
+    (update-state! :dix nil)))
 
 (defn handle-drag [e]
-  (log @state)
-  (swap! state assoc :y (.-clientY e)))
+  ; (log @state)
+  (update-state! :y (.-clientY e)))
 
 ;; reorder
 (defn handle-drag-over [e]
-  (log (:item-type e))
+  ; (log e)
   (let [{:keys [dix hix]} @state]
     (if (:msg-added @state)
       (let [dix (if (nil? dix) hix)
             hix (if (nil? dix) (inc hix))]
+          (log @state)
+          ; (log hix)
           (when-not (= dix hix)
             (dispatch [:reorder_msg dix hix])))
       (do
-        (swap! state assoc :msg-added true)
+        (update-state! :msg-added true)
         (dispatch [:add_msg type dix hix])))))
+
+(defn handle-dragend [e]
+  "nimp")
 
 (defn handle-drop [e]
   "nimp")
@@ -122,17 +142,20 @@
   (events/listen js/window EventType.DRAGOVER  on-event)
   (events/listen js/window EventType.DRAGEND   on-event)
   (events/listen js/window EventType.DRAG      on-event)
+  (events/listen js/window EventType.DRAGENTER on-event)
+  (events/listen js/window EventType.DRAGLEAVE on-event)
+
   (go-loop []
      (let [e (<! dnd-chan)
            {:keys [event-type]} e]
-        (cond = event-type
+        (condp = event-type
           "dragenter" (handle-drag-enter e)
+          "dragleave" (handle-drag-leave e)
           "dragstart" (handle-drag-start e)
           "dragover"  (handle-drag-over e)
           "drag"      (handle-drag e)
           "drop"      (handle-drop e)
-          :default    (log event-type))
+          "dragend"   (handle-dragend e))
        (recur))))
 
-;; fire up!
 (listen!)

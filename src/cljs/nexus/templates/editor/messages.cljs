@@ -19,8 +19,8 @@
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]
       [:div#msg_wrapper.list_messages
-        {:on-drag-enter on-event
-         :on-drag-leave on-event}
+        ; {:on-drag-enter on-event
+        ;  :on-drag-leave on-event}
         ; [add-msg]
         (doall
           (map-indexed

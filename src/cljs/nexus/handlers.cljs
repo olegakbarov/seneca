@@ -23,18 +23,28 @@
 
 ;; DND STARTS HERE
 
-(defn reorder [arr a b]
-  "`a` and `b` are both indexes; arr is a vector"
+; (defn reorder [arr a b]
+;   "`a` and `b` are both indexes; arr is a vector"
+;   (let [right (if (> a b) a b)
+;         left (if (> a b) b a)
+;         l-item (nth arr left)
+;         r-item (nth arr right)]
+;     (if (= a b)
+;         arr
+;         (let [b4-a (subvec arr 0 left)
+;               btwn (subvec arr (+ left 1) right)
+;               aftr-b (subvec arr (+ right 1))]
+;            (into [] (concat b4-a btwn [r-item] [l-item] aftr-b))))))
+
+(defn reorder [v a b]
+  "`a` and `b` are both indexes; v is a vector"
   (let [right (if (> a b) a b)
         left (if (> a b) b a)
-        l-item (nth arr left)
-        r-item (nth arr right)]
+        l-item (nth v left)
+        r-item (nth v right)]
     (if (= a b)
-        arr
-        (let [b4-a (subvec arr 0 left)
-              btwn (subvec arr (+ left 1) right)
-              aftr-b (subvec arr (+ right 1))]
-           (into [] (concat b4-a btwn [r-item] [l-item] aftr-b))))))
+        v
+        (assoc v right l-item left r-item)))) ;; TODO CHECK!
 
 (re-frame/reg-event-db
   :reorder_msg
