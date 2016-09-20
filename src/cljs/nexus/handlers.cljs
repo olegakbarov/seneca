@@ -55,7 +55,7 @@
           updated (reorder msgs dix hix)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
-;; ADD CARD
+;; ADD MSG
 (defn- insert-at [v item index]
   (if (= index (+ 1 (count v)))
     (concat v [item])
@@ -66,7 +66,8 @@
 (re-frame/reg-event-db
   :add_msg
   (log "add msg!")
-  (fn [db [_ type dix hix]]
+  (fn [db [_ type hix]]
+    (prn (str "hix: " hix))
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
