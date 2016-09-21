@@ -15,6 +15,9 @@
                            dispatch-sync
                            subscribe]]))
 
+; (defn text-message [txt]
+;   ())
+
 (defn lister []
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]

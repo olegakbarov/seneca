@@ -8,15 +8,6 @@
     [nexus.templates.editor.tools :refer [tools-list]]))
 
 ;; ---------------------------------
-;; State
-
-(def state (r/atom {:auth {}
-                    ; :bots {:courses {:days {}}}
-                    :days {}}))
-
-(def s-days (r/cursor state [:days]))
-
-;; ---------------------------------
 ;; Init
 
 (defn add-to-list [x]
