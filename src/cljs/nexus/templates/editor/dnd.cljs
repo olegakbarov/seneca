@@ -29,14 +29,6 @@
   (swap! state assoc key val))
 
 ;; --------------------------
-;; WTF:
-
-;; reorder
-;; add on dragendeter (wrapper)
-;; remove on dragleave
-;; sort on dragenter (item)
-
-;; --------------------------
 ;; HELPERS:
 
 (defn parse-event [e]
@@ -50,6 +42,7 @@
   (let [
         ix (-> e .-target .-dataset .-index int)
         bottom (-> e .-target .getBoundingClientRect .-bottom)
+        y (-> e .-clientY)
         top (-> e .-target .getBoundingClientRect .-top)
         item-type (-> e .-target .-dataset .-type)
         event-type (-> e .-type)]
@@ -58,6 +51,7 @@
      :event-type event-type         ;; type of event
      :top top                       ;; top coord of bounding rect
      :bottom bottom                 ;; bottom coord of bounding rect
+     :y y
      :mid (/ (- bottom top) 2)}))   ;; middle of bounding rect
 
 (defn should-reorder? [e]
@@ -66,10 +60,13 @@
         {:keys [bottom top]} e
         mid (/ (- bottom top) 2)
         hover-y (- y top)]
+
+    (prn dix hix)
+    (prn mid hover-y)
+
     (cond
       (and (< dix hix) (< hover-y mid)) true
       (and (> dix hix) (> hover-y mid)) true
-      ; (nil? hover) false  ;; ?????
       :else false)))
 
 ;; --------------------------
@@ -88,12 +85,12 @@
       (update-state! :drag-type item-type))))
 
 (defn handle-drag [e]
-  (update-state! :y (.-clientY e)))
+  (update-state! :y (:y e)))
 
 (defn handle-drag-enter [e]
   (let [{:keys [ix item-type]} e
         {:keys [drag-type]} @state]
-    (update-state! :dix ix)
+    (update-state! :hix ix)
     (if-not (:msg-added @state)
       (if (some #(= drag-type %) dnd-types)
         (do
@@ -116,18 +113,20 @@
   ; (log e)
   (let [{:keys [dix]} @state    ;; drag index
         {:keys [ix]} e]         ;; hover index
+    ;
+    ; (prn (str "ix: " ix))
+    ; (prn (str "dix: " dix))
+    ;
     (if (should-reorder? e)
       (do
-        ; (update-state! :hix hix)
-        ; (update-state! :dix dix)
+        (update-state! :dix ix)
+        (update-state! :hix dix)
         (dispatch [:reorder_msg dix ix])))))
 
-;; delete from list
 (defn handle-dragend [e]
-  ; (log @state)
   (do
-    (update-state! :msg-added false)))
-    ; (update-state! :dix nil)))
+    (update-state! :msg-added false)
+    (update-state! :dix nil)))
 
 (defn handle-drop [e]
   "nimp")

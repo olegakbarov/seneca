@@ -55,7 +55,6 @@
           updated (reorder msgs dix hix)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
-;; ADD MSG
 (defn- insert-at [v item index]
   (if (= index (+ 1 (count v)))
     (concat v [item])
