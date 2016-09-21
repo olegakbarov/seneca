@@ -32,15 +32,12 @@
 ;; HELPERS:
 
 (defn parse-event [e]
-  ; (log e)
-  ; (prn (-> e .-type))
   (cond = (-> e .-type)
     "dragend" (.preventDefault e)
     "drop" (.preventDefault e)
     "dragleave" (.preventDefault e))
 
-  (let [
-        ix (-> e .-target .-dataset .-index int)
+  (let [ix (-> e .-target .-dataset .-index int)
         bottom (-> e .-target .getBoundingClientRect .-bottom)
         y (-> e .-clientY)
         top (-> e .-target .getBoundingClientRect .-top)
@@ -51,7 +48,7 @@
      :event-type event-type         ;; type of event
      :top top                       ;; top coord of bounding rect
      :bottom bottom                 ;; bottom coord of bounding rect
-     :y y
+     :y y                           ;; y coord of cursor
      :mid (/ (- bottom top) 2)}))   ;; middle of bounding rect
 
 (defn should-reorder? [e]
@@ -60,10 +57,6 @@
         {:keys [bottom top]} e
         mid (/ (- bottom top) 2)
         hover-y (- y top)]
-
-    (prn dix hix)
-    (prn mid hover-y)
-
     (cond
       (and (< dix hix) (< hover-y mid)) true
       (and (> dix hix) (> hover-y mid)) true
@@ -97,26 +90,13 @@
           (dispatch [:add_msg drag-type ix])
           (update-state! :msg-added true))))))
 
-;; set dix
-(defn handle-drag-leave [e]
-  (let [{:keys [dix hix]} @state
-        {:keys [ix]} e]))
-    ; (prn (:msg-added @state))))
-    ; (if (:msg-added @state)
-    ;   (do
-    ;     (dispatch [:remove_msg ix])
-    ;     (update-state! :dix nil)
-    ;     (update-state! :msg-added false)))))
+; (defn handle-drag-leave [e]
+;   (let [{:keys [dix hix]} @state
+;         {:keys [ix]} e]))
 
-;; reorder
 (defn handle-drag-over [e]
-  ; (log e)
-  (let [{:keys [dix]} @state    ;; drag index
-        {:keys [ix]} e]         ;; hover index
-    ;
-    ; (prn (str "ix: " ix))
-    ; (prn (str "dix: " dix))
-    ;
+  (let [{:keys [dix]} @state    ;; index of dragged item
+        {:keys [ix]} e]         ;; index of hovered item
     (if (should-reorder? e)
       (do
         (update-state! :dix ix)
@@ -143,7 +123,6 @@
   (go-loop []
      (let [e (<! dnd-chan)
            {:keys [event-type]} e]
-        ; (prn event-type)
         (condp = event-type
           "dragenter" (handle-drag-enter e)
           "dragleave" (handle-drag-leave e)
