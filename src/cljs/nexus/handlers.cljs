@@ -44,7 +44,7 @@
         r-item (nth v right)]
     (if (= a b)
         v
-        (assoc v right l-item left r-item)))) ;; TODO CHECK!
+        (assoc v right l-item left r-item)))) 
 
 (re-frame/reg-event-db
   :reorder_msg

@@ -17,7 +17,12 @@
 
 (def dnd-chan (chan))
 
-(def dnd-types ["button-template"])
+(def dnd-types ["text-message"
+                "button-template"
+                "quick-reply"
+                "generic-template"
+                "media"])
+
 
 (def state (r/atom {:dix nil           ;; the item we drag
                     :hix nil           ;; the item we hover on
@@ -90,9 +95,10 @@
           (dispatch [:add_msg drag-type ix])
           (update-state! :msg-added true))))))
 
-; (defn handle-drag-leave [e]
-;   (let [{:keys [dix hix]} @state
-;         {:keys [ix]} e]))
+(defn handle-drag-leave [e]
+  (let [{:keys [dix hix]} @state
+        {:keys [ix]} e]
+    (prn "Dragleave NIMP yep")))
 
 (defn handle-drag-over [e]
   (let [{:keys [dix]} @state    ;; index of dragged item

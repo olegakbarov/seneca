@@ -18,10 +18,7 @@
 (defn lister []
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]
-          ; current-course (subscribe :course)
-          ; curr-day (subscribe (current-course))
       [:div#msg_wrapper.list_messages
-        ; [add-msg]
         (doall
           (map-indexed
             (fn [ix, item]
@@ -29,7 +26,7 @@
                  ^{:key ix}
                  [:div.list_message
                   {:draggable true
-                   :class (if (= ix (:drag-index @state)) "msg_dragged" "")
+                   :class (if (= ix (:dix @state)) "msg_dragged" "")
                    :on-drag-enter on-event
                   ;  :on-drag-leave on-event
                    :on-drag-over  on-event

@@ -9,39 +9,106 @@
 (def normal {:position "relative"})
 (def sticky {:position "fixed" :top "150px" :right "60px"})
 
+;; REUSEABLE
+(defn img-placeholder []
+ [:ul.item_txt_stripe_wrap
+  [:div.item_img_placeholder]
+  (doall
+    (map-indexed
+      (fn [ix, item]
+         ^{:key ix}
+        [:li.item_txt_stripe])
+      (vec (repeat 2 nil))))]) ;; clever hack to obtain keys for each el
+
+(defn media-placeholder []
+  ;; TODO icon img
+  [:div.item_media_placeholder])
+
+(defn quick-replies [n]
+ [:ul.item_qr_wrapper
+  (doall
+    (map-indexed
+      (fn [ix, item]
+         ^{:key ix}
+        [:li.item_qr
+          [:div.item_qr_txt]])
+      (vec (repeat n nil))))]) ;; clever hack to obtain keys for each el
+
+(defn text-placeholder [n last]
+ [:ul.item_txt_stripe_wrap
+  {:class (if last "last" "")}
+  (doall
+    (map-indexed
+      (fn [ix, item]
+         ^{:key ix}
+        [:li.item_txt_stripe])
+      (vec (repeat n nil))))]) ;; clever hack to obtain keys for each el
+
+(defn buttons-placeholder [n]
+  [:ul.buttons_wrap
+    (doall
+      (map-indexed
+        (fn [ix, item]
+           ^{:key ix}
+          [:li.item_btn_placeholder
+            [:div.item_btn_txt]])
+        (vec (repeat n nil))))]) ;; clever hack to obtain keys for each el
+
+;; TXT MSG
+(defn text-message []
+  [:div.msg_type_wrapper
+    [:div.msg_type_title "Text message"]
+    [:div.msg_type_item.msg_item_text
+      {:draggable true
+       :data-type "text-message"}
+     [text-placeholder 3 true]]])
+
+;; BTN TEMPLATE
 (defn button-template []
   [:div.msg_type_wrapper
-    {:draggable true
-     :data-type "button-template"}
     [:div.msg_type_title "Button template"]
     [:div.msg_type_item
-      "button"]])
+      {:draggable true
+       :data-type "button-template"}
+     [text-placeholder 2 false]
+     [buttons-placeholder 2]]])
 
 (defn quick-reply []
-  [:div.msg_type_wrapper {:draggable true}
+  [:div.msg_type_wrapper
     [:div.msg_type_title "Quick reply"]
     [:div.msg_type_item
-      "QR"]])
+      {:draggable true
+       :data-type "quick-reply"}
+     [text-placeholder 2 true]
+     [quick-replies 2]]])
 
-(defn image-attach []
-  [:div.msg_type_wrapper {:draggable true}
-    [:div.msg_type_title "Image reply"]
+(defn generic-template []
+  [:div.msg_type_wrapper
+    [:div.msg_type_title "Generic template"]
     [:div.msg_type_item
-      "image"]])
+      {:draggable true
+       :data-type "generic-template"}
+     [img-placeholder]
+     [buttons-placeholder 2]]])
 
-(defn video-attach []
-  [:div.msg_type_wrapper {:draggable true}
-    [:div.msg_type_title "Video reply"]
+(defn media-attach []
+  [:div.msg_type_wrapper
+    [:div.msg_type_title "Media attach"]
     [:div.msg_type_item
-      "video"]])
+      {:draggable true
+       :data-type "media"}
+      [media-placeholder]]])
 
 (defn tools-list []
-  [:div.editor_tools_wrapper {:draggable true}
+  [:div.editor_tools_wrapper
     [:div.editor_tools {:style @tools}
-      [button-template]
-      [quick-reply]
-      [image-attach]
-      [video-attach]]])
+      [:div.editor_tools_left
+        [text-message]
+        [button-template]
+        [quick-reply]]
+      [:div.editor_tools_right
+        [generic-template]
+        [media-attach]]]])
 
 (defn listen! []
   (let [chan (scroll-chan)]

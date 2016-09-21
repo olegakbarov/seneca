@@ -1,6 +1,7 @@
 
 @import 'colors.less';
 @import 'globals.less';
+@import "tools.less";
 
 @padding: 7px;
 
@@ -45,62 +46,26 @@
   margin: 0 auto;
   padding-bottom: 40px;
   max-width: 1320px;
+  min-width: 1120px;
   display: flex;
+  justify-content: space-between;
 }
 
 .editor_messenger_wrapper {
-  width: 70%;
   position: relative;
+  width: 880px;
 }
 
 .editor_messenger {
-  width: 600px;
   margin: 0 auto;
+  width: 600px;
   background-color: @white;
   border: 1px solid @gray;
   border-radius: @radius;
 }
 
 .editor_tools_wrapper {
-  width: 30%;
-}
-
-// TOOLS
-
-.editor_tools {
-  .border
-}
-
-.editor_tools {
-  background-color: @white;
-  padding: 10px;
-  width: 400px;
-}
-
-.wrap-mxn {
-  padding: 5px;
-  margin-bottom: 10px;
-}
-
-.msg_type_wrapper {
-  .wrap-mxn
-}
-
-.msg_type_title {
-  text-align: center;
-  padding-bottom: 10px;
-  color: @midgray;
-}
-
-@itheight: 150px;
-.msg_type_item {
-  background-color: @gray;
-  border-radius: 18px;
-  height: @itheight;
-  text-align: center;
-  line-height: @itheight;
-  color: @midgray;
-  transition: all .2s ease;
+  width: 440px;
 }
 
 // MESSAGES

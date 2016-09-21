@@ -1,0 +1,137 @@
+
+@import 'colors.less';
+@import 'globals.less';
+
+
+// local vars
+
+@radius: 13px;
+@padding: 10px;
+
+.editor_tools {
+  display: flex;
+  border-radius: 4px;
+}
+
+.editor_tools {
+  background-color: @white;
+  padding: 10px 20px;
+  width: 440px;
+}
+
+.editor_tools_left,
+.editor_tools_right {
+  width: 195px;
+}
+
+.editor_tools_right {
+  margin-left: 20px;
+}
+
+.msg_type_wrapper {
+  margin-bottom: 10px;
+}
+
+.msg_type_title {
+  text-align: center;
+  padding-bottom: 10px;
+  font-size: 13px;
+  color: @midgray;
+}
+
+/** TXT */
+
+@itheight: 50px;
+.msg_type_item {
+  text-align: center;
+  transition: all .2s ease;
+  // border: 1px solid @midgray;
+}
+
+ul.item_txt_stripe_wrap {
+  list-style: none;
+  color: @midgray;
+  background-color: @lightgray;
+  padding: 15px @padding;
+  border-left: 1px solid @midgray;
+  border-right: 1px solid @midgray;
+  border-top: 1px solid @midgray;
+  border-radius: @radius @radius 0 0;
+
+  &.last {
+    border-radius: @radius;
+    border: 1px solid @midgray;
+  }
+}
+
+li.item_txt_stripe {
+  width: 100%;
+  height: 8px;
+  margin-bottom: 7px;
+  background-color: @midgray;
+  &:last-child {
+    margin-bottom: 0px;
+    width: 30%;
+  }
+}
+
+/** BUTTONS */
+
+ul.buttons_wrap {
+  background-color: @white;
+  border: 1px solid @midgray;
+  border-radius: 0 0 13px 13px;
+}
+
+li.item_btn_placeholder {
+  padding: 14px 40px;
+
+  &:last-child {
+    border-top: 1px solid @midgray;
+  }
+
+  .item_btn_txt {
+    width: 100%;
+    height: 8px;
+    background-color: @fbblue;
+  }
+}
+
+/** IMG PLACEHOLDER */
+
+.item_img_placeholder {
+  background-color: @midgray;
+  height: 60px;
+  margin-bottom: 7px;
+}
+
+.item_media_placeholder {
+  height: 60px;
+  margin-bottom: 7px;
+  background-color: @lightgray;
+  border-radius: @radius;
+  border: 1px solid @midgray;
+}
+
+ul.item_qr_wrapper {
+  display: flex;
+}
+
+.item_qr {
+  border: 1px solid @fbblue;
+  width: 48%;
+  margin-left: 0;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 100px;;
+
+  &:last-child {
+    margin-left: 4%;
+  }
+
+  .item_qr_txt {
+    width: 100%;
+    height: 8px;
+    background-color: @fbblue;
+  }
+}
