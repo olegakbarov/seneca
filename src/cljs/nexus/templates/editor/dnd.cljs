@@ -23,7 +23,7 @@
                     :hix nil           ;; the item we hover on
                     :y nil             ;; user's clientY
                     :msg-added false   ;; msg already added?
-                    :item-type nil}))  ;; type of item we drag
+                    :drag-type nil}))  ;; type of item we drag
 
 (defn update-state! [key val]
   (swap! state assoc key val))
@@ -53,12 +53,12 @@
         top (-> e .-target .getBoundingClientRect .-top)
         item-type (-> e .-target .-dataset .-type)
         event-type (-> e .-type)]
-    {:ix ix                 ;; index of item where event occured
-     :item-type item-type   ;; type of item where event occured
-     :event-type event-type ;; type of event
-     :top top
-     :bottom bottom
-     :mid (/ (- bottom top) 2)}))
+    {:ix ix                         ;; index of item where event occured
+     :item-type item-type           ;; type of item where event occured
+     :event-type event-type         ;; type of event
+     :top top                       ;; top coord of bounding rect
+     :bottom bottom                 ;; bottom coord of bounding rect
+     :mid (/ (- bottom top) 2)}))   ;; middle of bounding rect
 
 (defn should-reorder? [e]
   "`bottom`, `top`, `mid` of hovered el"
@@ -83,37 +83,28 @@
 
 (defn handle-drag-start [e]
   (let [{:keys [ix item-type]} e]
-    (if (= item-type "msg")
-      (update-state! :dix ix))))
-    ; (if (some #(= item-type %) dnd-types)
-    ;   (update-state! :item-type item-type))))
+    (do
+      (update-state! :dix ix)
+      (update-state! :drag-type item-type))))
 
 (defn handle-drag [e]
   (update-state! :y (.-clientY e)))
 
-;; set dix
 (defn handle-drag-enter [e]
-  (let [{:keys [ix item-type]} e]
-    (log "ON DRAG ENTER DIX")
-    (log ix)
-    (log item-type)
-
+  (let [{:keys [ix item-type]} e
+        {:keys [drag-type]} @state]
     (update-state! :dix ix)
-
-    ;; when dont add:
-    ;; if we drag msg
-    ;; if 'msg added' and type of draggable el != msg
-
-    (if-not (and (= (not item-type "msg")) (:msg-added @state))
-      (do
-        (dispatch [:add_msg "kek" ix])
-        (update-state! :msg-added true)))))
+    (if-not (:msg-added @state)
+      (if (some #(= drag-type %) dnd-types)
+        (do
+          (dispatch [:add_msg drag-type ix])
+          (update-state! :msg-added true))))))
 
 ;; set dix
 (defn handle-drag-leave [e]
   (let [{:keys [dix hix]} @state
-        {:keys [ix]} e]
-    (prn (:msg-added @state))))
+        {:keys [ix]} e]))
+    ; (prn (:msg-added @state))))
     ; (if (:msg-added @state)
     ;   (do
     ;     (dispatch [:remove_msg ix])
@@ -123,7 +114,7 @@
 ;; reorder
 (defn handle-drag-over [e]
   ; (log e)
-  (let [{:keys [dix]} @state   ;; drag index
+  (let [{:keys [dix]} @state    ;; drag index
         {:keys [ix]} e]         ;; hover index
     (if (should-reorder? e)
       (do
@@ -133,7 +124,7 @@
 
 ;; delete from list
 (defn handle-dragend [e]
-  (log @state)
+  ; (log @state)
   (do
     (update-state! :msg-added false)))
     ; (update-state! :dix nil)))
