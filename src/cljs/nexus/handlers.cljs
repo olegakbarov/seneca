@@ -44,7 +44,7 @@
         r-item (nth v right)]
     (if (= a b)
         v
-        (assoc v right l-item left r-item)))) 
+        (assoc v right l-item left r-item))))
 
 (re-frame/reg-event-db
   :reorder_msg
@@ -62,15 +62,23 @@
           right (subvec v index)]
         (into [] (concat left [item] right)))))
 
+(defn- default-message [type]
+  (condp = type
+    "text-message" {:type "text-message" :text "New!New!New!" :id 123}
+    "button-template" {:id 11 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+    "quick-reply" {:type "text-message" :text "New!New!New!" :id 123}
+    "generic-template" {:type "text-message" :text "New!New!New!" :id 123}
+    "media" {:type "text-message" :text "New!New!New!" :id 123}))
+
 (re-frame/reg-event-db
   :add_msg
-  (log "add msg!")
+  (log type)
   (fn [db [_ type hix]]
     (prn (str "hix: " hix))
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
-          updated (insert-at msgs {:title "New!" :id 55} hix)]
+          updated (insert-at msgs (default-message type) hix)]
         (assoc-in db [:courses course :days day :messages] updated))))
 
 (defn remove-at [v i]
