@@ -7,6 +7,7 @@
   position: relative;
   border-bottom: 1px solid @lightgray;
   padding: 20px 0;
+  cursor: default;
 
   &:hover {
     cursor: move;
@@ -34,6 +35,10 @@
   font-size: 14px;
   line-height: 22px;
   cursor: default;
+
+  &.last_txt {
+    border-radius: 14px 14px 0 0;
+  }
 }
 
 .lister_msg_item_wrap {
@@ -45,12 +50,47 @@
   cursor: default;
 }
 
-.lister_msg_item_btn {
+.lister_msg_item_qr {
   color: @fbblue;
   text-align: center;
+  padding: 12px 20px;
   border: 1px solid @fbblue;
   border-radius: 100px;
-  padding: 12px 20px;
   min-width: 48%;
   cursor: default;
 }
+
+.lister_msg_item_btns {
+  margin: 0 auto;
+  padding: 12px 20px;
+  width: 300px;
+  display: block;
+  color: @fbblue;
+  text-align: center;
+  border: 1px solid @lightgray;
+  border-top: 0px solid @fbblue;
+
+  &:last-child {
+    border-radius: 0 0 14px 14px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

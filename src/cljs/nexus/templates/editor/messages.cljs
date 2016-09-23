@@ -21,20 +21,31 @@
                 "generic-template"
                 "media"])
 
-(defn render-text [text]
+(defn render-text [text & last]
   ^{:key text}
   [:div.lister_msg_item_text
+    {:class (if (not (nil? last)) "last_txt" "")}
     ; {:draggable false
     ;  :on-drag-start #(.preventDefault %)} ;; TODO think about it!
     text])
 
 (defn render-buttons [btns]
+  [:ul
+    (doall
+      (map-indexed
+        (fn [ix item]
+          ^{:key ix}
+          [:li.lister_msg_item_btns
+            (:text item)])
+        btns))])
+
+(defn render-qr [btns]
   [:div.lister_msg_item_wrap
     (doall
       (map-indexed
         (fn [ix item]
           ^{:key ix}
-          [:div.lister_msg_item_btn
+          [:div.lister_msg_item_qr
             (:text item)])
         btns))])
 
@@ -67,13 +78,23 @@
        ^{:key ix}
       [render-text text]]))
 
-(defmethod render-msg "button-template" [ix item]
+(defmethod render-msg "quick-reply" [ix item]
   (let [text (:text item)
         btns (:buttons item)]
     ^{:key ix}
     [render-item ix item
       ^{:key text}
       [render-text text]
+      ^{:key btns}
+      [render-qr btns]]))
+
+(defmethod render-msg "button-template" [ix item]
+  (let [text (:text item)
+        btns (:buttons item)]
+    ^{:key ix}
+    [render-item ix item
+      ^{:key text}
+      [render-text text "last"]
       ^{:key btns}
       [render-buttons btns]]))
 
