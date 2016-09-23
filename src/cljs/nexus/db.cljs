@@ -34,7 +34,7 @@
      :courses {123 {:title "Life hacks kek"
                     :subtitle "ke-ke-ke"
                     :days {1 {:UUID 123123
-                              :messages [{:id 11 :title "Topkek"}
-                                         {:id 22 :title "Normkek"}
-                                         {:id 33 :title "Alien"}
-                                         {:id 44 :title "Mehkek"}]}}}}})
+                              :messages [{:id 44 :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
+                                         {:id 11 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                                         {:id 22 :text "Normkek" :type "text-message"}
+                                         {:id 33 :text "Alien" :type "text-message"}]}}}}})

@@ -1,0 +1,56 @@
+
+@import 'colors.less';
+@import 'globals.less';
+
+.list_message {
+  color: rgb(214, 214, 214);
+  position: relative;
+  border-bottom: 1px solid @lightgray;
+  padding: 20px 0;
+
+  &:hover {
+    cursor: move;
+  }
+
+  &:last-child {
+    border-bottom: 0px;
+  }
+}
+
+.msg_dragged {
+  opacity: 0;
+}
+
+/* MSGS BY TYPES */
+
+.lister_msg_item_text {
+  color: @graphite;
+  background-color: @lightgray;
+  border: 1px solid @lightgray;
+  margin: 0 auto;
+  width: 300px;
+  border-radius: 25px;
+  padding: 14px 15px;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: default;
+}
+
+.lister_msg_item_wrap {
+  margin: 0 auto;
+  padding-top: 20px;
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  cursor: default;
+}
+
+.lister_msg_item_btn {
+  color: @fbblue;
+  text-align: center;
+  border: 1px solid @fbblue;
+  border-radius: 100px;
+  padding: 12px 20px;
+  min-width: 48%;
+  cursor: default;
+}

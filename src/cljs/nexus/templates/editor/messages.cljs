@@ -15,25 +15,86 @@
                            dispatch-sync
                            subscribe]]))
 
-; (defn text-message [txt]
-;   ())
+(def dnd-types ["text-message"
+                "button-template"
+                "quick-reply"
+                "generic-template"
+                "media"])
+
+(defn render-text [text]
+  ^{:key text}
+  [:div.lister_msg_item_text
+    ; {:draggable false
+    ;  :on-drag-start #(.preventDefault %)} ;; TODO think about it!
+    text])
+
+(defn render-buttons [btns]
+  [:div.lister_msg_item_wrap
+    (doall
+      (map-indexed
+        (fn [ix item]
+          ^{:key ix}
+          [:div.lister_msg_item_btn
+            (:text item)])
+        btns))])
+
+(defn render-item
+  "Wraps each msg in draggable container"
+  [ix msg & items]
+  (let [{:keys [type]} msg]
+     [:li.list_message
+        {:draggable true
+         :class (if (= ix (:dix @state)) "msg_dragged" "")
+         :on-drag-enter on-event
+        ;  :on-drag-leave on-event
+         :on-drag-over  on-event
+         :data-index ix
+         :data-type type}
+       items]))
+
+;; M&Ms
+
+(defmulti render-msg
+  (fn [ix item]
+    (:type item)))
+
+(defmethod render-msg :default [ix item] "KEK")
+
+(defmethod render-msg "text-message" [ix item]
+  (let [text (:text item)]
+    ^{:key ix}
+    [render-item ix item
+       ^{:key ix}
+      [render-text text]]))
+
+(defmethod render-msg "button-template" [ix item]
+  (let [text (:text item)
+        btns (:buttons item)]
+    ^{:key ix}
+    [render-item ix item
+      ^{:key text}
+      [render-text text]
+      ^{:key btns}
+      [render-buttons btns]]))
+
+;; LISTER
 
 (defn lister []
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]
-      [:div#msg_wrapper.list_messages
-        (doall
-          (map-indexed
-            (fn [ix, item]
-              (let [{:keys [title]} item]
-                 ^{:key ix}
-                 [:div.list_message
-                  {:draggable true
-                   :class (if (= ix (:dix @state)) "msg_dragged" "")
-                   :on-drag-enter on-event
-                  ;  :on-drag-leave on-event
-                   :on-drag-over  on-event
-                   :data-index ix
-                   :data-type "msg"}
-                  title]))
-            @msgs))])))
+      [:div#msg_wrapper
+        [:ul.list_messages
+          (doall
+            (map-indexed
+              (fn [ix item]
+                ^{:key ix}
+                [render-msg ix item])
+              @msgs))]])))
+
+
+
+
+
+
+
+;;
