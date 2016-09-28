@@ -54,7 +54,7 @@
     "text-message" {:type "text-message" :text "New!New!New!" :id 123}
     "button-template" {:id 11 :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
 
-    "quick-reply" {:type "text-message" :text "New!New!New!" :id 123}
+    "quick-reply" {:id 22 :text "New QR!" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
     "generic-template" {:type "text-message" :text "New!New!New!" :id 123}
     "media" {:type "text-message" :text "New!New!New!" :id 123}))
 

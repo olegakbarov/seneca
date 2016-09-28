@@ -48,13 +48,13 @@
         y (-> e .-clientY)
         top (-> e .-target .getBoundingClientRect .-top)
         item-type (-> e .-target .-dataset .-type)
-        tool (-> e .-target .-dataset .-tool)
+        action (-> e .-target .-dataset .-action)
         event-type (-> e .-type)]
     {:ix ix                                  ;; index of item where event occured
      :item-type item-type                    ;; type of item where event occured
-     :tool (if (= "tool" tool) true false)   ;; boolean; indicates if we drag from tools
      :event-type event-type                  ;; type of event
      :top top                                ;; top coord of bounding rect
+     :action action                          ;; action flag
      :bottom bottom                          ;; bottom coord of bounding rect
      :y y}))                                 ;; y coord of cursor
 
@@ -68,28 +68,26 @@
 ;; HANDLERS
 
 (defn handle-drag-start [e]
-  (let [{:keys [ix item-type tool bottom top]} e
+  (let [{:keys [ix item-type action bottom top]} e
         mid (/ (- bottom top) 2)]
-    (if-not (= "tool" tool)
-      (do
-        (update-state! :dix ix)
-        (update-state! :drag-mid mid)
-        (update-state! :drag-type item-type)))))
+    (do
+      (update-state! :action action)
+      (update-state! :dix ix)
+      (update-state! :drag-mid mid)
+      (update-state! :drag-type item-type))))
 
 (defn handle-drag [e]
   (update-state! :y (:y e)))
 
 (defn handle-drag-enter [e]
   "We should compare middle of bounding rect to current mouse position"
-  (let [{:keys [ix type item-type bottom top tool]} e
+  (let [{:keys [ix type item-type bottom tool top]} e
         mid (/ (- bottom top) 2)
-        {:keys [drag-type]} @state]
-    (prn "DRAGENTER " ix)
-    (if-not (:msg-added @state)
-      (if tool
-        (do
-          (dispatch [:add_msg drag-type ix])
-          (update-state! :msg-added true))))))
+        {:keys [drag-type]} @state]))
+    ; (if-not (:msg-added @state)
+      ; (do
+      ;   (dispatch [:add_msg drag-type ix])
+      ;   (update-state! :msg-added true)))))
 
 (defn handle-drag-leave [e]
   (let [{:keys [dix hix]} @state
@@ -108,19 +106,23 @@
       :else true)))
 
 (defn handle-drag-over [e]
-  (let [{:keys [dix hix]} @state                ;; index of dragged item
+  (let [{:keys [dix hix action drag-type]} @state      ;; index of dragged item
         {:keys [ix bottom top item-type]} e     ;; data of hovered item
         mid (/ (- bottom top) 2)]
 
     (update-state! :mid mid)
     (update-state! :hix ix)
 
-    (if-not (nil? item-type)
-      (if (should-reorder? e)
-        (if-not (= dix ix)
-          (do
-            (dispatch-sync [:reorder_msg dix ix])
-            (update-state! :dix ix)))))))
+    (if (and (not (:msg-added @state)) (= action "add"))
+      (do
+        (dispatch [:add_msg drag-type ix])
+        (update-state! :msg-added true)))
+
+    (if (should-reorder? e)
+      (if-not (= dix ix)
+        (do
+          (dispatch-sync [:reorder_msg dix ix])
+          (update-state! :dix ix))))))
 
 (defn handle-dragend [e]
   (do
