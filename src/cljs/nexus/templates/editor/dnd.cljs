@@ -29,8 +29,7 @@
                     :y nil             ;; user's clientY
                     :mid nil           ;; middle of hovered item
                     :msg-added false   ;; msg already added?
-                    :drag-type nil     ;; type of item we drag
-                    :drag-mig nil}))   ;; middle of dragged el
+                    :drag-type nil}))     ;; type of item we drag
 
 (defn update-state! [key val]
   (swap! state assoc key val))
@@ -100,19 +99,17 @@
 (defn should-reorder? [e]
   "`bottom`, `top`, `mid` of hovered el"
   (let [{:keys [mid dix hix y]} @state
-        {:keys [bottom top]} e
+        {:keys [top]} e
         hover-y (- y top)]
-    ; (prn y top)
-    (prn dix hix hover-y mid)
-    ;;     2 1 186 93.5
+    ; (prn dix hix hover-y mid)
     (cond
       (and (< dix hix) (< hover-y mid)) false
       (and (> dix hix) (> hover-y mid)) false
       :else true)))
 
 (defn handle-drag-over [e]
-  (let [{:keys [dix hix]} @state    ;; index of dragged item
-        {:keys [ix bottom top item-type]} e             ;; data of hovered item
+  (let [{:keys [dix hix]} @state                ;; index of dragged item
+        {:keys [ix bottom top item-type]} e     ;; data of hovered item
         mid (/ (- bottom top) 2)]
 
     (update-state! :mid mid)
@@ -146,7 +143,6 @@
   (go-loop []
      (let [e (<! dnd-chan)
            {:keys [event-type]} e]
-        (log e)
         (condp = event-type
           "dragenter" (handle-drag-enter e)
           "dragleave" (handle-drag-leave e)
