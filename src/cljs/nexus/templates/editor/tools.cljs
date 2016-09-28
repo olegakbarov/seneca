@@ -60,7 +60,8 @@
     [:div.msg_type_title "Text message"]
     [:div.msg_type_item.msg_item_text
       {:draggable true
-       :data-type "text-message"}
+       :data-type "text-message"
+       :data-tool "tool"}
      [text-placeholder 3 true]]])
 
 ;; BTN TEMPLATE
@@ -69,7 +70,8 @@
     [:div.msg_type_title "Button template"]
     [:div.msg_type_item
       {:draggable true
-       :data-type "button-template"}
+       :data-type "button-template"
+       :data-tool "tool"}
      [text-placeholder 2 false]
      [buttons-placeholder 2]]])
 
@@ -78,7 +80,8 @@
     [:div.msg_type_title "Quick reply"]
     [:div.msg_type_item
       {:draggable true
-       :data-type "quick-reply"}
+       :data-type "quick-reply"
+       :data-tool "tool"}
      [text-placeholder 2 true]
      [quick-replies 2]]])
 
@@ -87,7 +90,8 @@
     [:div.msg_type_title "Generic template"]
     [:div.msg_type_item
       {:draggable true
-       :data-type "generic-template"}
+       :data-type "generic-template"
+       :data-tool "tool"}
      [img-placeholder]
      [buttons-placeholder 2]]])
 
@@ -96,7 +100,8 @@
     [:div.msg_type_title "Media attach"]
     [:div.msg_type_item
       {:draggable true
-       :data-type "media"}
+       :data-type "media"
+       :data-tool "tool"}
       [media-placeholder]]])
 
 (defn tools-list []

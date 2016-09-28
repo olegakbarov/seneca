@@ -52,16 +52,16 @@
 (defn- default-message [type]
   (condp = type
     "text-message" {:type "text-message" :text "New!New!New!" :id 123}
-    "button-template" {:id 11 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+    "button-template" {:id 11 :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+
     "quick-reply" {:type "text-message" :text "New!New!New!" :id 123}
     "generic-template" {:type "text-message" :text "New!New!New!" :id 123}
     "media" {:type "text-message" :text "New!New!New!" :id 123}))
 
 (re-frame/reg-event-db
   :add_msg
-  (log type)
   (fn [db [_ type hix]]
-    (prn (str "hix: " hix))
+    ; (prn (str "hix: " hix))
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
