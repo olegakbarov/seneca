@@ -55,8 +55,8 @@
   (let [{:keys [type]} msg]
      [:li.list_message
         {:draggable true
-        ;  :class (if (= ix (:dix @state)) "msg_dragged" "")
-         :class (if (= ix (:hix @state)) "msg_dragged_over" "")
+         :class (if (= ix (:dix @state)) "msg_dragged" "")
+        ;  :class (if (= ix (:hix @state)) "msg_dragged_over" "")
          :on-drag-enter on-event
         ;  :on-drag-leave on-event
          :on-drag-over  on-event

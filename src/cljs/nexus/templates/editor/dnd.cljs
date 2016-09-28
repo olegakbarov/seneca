@@ -85,16 +85,12 @@
   (let [{:keys [ix type item-type bottom top tool]} e
         mid (/ (- bottom top) 2)
         {:keys [drag-type]} @state]
-    (do
-      (update-state! :mid mid)
-      (update-state! :hix ix)
-      ;; тут должен быть индекс drop target блядь
-      (prn "DRAGENTER " ix)
-      (if-not (:msg-added @state)
-        (if tool
-          (do
-            (dispatch [:add_msg drag-type ix])
-            (update-state! :msg-added true)))))))
+    (prn "DRAGENTER " ix)
+    (if-not (:msg-added @state)
+      (if tool
+        (do
+          (dispatch [:add_msg drag-type ix])
+          (update-state! :msg-added true))))))
 
 (defn handle-drag-leave [e]
   (let [{:keys [dix hix]} @state
@@ -116,15 +112,18 @@
 
 (defn handle-drag-over [e]
   (let [{:keys [dix hix]} @state    ;; index of dragged item
-        {:keys [ix]} e]             ;; data of hovered item
+        {:keys [ix bottom top item-type]} e             ;; data of hovered item
+        mid (/ (- bottom top) 2)]
 
-    ; (prn "DRAGOVER " ix)
+    (update-state! :mid mid)
     (update-state! :hix ix)
-    (if (should-reorder? e)
-      (if-not (= dix ix)
-        (do
-          (dispatch-sync [:reorder_msg dix ix])
-          (update-state! :dix ix))))))
+
+    (if-not (nil? item-type)
+      (if (should-reorder? e)
+        (if-not (= dix ix)
+          (do
+            (dispatch-sync [:reorder_msg dix ix])
+            (update-state! :dix ix)))))))
 
 (defn handle-dragend [e]
   (do
@@ -147,7 +146,7 @@
   (go-loop []
      (let [e (<! dnd-chan)
            {:keys [event-type]} e]
-        ; (log e)
+        (log e)
         (condp = event-type
           "dragenter" (handle-drag-enter e)
           "dragleave" (handle-drag-leave e)
