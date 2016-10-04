@@ -2,12 +2,24 @@
 (ns nexus.templates.editor.tools
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
+    [goog.dom :as dom]
     [reagent.core :as r]
     [nexus.chans :refer [scroll-chan cur-scroll-y prev-scroll-y]]))
 
 (def tools (r/atom {}))
 (def normal {:position "relative"})
-(def sticky {:position "fixed" :top "150px" :right "60px"})
+
+(defn get-offset []
+  (let [w js/window.innerWidth]
+    (cond
+      (> w 1340) (str (/ (- w 1340) 2) "px")
+      (and (< w 1340) (> 1140)) "0px";; (str (/ w 2) "px")
+      (< w 1140) (str (/ (- w 1340) 2) "px"))))
+
+(defn sticky []
+ (let [wrapper (.getElementById js/document "editor_messenger_wrapper")]
+   (do (set! (.-width (.-style wrapper)) (- js/window.innerWidth 440)))
+   {:position "fixed" :top "144px" :right (get-offset)}))
 
 ;; REUSEABLE
 (defn img-placeholder []
@@ -105,7 +117,7 @@
       [media-placeholder]]])
 
 (defn tools-list []
-  [:div.editor_tools_wrapper
+  [:div#editor_tools_wrapper
     [:div.editor_tools {:style @tools}
       [:div.editor_tools_left
         [text-message]
@@ -119,11 +131,11 @@
   (let [chan (scroll-chan)]
     (go-loop []
        (let [y (<! chan)]
-         (reset! prev-scroll-y @cur-scroll-y))
+         (reset! prev-scroll-y @cur-scroll-y)
         ; TODO stick on scroll
-        ;  (if (> y 50)
-        ;    (do (reset! tools sticky))
-        ;    (do (reset! tools normal))))
+         (if (> y 0)
+           (do (reset! tools (sticky)))
+           (do (reset! tools normal))))
       (recur))))
 
 (listen!)
