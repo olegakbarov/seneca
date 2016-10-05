@@ -9,17 +9,27 @@
 (def tools (r/atom {}))
 (def normal {:position "relative"})
 
-(defn get-offset []
+(defn tools-offset []
   (let [w js/window.innerWidth]
     (cond
-      (> w 1340) (str (/ (- w 1340) 2) "px")
-      (and (< w 1340) (> 1140)) "0px";; (str (/ w 2) "px")
-      (< w 1140) (str (/ (- w 1340) 2) "px"))))
+      (> w 1340) (/ (- w 1340) 2)
+      (< w 1140) (- w 1140)
+      (and (< w 1340) (> 1140)) 0)))
+
+(defn get-wrap-offset []
+  (let [w js/window.innerWidth]
+    (prn "innerWidth: " w)
+    (cond
+        (> w 1340) 880
+        (< w 1140) 700
+        (and (< w 1340) (> 1140)) (- w 440))))
+        ;; (< w 1140) (- w 440)
 
 (defn sticky []
+ (prn (get-wrap-offset))
  (let [wrapper (.getElementById js/document "editor_messenger_wrapper")]
-   (do (set! (.-width (.-style wrapper)) (- js/window.innerWidth 440)))
-   {:position "fixed" :top "144px" :right (get-offset)}))
+   (do (set! (.-width (.-style wrapper)) (str (get-wrap-offset) "px")))
+   {:position "fixed" :top "144px" :right (str (tools-offset) "px")}))
 
 ;; REUSEABLE
 (defn img-placeholder []
