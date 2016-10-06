@@ -100,7 +100,6 @@
       [render-buttons btns]]))
 
 ;; LISTER
-
 (defn lister []
   (fn []
     (let [msgs (subscribe [:msgs 123 1])]

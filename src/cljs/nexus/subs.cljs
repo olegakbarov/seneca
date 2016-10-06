@@ -14,6 +14,10 @@
   (fn [db [_ course-id day-id]] ;; TODO change to bound to current day etc
     (get-in db [:courses course-id :days day-id :messages])))
 
+(re-frame/reg-sub
+  :days
+  (fn [db [_ course-id]]
+    (get-in db [:courses course-id :days])))
 
  ; (register-sub
  ;  :sorted-items      ;; the query id  (the name of the query)

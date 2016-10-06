@@ -2,7 +2,7 @@
 
 ### State
 
-```clj
+```clojure
 
 {:user {:auth    {:token "12ER2319HKJ231SDFMB3"}
         :profile {:user-id "123"

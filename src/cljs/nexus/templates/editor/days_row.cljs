@@ -3,14 +3,8 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [reagent.core :as r]
-    [cljs.core.async :refer [<! put! chan timeout]]
-    [nexus.chans :refer [scroll-chan cur-scroll-y prev-scroll-y]]))
-
-; (def days-basic {:height "100px"
-;                  :width "100px"
-;                  :text-align "center"
-;                  :line-height "100px"
-;                  :font-size "33px"})
+    [re-frame.core :refer [reg-event-db
+                           subscribe]]))
 
 (def days-folded {:width "40px"
                   :height "40px"
@@ -30,21 +24,13 @@
       (for [id items]
           ^{:key id} [:div.day_item {:style @days-style} id]))])
 
-(defn days-row []
-  [days (range 7)])
+(defn num->vec [n]
+  (let [v (vec (repeat n nil))]
+    (map-indexed
+      (fn [ix _] ix)
+     v)))
 
-; (defn listen! []
-;   (let [chan (scroll-chan)]
-;     (go-loop []
-;          (let [y (<! chan)]
-;            (reset! prev-scroll-y @cur-scroll-y)
-;            (if (> y 0)
-;              (do
-;                (reset! row-style row-folded)        ;; This sucks.
-;                (reset! days-style days-folded))
-;              (do
-;                (reset! row-style row-basic)
-;                (reset! days-style days-basic))))
-;          (recur))))
-;
-; (listen!)
+(defn days-row []
+  (let [dayz (subscribe [:days 123])
+        days-from-1 (map inc (num->vec (count @dayz)))]
+    [days days-from-1]))

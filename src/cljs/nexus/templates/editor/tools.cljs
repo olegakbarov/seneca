@@ -18,15 +18,12 @@
 
 (defn get-wrap-offset []
   (let [w js/window.innerWidth]
-    (prn "innerWidth: " w)
     (cond
         (> w 1340) 880
         (< w 1140) 700
         (and (< w 1340) (> 1140)) (- w 440))))
-        ;; (< w 1140) (- w 440)
 
 (defn sticky []
- (prn (get-wrap-offset))
  (let [wrapper (.getElementById js/document "editor_messenger_wrapper")]
    (do (set! (.-width (.-style wrapper)) (str (get-wrap-offset) "px")))
    {:position "fixed" :top "144px" :right (str (tools-offset) "px")}))
