@@ -11,8 +11,6 @@
     [re-frame.core :refer [reg-event-db
                            path
                            reg-sub
-                           dispatch
-                           dispatch-sync
                            subscribe]]))
 
 (def dnd-types ["text-message"
@@ -102,7 +100,7 @@
 ;; LISTER
 (defn lister []
   (fn []
-    (let [msgs (subscribe [:msgs 123 1])]
+    (let [msgs (subscribe [:current-msgs])]
       [:div#msg_wrapper
         [:ul.list_messages
           (doall

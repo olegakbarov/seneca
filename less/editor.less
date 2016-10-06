@@ -4,6 +4,7 @@
 
 @import "tools.less";
 @import "messages.less";
+@import "days-row.less";
 
 @padding: 7px;
 
@@ -13,35 +14,6 @@
   min-width: 980px;
   overflow: scroll;
 }
-
-// DAYS ROW
-.days_wrapper {
-  width: 100%;
-  background-color: @graphite;
-  display: flex;
-  padding: 10px;
-  padding-left: 0px;
-  position: absolute;
-  top: 0;
-}
-
-@dayh: 80px;
-.day_item {
-  background-color: @light-graphite;
-  border-radius: 3px;
-  color: @graphite;
-  margin-left: 10px;
-  text-align: center;
-  transition: all .333s ease;
-  &:hover {
-    background-color: @graphite;
-    color: @light-graphite;
-    border: 1px solid @light-graphite;
-    cursor: pointer;
-  }
-}
-
-// EDITOR WRAPPER
 
 .editor_wrapper {
   padding: 80px 0 0;

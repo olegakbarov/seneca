@@ -80,12 +80,16 @@
 
 (re-frame/reg-event-db
   :remove_msg
-  (log "remove msg!")
   (fn [db [_ i]]
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
           updated (remove-at msgs i)]
       (assoc-in db [:courses course :days day :messages] updated))))
+
+(re-frame/reg-event-db
+  :set_current_day
+  (fn [db [_ n]]
+    (assoc db :curr-day n)))
 
 ;;

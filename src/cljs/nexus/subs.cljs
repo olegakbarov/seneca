@@ -4,15 +4,26 @@
             [nexus.helpers.core :refer [log]]))
 
 (re-frame/reg-sub
- :active-panel
- (fn [db _]
+  :active-panel
+  (fn [db _]
    (-> db :router :current)))
 
+(re-frame/reg-sub
+  :curr-day
+  (fn [db [_]]
+   (:curr-day db)))
 
 (re-frame/reg-sub
-  :msgs
-  (fn [db [_ course-id day-id]] ;; TODO change to bound to current day etc
-    (get-in db [:courses course-id :days day-id :messages])))
+ :curr-course
+ (fn [db [_]]
+   (:curr-course db)))
+
+(re-frame/reg-sub
+  :current-msgs
+  (fn [db [_ course-id day-id]]
+    (let [course (-> db :curr-course)
+          day (-> db :curr-day)]
+      (get-in db [:courses course :days day :messages]))))
 
 (re-frame/reg-sub
   :days

@@ -16,7 +16,7 @@
       (< w 1140) (- w 1140)
       (and (< w 1340) (> 1140)) 0)))
 
-(defn get-wrap-offset []
+(defn wrapper-width []
   (let [w js/window.innerWidth]
     (cond
         (> w 1340) 880
@@ -25,7 +25,7 @@
 
 (defn sticky []
  (let [wrapper (.getElementById js/document "editor_messenger_wrapper")]
-   (do (set! (.-width (.-style wrapper)) (str (get-wrap-offset) "px")))
+   (do (set! (.-width (.-style wrapper)) (str (wrapper-width) "px")))
    {:position "fixed" :top "144px" :right (str (tools-offset) "px")}))
 
 ;; REUSEABLE
@@ -139,10 +139,9 @@
     (go-loop []
        (let [y (<! chan)]
          (reset! prev-scroll-y @cur-scroll-y)
-        ; TODO stick on scroll
          (if (> y 0)
-           (do (reset! tools (sticky)))
-           (do (reset! tools normal))))
+           (do (reset! tools (sticky)))))
+          ;  (do (reset! tools normal))))
       (recur))))
 
 (listen!)
