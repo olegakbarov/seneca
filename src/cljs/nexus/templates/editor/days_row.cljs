@@ -11,7 +11,6 @@
 (def style (r/atom {}))
 
 (defn get-item-classes [day]
-  (prn day)
   (let [curr-day (subscribe [:curr-day])
         {:keys [errors empty uuid]} day
         cur (if (= uuid @curr-day) "current " "")

@@ -41,7 +41,8 @@
   height: @dayh;
   line-height: @dayh;
   border: 1px solid @light-graphite;
-  color: @graphite;
+  background-color: @light-graphite;
+  color: @light-graphite;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -61,10 +62,11 @@
 
 .empty {
   &:extend(.days_row_item);
+  color: @graphite;
+  background-color: transparent!important;
 }
 
 .current {
   &:extend(.days_row_item);
-  background-color: @light-graphite;
-  color: @light-graphite;
+  border: 1px solid @white;
 }

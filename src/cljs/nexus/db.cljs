@@ -43,11 +43,7 @@
 
                            1 {:uuid 2938457
                               :errors 0
-                              :messages [
-                                         {:id 11 :text "Beer"    :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                                         {:id 22 :text "Chips" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                                         {:id 44 :text "f should be a function of 2 arguments. If val is not supplied, returns the result of applying f to the first 2 items in coll, then applying f to that result and the 3rd item, etc. If coll contains no items, f must accept no arguments as well, and reduce returns theresult of calling f with no arguments. " :type "text-message"}
-                                         {:id 33 :text "Football" :type "text-message"}]}
+                              :messages []}
 
                            2 {:uuid 223457
                               :errors 1
@@ -65,12 +61,8 @@
                                          {:id 22 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}]}
 
                            4 {:uuid 733412231131
-                              :errors 12
-                              :messages [
-                                         {:id 22 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                                         {:id 33 :text "Alien" :type "text-message"}
-                                         {:id 44 :text "Reduces a collection using a (potentially parallel) reduce-combine strategy. The collection is partitioned into groups of approximately n (default 512), each of which is reduced with reducef (with a seed value obtained by calling (combinef) with no arguments)." :type "text-message"}
-                                         {:id 11 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}]}
+                              :errors 0
+                              :messages []}
 
                            5 {:uuid 89234093457
                               :errors 0
@@ -100,7 +92,7 @@
                                          {:id 22 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}]}
 
                            9 {:uuid 23423493399
-                              :errors 33
+                              :errors 3
                               :messages [
                                          {:id 22 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
                                          {:id 33 :text "Alien" :type "text-message"}
