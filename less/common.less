@@ -1,0 +1,20 @@
+
+@import 'colors.less';
+@import 'globals.less';
+
+.btn {
+  padding: 7px 20px;
+  border: 1px solid @light-graphite;
+}
+
+.btn-white {
+  &:extend(.btn);
+  background-color: @white;
+}
+
+.btn-green {
+  &:extend(.btn);
+  border: 1px solid @green;
+  background-color: @green;
+  color: @white;
+}

@@ -92,4 +92,15 @@
   (fn [db [_ n]]
     (assoc db :curr-day n)))
 
+(def new-bot
+  {:title "New bot"
+   :description ""
+   :status "development"})
+
+(re-frame/reg-event-db
+  :add-bot
+  (fn [db [_]]
+    (let [uid 333]
+      (assoc-in db [:bots 333] new-bot))))
+
 ;;

@@ -17,9 +17,9 @@
      :team {:name "The Village"
             :users ["uuid-1" "uuid-2"]}
 
-     :bots {:uuid {:title "Village bot"
-                   :description "woop-woop"
-                   :status "pending"}} ;; in development, pending, active
+     :bots {123 {:title "Village bot"
+                 :description "woop-woop"
+                 :status "active"}} ;; in development, pending, active
 
      :editor {:ui {:days-folded false
                    :topbar-folded false

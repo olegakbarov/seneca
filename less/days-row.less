@@ -8,6 +8,10 @@
   display: flex;
   position: absolute;
   top: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .days_group_number {
@@ -17,7 +21,6 @@
   padding-left: 18px;
   padding-bottom: 3px;
 }
-
 
 .days_group_wrapper {
   padding-bottom: 15px;
@@ -43,10 +46,6 @@
   border: 1px solid @light-graphite;
   background-color: @light-graphite;
   color: @light-graphite;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   &:hover {
     cursor: pointer;
   }

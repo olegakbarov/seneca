@@ -14,7 +14,7 @@
           [:a.header_logo {:href (routes/url-for :home)}]
           [:ul.header_crumbs
             [:li
-              [:a {:href (routes/url-for :editor)} "My Bots"]]
+              [:a {:href (routes/url-for :bots)} "My Bots"]]
             [:li
               [:a {:href (routes/url-for :editor)} "Weather bot"]]]]
         [:div.header_right

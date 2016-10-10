@@ -36,6 +36,11 @@
   (fn [db [_ course-id]]
     (get-in db [:courses course-id :days])))
 
+(re-frame/reg-sub
+  :my-bots
+  (fn [db [_ course-id]]
+    (-> db :bots)))
+
  ; (register-sub
  ;  :sorted-items      ;; the query id  (the name of the query)
  ;  (fn [db [_]]       ;; the handler for the subscription

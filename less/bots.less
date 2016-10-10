@@ -1,0 +1,67 @@
+
+@import 'colors.less';
+@import 'globals.less';
+@import 'common.less';
+
+.bots_page_container {
+  max-width: 1400px;
+  padding: 0 20px;
+}
+
+.bots_page_title {
+  font-weight: 100;
+  padding-top: 40px;
+  font-size: 38px;
+}
+
+.bots_page_wrapper {
+  padding-top: 30px;
+  display: flex;
+}
+
+.bots_page_item {
+  background-color: @white;
+  border-radius: 2px;
+  width: 290px;
+  margin-right: 30px;
+}
+
+.bot_page_placeholder {
+  height: 165px;
+  border-radius: 2px 2px 0 0 ;
+  background-color: @midgray;
+  border: 1px solid @midgray;
+  padding: 9px
+}
+
+.bot_page_meta {
+  padding: 20px;
+}
+
+.bot_page_meta_title {
+  font-size: 20px;
+  padding: 10px 0;
+}
+
+.bot_page_item_status {
+  width: 11px;
+  height: 11px;
+  border-radius: 11px;
+}
+
+.bot_page_add {
+  border: 1px solid @midgray;
+  width: 270px;
+  height: 300px;
+  line-height: 300px;
+  font-weight: 100;
+  font-size: 170px;
+  text-align: center;
+  color: @midgray;
+
+  &:hover {
+    cursor: pointer;
+    opacity: .7;
+    transition: all .3s ease;
+  }
+}
