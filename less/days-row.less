@@ -6,32 +6,65 @@
   width: 100%;
   background-color: @graphite;
   display: flex;
-  padding: 10px;
-  padding-left: 0px;
   position: absolute;
   top: 0;
 }
 
-@dayh: 30px;
-.days_row_item {
-  background-color: @light-graphite;
-  border-radius: 3px;
+.days_group_number {
+  display: block;
   color: @light-graphite;
-  margin-left: 10px;
+  font-size: .75em;
+  padding-left: 18px;
+  padding-bottom: 3px;
+}
+
+
+.days_group_wrapper {
+  padding-bottom: 15px;
+  padding-top: 5px;
+  padding-right: 20px;
+  padding-left: 10px;
+  border-left: 1px solid @light-graphite;
+}
+
+.days_group_inner {
+  display: flex;
+}
+
+@dayh: 33px;
+.days_row_item {
+  border-radius: 2px;
+  margin-left: 5px;
   text-align: center;
   transition: all .2s ease;
   width: @dayh;
   height: @dayh;
   line-height: @dayh;
+  border: 1px solid @light-graphite;
+  color: @graphite;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   &:hover {
     cursor: pointer;
   }
 }
 
-.current {
+.error {
   &:extend(.days_row_item);
   background-color: @graphite;
   color: @pink;
   border: 1px solid @pink;
   cursor: pointer;
+}
+
+.empty {
+  &:extend(.days_row_item);
+}
+
+.current {
+  &:extend(.days_row_item);
+  background-color: @light-graphite;
+  color: @light-graphite;
 }

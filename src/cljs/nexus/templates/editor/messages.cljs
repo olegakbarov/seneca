@@ -109,11 +109,3 @@
                 ^{:key ix}
                 [render-msg ix item])
               @msgs))]])))
-
-
-
-
-
-
-
-;;

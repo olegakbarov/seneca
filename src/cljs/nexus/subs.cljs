@@ -22,8 +22,14 @@
   :current-msgs
   (fn [db [_ course-id day-id]]
     (let [course (-> db :curr-course)
-          day (-> db :curr-day)]
-      (get-in db [:courses course :days day :messages]))))
+          curr-day-id (-> db :curr-day)
+          days (vals (get-in db [:courses course :days]))
+          current-day (filter
+                        (fn [day] (= curr-day-id (:uuid day)))
+                       days)]
+      (-> current-day
+          first
+          :messages))))
 
 (re-frame/reg-sub
   :days

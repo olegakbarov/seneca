@@ -26,7 +26,7 @@
 (defn sticky []
  (let [wrapper (.getElementById js/document "editor_messenger_wrapper")]
    (do (set! (.-width (.-style wrapper)) (str (wrapper-width) "px")))
-   {:position "fixed" :top "144px" :right (str (tools-offset) "px")}))
+   {:position "fixed" :top "164px" :right (str (tools-offset) "px")}))
 
 ;; REUSEABLE
 (defn img-placeholder []

@@ -1,13 +1,14 @@
 (set-env!
  :source-paths    #{"src/cljs" "less"}
  :resource-paths  #{"resources"}
- :dependencies '[[adzerk/boot-cljs          "1.7.228-1"  :scope "test"]
-                 [adzerk/boot-cljs-repl     "0.3.0"      :scope "test"]
-                 [adzerk/boot-reload        "0.4.8"      :scope "test"]
-                 [pandeiro/boot-http        "0.7.2"      :scope "test"]
-                 [com.cemerick/piggieback   "0.2.1"      :scope "test"]
-                 [org.clojure/tools.nrepl   "0.2.12"     :scope "test"]
-                 [weasel                    "0.7.0"      :scope "test"]
+ :dependencies '[[adzerk/boot-cljs           "1.7.228-1"  :scope "test"]
+                 [adzerk/boot-cljs-repl      "0.3.0"      :scope "test"]
+                 [adzerk/boot-reload         "0.4.8"      :scope "test"]
+                 [pandeiro/boot-http         "0.7.2"      :scope "test"]
+                 [com.cemerick/piggieback    "0.2.1"      :scope "test"]
+                 [org.clojure/tools.nrepl    "0.2.12"     :scope "test"]
+                 [weasel                     "0.7.0"      :scope "test"]
+                 [danielsz/boot-autoprefixer "0.0.8"      :scope "test"]
                  [org.clojure/clojurescript "1.7.228"]
 
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
@@ -33,14 +34,16 @@
  '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http    :refer [serve]]
- '[deraen.boot-less      :refer [less]])
+ '[deraen.boot-less      :refer [less]]
+ '[danielsz.autoprefixer :refer [autoprefixer]])
 
 (deftask build []
   (comp
     (cljs)
     (less)
     (sift   :move {#"less.css"          "css/less.css"
-                   #"less.main.css.map" "css/less.main.css.map"})))
+                   #"less.main.css.map" "css/less.main.css.map"})
+    (autoprefixer)))
 
 (deftask run []
   (comp (serve)
@@ -51,13 +54,16 @@
 
 (deftask production []
   (task-options! cljs {:optimizations :advanced}
-                      less   {:compression true})
+                 less   {:compression true}
+                 autoprefixer {:files ["less.css"]
+                               :browsers "last 2 versions"})
   identity)
 
 (deftask development []
   (task-options! cljs   {:optimizations :none :source-map true}
                  reload {:on-jsload 'nexus.core/init}
-                 less   {:source-map  true})
+                 less   {:source-map  true}
+                 autoprefixer {:files ["css/less.css"]})
   identity)
 
 (deftask dev
