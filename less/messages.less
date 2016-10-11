@@ -5,7 +5,6 @@
 .list_message {
   color: rgb(214, 214, 214);
   position: relative;
-  border-bottom: 1px solid @lightgray;
   padding: 20px 0;
   cursor: default;
 
@@ -23,11 +22,32 @@
 }
 
 .msg_dragged_over {
-  background-color: red;
+  background-color: @red;
   opacity: .3;
 }
 
 /* MSGS BY TYPES */
+
+.lister_msg_container {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid @lightgray;
+}
+
+@emoji: 2em;
+.msg_drag-hook {
+  width: 160px;
+  text-align: center;
+  font-size: @emoji;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  &:hover {
+    cursor: move;
+  }
+}
 
 .lister_msg_item_text {
   color: @graphite;
@@ -44,6 +64,19 @@
   &.last_txt {
     border-radius: 14px 14px 0 0;
   }
+}
+
+.lister_msg_tools {
+  display: flex;
+  width: 100%;
+  max-width: 160px;
+  padding: 30px;
+  font-size: @emoji / 1.5;
+  justify-content: space-around;;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .lister_msg_item_wrap {
@@ -82,22 +115,10 @@
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
+.lister_msg_empty {
+  width: 100%;
+  text-align: center;
+  color: @graphite;
+  padding: 40px 100px;
+  font-size: 1.4em;
+}

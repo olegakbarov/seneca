@@ -29,7 +29,7 @@
 
      :curr-course 123
 
-     :curr-day 223457
+     :curr-day 123123
 
      :courses {123 {:title "A Course about Stuff"
                     :subtitle "Subtitle of course about stuff"

@@ -4,7 +4,9 @@
   (:require
     [goog.dom :as dom]
     [reagent.core :as r]
-    [nexus.chans :refer [scroll-chan cur-scroll-y prev-scroll-y]]))
+    [nexus.chans :refer [scroll-chan
+                         cur-scroll-y
+                         prev-scroll-y]]))
 
 (def tools (r/atom {}))
 (def normal {:position "relative"})
@@ -141,7 +143,6 @@
          (reset! prev-scroll-y @cur-scroll-y)
          (if (> y 0)
            (do (reset! tools (sticky)))))
-          ;  (do (reset! tools normal))))
       (recur))))
 
 (listen!)

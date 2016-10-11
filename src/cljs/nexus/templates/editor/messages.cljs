@@ -52,14 +52,6 @@
   [ix msg & items]
   (let [{:keys [type]} msg]
      [:li.list_message
-        {:draggable true
-         :class (if (= ix (:dix @state)) "msg_dragged" "")
-        ;  :class (if (= ix (:hix @state)) "msg_dragged_over" "")
-         :on-drag-enter on-event
-        ;  :on-drag-leave on-event
-         :on-drag-over  on-event
-         :data-index ix
-         :data-type type}
        items]))
 
 ;; M&Ms
@@ -97,15 +89,42 @@
       ^{:key btns}
       [render-buttons btns]]))
 
+(defn empty-day []
+  [:div.lister_msg_empty
+    (str "Drag & drop here one of elements"
+         " from the right panel")])
+
+(defn msg-tools []
+  [:div.lister_msg_tools {:on-drag-start #(.preventDefault %)}
+    [:div.edit   "✍🏼"]
+    [:div.copy   "📑"]
+    [:div.remove "💥"]])
+
+(defn render-msg-container [ix msg]
+  (let [{:keys [type]} msg]
+    [:div.lister_msg_container
+      {:draggable true
+       :class (if (= ix (:dix @state)) "msg_dragged" "")
+      ;  :class (if (= ix (:hix @state)) "msg_dragged_over" "")
+       :on-drag-enter on-event
+       :on-drag-over  on-event
+       :data-index ix
+       :data-type type}
+      [:div.msg_drag-hook "🖐🏻"]
+      [render-msg ix msg]
+      [msg-tools ix msg]]))
+
 ;; LISTER
 (defn lister []
   (fn []
     (let [msgs (subscribe [:current-msgs])]
-      [:div#msg_wrapper
-        [:ul.list_messages
-          (doall
-            (map-indexed
-              (fn [ix item]
-                ^{:key ix}
-                [render-msg ix item])
-              @msgs))]])))
+      (if (= 0 (count @msgs))
+        [empty-day]
+        [:div#msg_wrapper
+          [:ul.list_messages
+            (doall
+              (map-indexed
+                (fn [ix item]
+                  ^{:key ix}
+                  [render-msg-container ix item])
+                @msgs))]]))))

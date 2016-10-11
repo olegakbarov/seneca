@@ -22,3 +22,6 @@
 
 (defn scroll-chan []
   (events->chan js/window EventType/SCROLL (chan 1 (map get-scroll))))
+
+; (defn resize-chan []
+;   (events->chan js/window EventType/RESIZE(chan 1)))
