@@ -40,24 +40,41 @@
 
 .bot_page_meta_title {
   font-size: 20px;
-  padding: 10px 0;
+  padding: 0 0 10px;
 }
 
 .bot_page_item_status {
   width: 11px;
   height: 11px;
   border-radius: 11px;
+
+}
+
+.bot_page_item_status.development {
+  background-color: @snowgray;
+}
+
+.bot_page_item_status.submitted {
+  background-color: @yellow;
+}
+
+.bot_page_item_status.rejected {
+  background-color: @red;
+}
+
+.bot_page_item_status.active {
+  background-color: @green;
 }
 
 .bot_page_add {
   border: 1px solid @midgray;
-  width: 270px;
-  height: 300px;
-  line-height: 300px;
+  padding: 40px 80px;
   font-weight: 100;
   font-size: 170px;
   text-align: center;
   color: @midgray;
+  display: flex;
+  align-self: center;
 
   &:hover {
     cursor: pointer;

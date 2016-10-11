@@ -8,15 +8,9 @@
                            dispatch
                            subscribe]]))
 
-;; TODO: rewrite this shit.
 (defn bot-status [status]
-  (let [colour (case status
-                  "development" "gray"
-                  "submitted"   "yellow"
-                  "rejected"    "red"
-                  "active"      "green")]
     [:div.bot_page_item_status
-      {:style {:background-color colour}}]))
+      {:class status}])
 
 (defn bot-img [bot]
   (let [{:keys [status path]} bot]

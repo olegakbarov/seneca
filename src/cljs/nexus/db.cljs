@@ -19,7 +19,7 @@
 
      :bots {123 {:title "Village bot"
                  :description "woop-woop"
-                 :status "active"}} ;; in development, pending, active
+                 :status "active"}} ;; development, pending, active
 
      :editor {:ui {:days-folded false
                    :topbar-folded false
