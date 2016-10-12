@@ -112,7 +112,7 @@
 
 (defn on-hover [e]
   ;; synthetic event
-  (let [x (-> e .-currentTarget .-dataset .-index int)]
+  (let [x (-> e .-currentTarget .-dataset .-index)]
     (reset! reveal x)))
 
 (defn on-unhover [e]
@@ -141,7 +141,6 @@
         [render-msg uid msg]
         [msg-tools uid msg]])))
 
-;; LISTER
 (defn lister []
   (fn []
     (let [msgs (subscribe [:current-msgs])]
@@ -153,16 +152,3 @@
               (for [item @msgs]
                 ^{:key (:uid item)}
                 [render-msg-container item]))]]))))
-
-
-; (defn listen! []
-;   (go-loop []
-;      (let [e (<! mouse-chan)]
-;         (prn e)
-;         ;    {:keys [event-type]} e]
-;         ; (condp = event-type
-;         ;   "mouseover" (handle-drag-enter e)
-;         ;   "mouseleave," (handle-drag-leave e))
-;        (recur))))
-;
-; (listen!)
