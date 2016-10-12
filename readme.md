@@ -9,37 +9,41 @@ React requires unique keys for all list-style items. We can't rely on seq order 
 
 ```clojure
 
-{:user {:auth    {:token "12ER2319HKJ231SDFMB3"}
+{:router {:current ""}
+
+ :ui {:scroll-top 0}
+
+ :user {:auth    {:token "12ER2319HKJ231SDFMB3"}
         :profile {:user-id "123"
                   :email "yourmum@kek.ru"
                   :userpic "http://s3.azazozon.com"}
         :plan    {:current "platinum"}}
 
  :team {:name "The Village"
-        :users ["UUID-1" "UUID-2"]}
+        :users ["uuid-1" "uuid-2"]}
 
- :bots {:UUID {:title "Village bot"
-               :description "woop-woop"
-               :status "pending"}} ;; in development, pending, active
+ :bots {123 {:title "Village bot"
+             :description "woop-woop"
+             :status "active"}} ;; development, pending, active
 
  :editor {:ui {:days-folded false
+               :topbar-folded false
                :saved true}
           :errors {:editor {:type "error" ;; warning etc
                             :text "Can't be blank"}}}
 
- :courses {:UUID {:title "Life hacks kek"
-                  :subtitle "ke-ke-ke"
-                  :days [{:order 1 ;; order in course
-                          :UUID ;; we need this?
-                          :type "button-template"
-                          :text "Some txt kk"
-                          :buttons {:title "User see this" ;; TODO. ordered map?
-                                    :payload "UUID"}}
+ :curr-day "day@ciu6ymswc00018012503n3wsf"
+ :curr-course "crs@tiu6ywsic00018012503n3wso"
 
-                         {:order 2
-                          :UUID
-                          :type "quick-reply"
-                          :text "Text for QR"
-                          :quick_replies {:title "User see this" ;; TODO. ordered map?
-                                          :payload "UUID"}}]}}}
+ :courses [{:title "A Course about Stuff"
+            :uid "crs@tiu6ywsic00018012503n3wso"
+            :subtitle "Subtitle of course about stuff"
+            :days [{:uid "day@ciu6ymswc00018012503n3wsf"
+                    :errors 0
+                    :messages [
+                                {:uid "msg@ciu6ymswc00018012503n3wsf"
+                                 :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
+                                {:uid "msg@ciu6ynmzg00078012gdqy9jjt" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+                                {:uid "msg@ciu6yo71d00098012dhe2hmpi" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                                {:uid "msg@ciu6yo76300108012lmv63h8q" :text "Alien" :type "text-message"}]}]}]}
 ```
