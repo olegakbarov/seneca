@@ -1,7 +1,9 @@
+
 (ns nexus.subs
   (:require [re-frame.core :as re-frame]
             [nexus.db :as db]
-            [nexus.helpers.core :refer [log]]))
+            [nexus.helpers.core :refer [log]]
+            [re-frame.core :refer [subscribe]]))
 
 (re-frame/reg-sub
   :active-panel
@@ -19,22 +21,25 @@
    (:curr-course db)))
 
 (re-frame/reg-sub
-  :current-msgs
-  (fn [db [_ course-id day-id]]
-    (let [course (-> db :curr-course)
-          curr-day-id (-> db :curr-day)
-          days (vals (get-in db [:courses course :days]))
-          current-day (filter
-                        (fn [day] (= curr-day-id (:uuid day)))
-                       days)]
-      (-> current-day
-          first
-          :messages))))
+  :curr-days
+  (fn [db [_]]
+    (let [course-id (:curr-course db)
+          all-courses (get-in db [:courses])]
+      (->> all-courses
+           (filter (fn [c] (= (:uid c) course-id)))
+           first
+           :days))))
 
 (re-frame/reg-sub
-  :days
-  (fn [db [_ course-id]]
-    (get-in db [:courses course-id :days])))
+  :current-msgs
+  (fn [db [_]]
+    (let [days (subscribe [:curr-days])
+          day-id (:curr-day db)]
+      (->> @days
+           (filter (fn [c] (= (:uid c) day-id)))
+           first
+           :messages))))
+
 
 (re-frame/reg-sub
   :my-bots

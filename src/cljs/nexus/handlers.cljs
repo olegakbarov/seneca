@@ -2,7 +2,8 @@
 (ns nexus.handlers
     (:require [re-frame.core :as re-frame]
               [nexus.db :as db]
-              [nexus.helpers.core :refer [log]]))
+              [nexus.helpers.core :refer [log]]
+              [nexus.helpers.uids :refer [gen-uid]]))
 
 (re-frame/reg-event-db
  :initialize-db
@@ -51,13 +52,14 @@
         (into [] (concat left [item] right)))))
 
 (defn- default-message [type]
-  (condp = type
-    "text-message" {:type "text-message" :text "New!New!New!" :id 123}
-    "button-template" {:id 11 :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+  (let [uid (gen-uid "msg")]
+    (condp = type
+      "text-message" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
+      "button-template" {:uid uid  :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
 
-    "quick-reply" {:id 22 :text "New QR!" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-    "generic-template" {:type "text-message" :text "New!New!New!" :id 123}
-    "media" {:type "text-message" :text "New!New!New!" :id 123}))
+      "quick-reply" {:uid uid  :text "New QR!" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+      "generic-template" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
+      "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123})))
 
 (re-frame/reg-event-db
   :add_msg
@@ -93,6 +95,7 @@
 (re-frame/reg-event-db
   :set_current_day
   (fn [db [_ n]]
+    (prn n)
     (assoc db :curr-day n)))
 
 ;; BOTS

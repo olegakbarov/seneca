@@ -7,6 +7,7 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
     [nexus.helpers.core :refer [log]]
+    [nexus.helpers.uids :refer [gen-uid]]
     [nexus.templates.editor.dnd :refer [on-event
                                         state]]
     [nexus.templates.editor.add_msg :refer [add-msg]]
@@ -93,6 +94,7 @@
 
 (defn empty-day []
   [:div.lister_msg_empty
+    {:on-click #(prn (gen-uid "msg"))}
     (str "Drag & drop here one of elements"
          " from the right panel")])
 
@@ -109,14 +111,8 @@
 (def mouse-chan (chan))
 
 (defn on-hover [e]
-  ;; REACT CACHES EVENTS
-  (let [ix (-> e .-target .-dataset .-index int)
-        x (-> e .-currentTarget .-dataset .-index int)]
-    ; (log (-> e .-type))
-    ; (log (-> e .-currentTarget .-dataset .-index))
-    ; (-> e .stopPropagation)
-    ; (-> e .preventDefault)
-    (prn x)
+  ;; synthetic event
+  (let [x (-> e .-currentTarget .-dataset .-index int)]
     (reset! reveal x)))
 
 (defn on-unhover [e]
@@ -127,23 +123,23 @@
     {:class (if (= @reveal ix) "" "hidden")}
     "🖐🏻"])
 
-(defn render-msg-container [ix msg]
-  (let [{:keys [type]} msg]
+(defn render-msg-container [msg]
+  (let [{:keys [type uid]} msg]
     (fn []
       [:div.lister_msg_container
         {:draggable true
-         :class (if (= ix (:dix @state)) "msg_dragged" "")
+         :class (if (= uid (:dix @state)) "msg_dragged" "")
          :on-drag-enter on-event
          :on-drag-over  on-event
          ;;
          :on-mouse-enter on-hover
          :on-mouse-leave on-unhover
          ;;
-         :data-index ix
+         :data-index uid
          :data-type type}
-        [drag-hook ix]
-        [render-msg ix msg]
-        [msg-tools ix msg]])))
+        [drag-hook uid]
+        [render-msg uid msg]
+        [msg-tools uid msg]])))
 
 ;; LISTER
 (defn lister []
@@ -154,12 +150,10 @@
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (map-indexed
-                (fn [ix item]
-                  (prn ix)
-                  ^{:key item}
-                  [render-msg-container ix item])
-               @msgs))]]))))
+              (for [item @msgs]
+                ^{:key (:uid item)}
+                [render-msg-container item]))]]))))
+
 
 ; (defn listen! []
 ;   (go-loop []

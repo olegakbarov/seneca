@@ -12,30 +12,29 @@
 
 (defn get-item-classes [day]
   (let [curr-day (subscribe [:curr-day])
-        {:keys [errors empty uuid]} day
-        cur (if (= uuid @curr-day) "current " "")
+        {:keys [errors empty uid]} day
+        cur (if (= uid @curr-day) "current " "")
         em (if (:empty? day) "empty " "")
         er (if (> (:errors day) 0) "error " "")]
     (str cur er em)))
 
-(defn days-group [group group-n n]
-  (let [is-first (= group-n 0)
-        is-last  (= group-n (count (partition-all 7 (range n))))]
+(defn days-group [group index n]
+  (let [is-first (= index 0)
+        is-last  (= index (count (partition-all 7 (range n))))]
+    (prn group)
     [:div.days_group_container {:class (cond is-first "first"
                                              is-last  "last")}
       [:div.days_group_wrapper {:style {:border-left (if is-first "0px")}}
-        [:div.days_group_number (+ 1 (* 7 group-n))]
+        [:div.days_group_number (+ 1 (* 7 index))]
         [:div.days_group_inner
           (doall
-            (map-indexed
-             (fn [index day]
-               (let [uuid (:uuid day)]
-                  ^{:key index}
+             (for [day group]
+               (let [uid (:uid day)]
+                  ^{:key uid}
                   [:div.days_row_item
                      {:class (get-item-classes day)
-                      :on-click #(dispatch [:set_current_day uuid])}
-                    (:errors day)]))
-             group))]]]))
+                      :on-click #(dispatch [:set_current_day uid])}
+                    (:errors day)])))]]]))
 
 (defn days [items]
   (let [groups (partition-all 7 items) ;; 7 = week
@@ -49,17 +48,17 @@
            groups))]))
 
 (defn days-row []
-  (let [dayz (subscribe [:days 123])
+  (let [dayz (subscribe [:curr-days])
         days-processed (map
                          (fn [day]
                            (let [d day
                                  is-empty (empty? (:messages d))
                                  errors (:errors d)
-                                 uuid (:uuid d)]
+                                 uid (:uid d)]
                             {:empty? is-empty
                              :errors errors
-                             :uuid uuid}))
-                         (vals @dayz))]
+                             :uid uid}))
+                         @dayz)]
     [days days-processed]))
 
 (defn listen! []

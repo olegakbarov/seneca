@@ -1,5 +1,10 @@
 # Nexus
 
+
+### Why uids everywhere?
+
+React requires unique keys for all list-style items. We can't rely on seq order cause it leads to bugs. So ... uids everywhere.
+
 ### State
 
 ```clojure
@@ -18,7 +23,6 @@
                :status "pending"}} ;; in development, pending, active
 
  :editor {:ui {:days-folded false
-               :topbar-folded false
                :saved true}
           :errors {:editor {:type "error" ;; warning etc
                             :text "Can't be blank"}}}

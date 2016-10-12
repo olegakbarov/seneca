@@ -17,6 +17,8 @@
                 ;  [ring/ring-core "1.4.0"]
                 ;  [ring/ring-jetty-adapter "1.4.0"]
 
+                 [cuid "0.1.1"]
+
                  [bidi "2.0.10"]
                  [kibu/pushy "0.3.6"]
 
