@@ -21,7 +21,7 @@
   (fn [db [_ active-panel]]
     (assoc-in db [:router :current] active-panel)))
 
-;; DND STARTS HERE
+;; MESSAGES
 
 (defn reorder [v a b]
   "`a` and `b` are both indexes; v is a vector"
@@ -36,6 +36,7 @@
 (re-frame/reg-event-db
   :reorder_msg
   (fn [db [_ dix hix]]
+    (prn dix hix)
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])
@@ -87,10 +88,14 @@
           updated (remove-at msgs i)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
+;; DAYS
+
 (re-frame/reg-event-db
   :set_current_day
   (fn [db [_ n]]
     (assoc db :curr-day n)))
+
+;; BOTS
 
 (def new-bot
   {:title "New bot"
@@ -100,7 +105,6 @@
 (re-frame/reg-event-db
   :add-bot
   (fn [db [_]]
-    (let [uid 333]
-      (assoc-in db [:bots 333] new-bot))))
+    (assoc-in db [:bots 333] new-bot)))
 
 ;;

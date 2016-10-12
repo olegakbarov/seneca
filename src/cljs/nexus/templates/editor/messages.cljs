@@ -1,9 +1,11 @@
 
 (ns nexus.templates.editor.messages
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:import [goog.events EventType])
   (:require
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
+    [goog.events :as events]
     [nexus.helpers.core :refer [log]]
     [nexus.templates.editor.dnd :refer [on-event
                                         state]]
@@ -12,6 +14,8 @@
                            path
                            reg-sub
                            subscribe]]))
+
+(def reveal (r/atom nil))
 
 (def dnd-types ["text-message"
                 "button-template"
@@ -23,8 +27,6 @@
   ^{:key text}
   [:div.lister_msg_item_text
     {:class (if (not (nil? last)) "last_txt" "")}
-    ; {:draggable false
-    ;  :on-drag-start #(.preventDefault %)} ;; TODO think about it!
     text])
 
 (defn render-buttons [btns]
@@ -51,8 +53,8 @@
   "Wraps each msg in draggable container"
   [ix msg & items]
   (let [{:keys [type]} msg]
-     [:li.list_message
-       items]))
+    [:li.list_message
+      items]))
 
 ;; M&Ms
 
@@ -94,25 +96,54 @@
     (str "Drag & drop here one of elements"
          " from the right panel")])
 
-(defn msg-tools []
-  [:div.lister_msg_tools {:on-drag-start #(.preventDefault %)}
+(defn msg-tools [ix msg]
+  [:div.lister_msg_tools {:on-drag-start #(.stopPropagation %)
+                          :class (if (= @reveal ix) "" "hidden")}
     [:div.edit   "✍🏼"]
+      ;; TODO on-click
     [:div.copy   "📑"]
+      ;; TODO on-click
     [:div.remove "💥"]])
+      ;; TODO on-click
+
+(def mouse-chan (chan))
+
+(defn on-hover [e]
+  ;; REACT CACHES EVENTS
+  (let [ix (-> e .-target .-dataset .-index int)
+        x (-> e .-currentTarget .-dataset .-index int)]
+    ; (log (-> e .-type))
+    ; (log (-> e .-currentTarget .-dataset .-index))
+    ; (-> e .stopPropagation)
+    ; (-> e .preventDefault)
+    (prn x)
+    (reset! reveal x)))
+
+(defn on-unhover [e]
+  (reset! reveal nil))
+
+(defn drag-hook [ix]
+  [:div.msg_drag-hook
+    {:class (if (= @reveal ix) "" "hidden")}
+    "🖐🏻"])
 
 (defn render-msg-container [ix msg]
   (let [{:keys [type]} msg]
-    [:div.lister_msg_container
-      {:draggable true
-       :class (if (= ix (:dix @state)) "msg_dragged" "")
-      ;  :class (if (= ix (:hix @state)) "msg_dragged_over" "")
-       :on-drag-enter on-event
-       :on-drag-over  on-event
-       :data-index ix
-       :data-type type}
-      [:div.msg_drag-hook "🖐🏻"]
-      [render-msg ix msg]
-      [msg-tools ix msg]]))
+    (fn []
+      [:div.lister_msg_container
+        {:draggable true
+         :class (if (= ix (:dix @state)) "msg_dragged" "")
+         :on-drag-enter on-event
+         :on-drag-over  on-event
+         ;;
+         :on-mouse-enter on-hover
+         :on-mouse-leave on-unhover
+         ;;
+         :data-index ix
+         :data-type type}
+        [drag-hook ix]
+        [render-msg ix msg]
+        [msg-tools ix msg]])))
 
 ;; LISTER
 (defn lister []
@@ -125,6 +156,19 @@
             (doall
               (map-indexed
                 (fn [ix item]
-                  ^{:key ix}
+                  (prn ix)
+                  ^{:key item}
                   [render-msg-container ix item])
-                @msgs))]]))))
+               @msgs))]]))))
+
+; (defn listen! []
+;   (go-loop []
+;      (let [e (<! mouse-chan)]
+;         (prn e)
+;         ;    {:keys [event-type]} e]
+;         ; (condp = event-type
+;         ;   "mouseover" (handle-drag-enter e)
+;         ;   "mouseleave," (handle-drag-leave e))
+;        (recur))))
+;
+; (listen!)

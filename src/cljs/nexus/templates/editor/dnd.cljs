@@ -38,6 +38,7 @@
 ;; HELPERS:
 
 (defn parse-event [e]
+  (prn (-> e .-type))
   (cond = (-> e .-type)
     "dragend" (.preventDefault e)
     "drop" (.preventDefault e)
