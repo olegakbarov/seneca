@@ -6,7 +6,8 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [nexus.helpers.core :refer [log]]
     [goog.events :as events]
-    [re-frame.core :refer [dispatch dispatch-sync]])
+    [re-frame.core :refer [dispatch
+                           dispatch-sync]])
   (:import [goog.events EventType]))
 
 (defn set-cursor! [cursor-type]
@@ -23,13 +24,12 @@
                 "generic-template"
                 "media"])
 
-
 (def state (r/atom {:dix nil           ;; the item we drag
                     :hix nil           ;; the item we hover on
                     :y nil             ;; user's clientY
                     :mid nil           ;; middle of hovered item
                     :msg-added false   ;; msg already added?
-                    :drag-type nil}))     ;; type of item we drag
+                    :drag-type nil}))  ;; type of item we drag
 
 (defn update-state! [key val]
   (swap! state assoc key val))
@@ -38,26 +38,25 @@
 ;; HELPERS:
 
 (defn parse-event [e]
-  (prn (-> e .-type))
+  ; (log (js->clj e))
   (cond = (-> e .-type)
     "dragend" (.preventDefault e)
     "drop" (.preventDefault e)
     "dragleave" (.preventDefault e))
-
-  (let [ix (-> e .-target .-dataset .-index int)
+  (let [ix (-> e .-target .-dataset .-dragindex int)
         bottom (-> e .-target .getBoundingClientRect .-bottom)
         y (-> e .-clientY)
         top (-> e .-target .getBoundingClientRect .-top)
         item-type (-> e .-target .-dataset .-type)
         action (-> e .-target .-dataset .-action)
         event-type (-> e .-type)]
-    {:ix ix                                  ;; index of item where event occured
-     :item-type item-type                    ;; type of item where event occured
-     :event-type event-type                  ;; type of event
-     :top top                                ;; top coord of bounding rect
-     :action action                          ;; action flag
-     :bottom bottom                          ;; bottom coord of bounding rect
-     :y y}))                                 ;; y coord of cursor
+    {:ix ix                         ;; index of item where event occured
+     :item-type item-type           ;; type of item where event occured
+     :event-type event-type         ;; type of event
+     :top top                       ;; top coord of bounding rect
+     :action action                 ;; action flag
+     :bottom bottom                 ;; bottom coord of bounding rect
+     :y y}))                        ;; y coord of cursor
 
 ;; --------------------------
 ;; EVENTS:
@@ -71,6 +70,7 @@
 (defn handle-drag-start [e]
   (let [{:keys [ix item-type action bottom top]} e
         mid (/ (- bottom top) 2)]
+    (prn "drag-start-index: " ix)
     (do
       (update-state! :action action)
       (update-state! :dix ix)
@@ -78,10 +78,11 @@
       (update-state! :drag-type item-type))))
 
 (defn handle-drag [e]
+  ; (prn @state)
   (update-state! :y (:y e)))
 
 (defn handle-drag-enter [e]
-  "We should compare middle of bounding rect to current mouse position"
+  "We compare middle of bounding rect to current mouse position"
   (let [{:keys [ix type item-type bottom tool top]} e
         mid (/ (- bottom top) 2)
         {:keys [drag-type]} @state]))
@@ -100,15 +101,15 @@
   (let [{:keys [mid dix hix y]} @state
         {:keys [top]} e
         hover-y (- y top)]
-    ; (prn dix hix hover-y mid)
+    (prn dix hix hover-y mid)
     (cond
       (and (< dix hix) (< hover-y mid)) false
       (and (> dix hix) (> hover-y mid)) false
       :else true)))
 
 (defn handle-drag-over [e]
-  (let [{:keys [dix hix action drag-type]} @state      ;; index of dragged item
-        {:keys [ix bottom top item-type]} e     ;; data of hovered item
+  (let [{:keys [dix hix action drag-type]} @state   ;; index of dragged item
+        {:keys [ix bottom top item-type]} e         ;; data of hovered item
         mid (/ (- bottom top) 2)]
 
     (update-state! :mid mid)
@@ -122,7 +123,7 @@
     (if (should-reorder? e)
       (if-not (= dix ix)
         (do
-          (dispatch-sync [:reorder_msg dix ix])
+          (dispatch [:reorder_msg dix ix])
           (update-state! :dix ix))))))
 
 (defn handle-dragend [e]

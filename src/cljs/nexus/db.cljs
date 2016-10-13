@@ -27,23 +27,27 @@
               :errors {:editor {:type "error" ;; warning etc
                                 :text "Can't be blank"}}}
 
-     :curr-day "day@ciu6ymswc00018012503n3wsf"
      :curr-course "crs@tiu6ywsic00018012503n3wso"
+     :curr-day "day@ciu6ymswc00018012503n3wsf"
 
-     :courses [{:title "A Course about Stuff"
-                :uid "crs@tiu6ywsic00018012503n3wso"
-                :subtitle "Subtitle of course about stuff"
-                :days [{:uid "day@ciu6ymswc00018012503n3wsf"
-                        :errors 0
-                        :messages [
-                                    {:uid "msg@ciu6ymswc00018012503n3wsf"
-                                     :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
-                                    {:uid "msg@ciu6ynmzg00078012gdqy9jjt" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                                    {:uid "msg@ciu6yo71d00098012dhe2hmpi" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                                    {:uid "msg@ciu6yo76300108012lmv63h8q" :text "Alien" :type "text-message"}]}
-                       {:uid "day@ciu6ymswc03453503n3wsp"
-                        :errors 0
-                        :messages [
-                                   {:uid "msg@ciu6ynmzg00078012gdqy9jjt" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                                   {:uid "msg@ciu6yo71d00098012dhe2hmpi" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                                   {:uid "msg@ciu6yo76300108012lmv63h8q" :text "Alien" :type "text-message"}]}]}]})
+     :courses {"crs@tiu6ywsic00018012503n3wso"
+                {:title "A Course about Stuff"
+                 :uid "crs@tiu6ywsic00018012503n3wso"
+                 :subtitle "Subtitle of course about stuff"
+                 :days
+                   {"day@ciu6ymswc00018012503n3wsf"
+                     {:uid "day@ciu6ymswc00018012503n3wsf"
+                      :errors 0
+                      :messages
+                        [{:uid "msg@66666666KKK" :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
+                         {:uid "msg@55555555TTTT" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+                         {:uid "msg@444444444DDDD" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                         {:uid "msg@33333AAAAA" :text "Alien" :type "text-message"}]}
+
+                    "day@ciu6ymswc03453503n3wsp"
+                      {:uid "day@ciu6ymswc03453503n3wsp"
+                       :errors 0
+                       :messages
+                         [{:uid "msg@00000000099999" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+                          {:uid "msg@11111111199999" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                          {:uid "msg@222222229999999" :text "Alien" :type "text-message"}]}}}}})

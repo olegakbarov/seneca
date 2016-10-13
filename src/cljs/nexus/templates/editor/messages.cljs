@@ -6,7 +6,7 @@
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
-    [nexus.helpers.core :refer [log]]
+    ; [nexus.helpers.core :refer [log]]
     [nexus.helpers.uids :refer [gen-uid]]
     [nexus.templates.editor.dnd :refer [on-event
                                         state]]
@@ -94,6 +94,7 @@
 
 (defn empty-day []
   [:div.lister_msg_empty
+    ;; TODO remove
     {:on-click #(prn (gen-uid "msg"))}
     (str "Drag & drop here one of elements"
          " from the right panel")])
@@ -111,7 +112,7 @@
 (def mouse-chan (chan))
 
 (defn on-hover [e]
-  ;; synthetic event
+  ;; currentTarget 'cause dealing with synthetic event
   (let [x (-> e .-currentTarget .-dataset .-index)]
     (reset! reveal x)))
 
@@ -123,7 +124,7 @@
     {:class (if (= @reveal ix) "" "hidden")}
     "🖐🏻"])
 
-(defn render-msg-container [msg]
+(defn render-msg-container [index msg]
   (let [{:keys [type uid]} msg]
     (fn []
       [:div.lister_msg_container
@@ -136,6 +137,7 @@
          :on-mouse-leave on-unhover
          ;;
          :data-index uid
+         :data-dragindex index
          :data-type type}
         [drag-hook uid]
         [render-msg uid msg]
@@ -143,12 +145,14 @@
 
 (defn lister []
   (fn []
-    (let [msgs (subscribe [:current-msgs])]
+    (let [msgs (subscribe [:curr-msgs])]
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (for [item @msgs]
-                ^{:key (:uid item)}
-                [render-msg-container item]))]]))))
+              (map-indexed
+                (fn [index item]
+                  ^{:key (:uid item)}
+                  [render-msg-container index item])
+                @msgs))]]))))

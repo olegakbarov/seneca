@@ -1,30 +1,32 @@
 
 (ns nexus.handlers
-    (:require [re-frame.core :as re-frame]
+    (:require [re-frame.core :refer [reg-event-db
+                                     subscribe]]
               [nexus.db :as db]
               [nexus.helpers.core :refer [log]]
               [nexus.helpers.uids :refer [gen-uid]]))
 
-(re-frame/reg-event-db
+(reg-event-db
  :initialize-db
  (fn  [_ _]
    db/state))
 
 ;; naīve logging
-(re-frame/reg-event-db
+(reg-event-db
   :show_state
   (fn [db [_]]
     (log db)
     db))
 
-(re-frame/reg-event-db
+(reg-event-db
   :set-active-panel
   (fn [db [_ active-panel]]
     (assoc-in db [:router :current] active-panel)))
 
 ;; MESSAGES
 
-(defn reorder [v a b]
+(defn swap-vec [v a b]
+  (prn "reorder-indexes: " a b)
   "`a` and `b` are both indexes; v is a vector"
   (let [right (if (> a b) a b)
         left (if (> a b) b a)
@@ -34,15 +36,23 @@
         v
         (assoc v right l-item left r-item))))
 
-(re-frame/reg-event-db
+; (defn get-current-msgs []
+;   (let [course-id (:curr-course db)
+;         all-courses (get-in db [:courses])
+;         days (->> all-courses
+;                   (filter (fn [c] (= (:uid c) course-id)))
+;                   first
+;                   :days)]))
+
+(reg-event-db
   :reorder_msg
   (fn [db [_ dix hix]]
     (prn dix hix)
-    (let [course (:curr-course db)
-          day (:curr-day db)
-          msgs (get-in db [:courses course :days day :messages])
-          updated (reorder msgs dix hix)]
-      (assoc-in db [:courses course :days day :messages] updated))))
+    (let [course-id (:curr-course db)
+          day-id (:curr-day db)
+          msgs (get-in db [:courses course-id :days day-id :messages])
+          updated (swap-vec msgs dix hix)]
+      (assoc-in db [:courses course-id :days day-id :messages] updated))))
 
 (defn- insert-at [v item index]
   (if (= index (+ 1 (count v)))
@@ -56,12 +66,11 @@
     (condp = type
       "text-message" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
       "button-template" {:uid uid  :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-
       "quick-reply" {:uid uid  :text "New QR!" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
       "generic-template" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
       "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123})))
 
-(re-frame/reg-event-db
+(reg-event-db
   :add_msg
   (fn [db [_ type hix]]
     ; (prn (str "hix: " hix))
@@ -81,7 +90,7 @@
             right (subvec v (+ i 1))]
         (into [] (concat left right))))))
 
-(re-frame/reg-event-db
+(reg-event-db
   :remove_msg
   (fn [db [_ i]]
     (let [course (:curr-course db)
@@ -92,10 +101,9 @@
 
 ;; DAYS
 
-(re-frame/reg-event-db
+(reg-event-db
   :set_current_day
   (fn [db [_ n]]
-    (prn n)
     (assoc db :curr-day n)))
 
 ;; BOTS
@@ -105,7 +113,7 @@
    :description ""
    :status "development"})
 
-(re-frame/reg-event-db
+(reg-event-db
   :add-bot
   (fn [db [_]]
     (assoc-in db [:bots 333] new-bot)))

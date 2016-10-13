@@ -23,23 +23,17 @@
 (re-frame/reg-sub
   :curr-days
   (fn [db [_]]
-    (let [course-id (:curr-course db)
-          all-courses (get-in db [:courses])]
-      (->> all-courses
-           (filter (fn [c] (= (:uid c) course-id)))
-           first
-           :days))))
+    (let [course-id (:curr-course db)]
+      (-> db
+          (get-in [:courses course-id :days])
+          vals))))
 
 (re-frame/reg-sub
-  :current-msgs
+  :curr-msgs
   (fn [db [_]]
-    (let [days (subscribe [:curr-days])
+    (let [course-id (:curr-course db)
           day-id (:curr-day db)]
-      (->> @days
-           (filter (fn [c] (= (:uid c) day-id)))
-           first
-           :messages))))
-
+      (get-in db [:courses course-id :days day-id :messages]))))
 
 (re-frame/reg-sub
   :my-bots

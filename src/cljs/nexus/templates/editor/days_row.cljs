@@ -21,7 +21,6 @@
 (defn days-group [group index n]
   (let [is-first (= index 0)
         is-last  (= index (count (partition-all 7 (range n))))]
-    (prn group)
     [:div.days_group_container {:class (cond is-first "first"
                                              is-last  "last")}
       [:div.days_group_wrapper {:style {:border-left (if is-first "0px")}}
@@ -48,24 +47,23 @@
            groups))]))
 
 (defn days-row []
-  (let [dayz (subscribe [:curr-days])
+  (let [curr-days (subscribe [:curr-days])
         days-processed (map
                          (fn [day]
-                           (let [d day
-                                 is-empty (empty? (:messages d))
-                                 errors (:errors d)
-                                 uid (:uid d)]
+                           (let [is-empty (empty? (:messages day))
+                                 errors (:errors day)
+                                 uid (:uid day)]
                             {:empty? is-empty
                              :errors errors
                              :uid uid}))
-                         @dayz)]
+                         @curr-days)]
     [days days-processed]))
 
 (defn listen! []
   (let [chan (scroll-chan)]
     (go-loop []
        (let [y (<! chan)]
-        ;; TODO! only fire once first scroll
+        ;; TODO! only fire on first scroll
          (if (> y 0)
              (reset! style {:position "fixed"
                             :top "65px"
