@@ -36,16 +36,14 @@
  '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http    :refer [serve]]
- '[deraen.boot-less      :refer [less]]
- '[danielsz.autoprefixer :refer [autoprefixer]])
+ '[deraen.boot-less      :refer [less]])
 
 (deftask build []
   (comp
     (cljs)
     (less)
     (sift   :move {#"less.css"          "css/less.css"
-                   #"less.main.css.map" "css/less.main.css.map"})
-    (autoprefixer)))
+                   #"less.main.css.map" "css/less.main.css.map"})))
 
 (deftask run []
   (comp (serve)
@@ -56,16 +54,13 @@
 
 (deftask production []
   (task-options! cljs {:optimizations :advanced}
-                 less   {:compression true}
-                 autoprefixer {:files ["less.css"]
-                               :browsers "last 2 versions"})
+                 less   {:compression true})
   identity)
 
 (deftask development []
   (task-options! cljs   {:optimizations :none :source-map true}
                  reload {:on-jsload 'nexus.core/init}
-                 less   {:source-map  true}
-                 autoprefixer {:files ["css/less.css"]})
+                 less   {:source-map  true})
   identity)
 
 (deftask dev

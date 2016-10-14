@@ -124,8 +124,8 @@
     {:class (if (= @reveal ix) "" "hidden")}
     "🖐🏻"])
 
-(defn render-msg-container [index msg]
-  (let [{:keys [type uid]} msg]
+(defn render-msg-container [msg]
+  (let [{:keys [type uid order]} msg]
     (fn []
       [:div.lister_msg_container
         {:draggable true
@@ -137,7 +137,7 @@
          :on-mouse-leave on-unhover
          ;;
          :data-index uid
-         :data-dragindex index
+         :data-dragindex order
          :data-type type}
         [drag-hook uid]
         [render-msg uid msg]
@@ -151,8 +151,6 @@
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (map-indexed
-                (fn [index item]
+              (for [item (sort-by :order @msgs)]
                   ^{:key (:uid item)}
-                  [render-msg-container index item])
-                @msgs))]]))))
+                  [render-msg-container item]))]]))))

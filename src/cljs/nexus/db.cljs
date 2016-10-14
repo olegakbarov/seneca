@@ -39,15 +39,20 @@
                      {:uid "day@ciu6ymswc00018012503n3wsf"
                       :errors 0
                       :messages
-                        [{:uid "msg@66666666KKK" :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
-                         {:uid "msg@55555555TTTT" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                         {:uid "msg@444444444DDDD" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                         {:uid "msg@33333AAAAA" :text "Alien" :type "text-message"}]}
+                        {"msg@66666666KKK" {:uid "msg@66666666KKK" :order 0 :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
+                         "msg@5555555TTTT" {:uid "msg@5555555TTTT" :order 1 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+                         "msg@4444444DDDD" {:uid "msg@4444444DDDD" :order 2 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                         "msg@33333AAAAAA" {:uid "msg@33333AAAAAA" :order 3 :text "Alien" :type "text-message"}}}
 
                     "day@ciu6ymswc03453503n3wsp"
                       {:uid "day@ciu6ymswc03453503n3wsp"
                        :errors 0
                        :messages
-                         [{:uid "msg@00000000099999" :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                          {:uid "msg@11111111199999" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                          {:uid "msg@222222229999999" :text "Alien" :type "text-message"}]}}}}})
+                         {"msg@00000000099999" {:uid "msg@00000000099999" :order 0 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+                          "msg@11111111199999" {:uid "msg@11111111199999" :order 1 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
+                          "msg@22222222999999" {:uid "msg@22222222999999" :order 2 :text "Alien" :type "text-message"}}}
+
+                    "day@234sdf123sdf23"
+                      {:uid "day@234sdf123sdf23"
+                       :errors 0
+                       :messages {}}}}}})

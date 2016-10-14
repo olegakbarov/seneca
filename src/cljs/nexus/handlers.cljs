@@ -26,32 +26,23 @@
 ;; MESSAGES
 
 (defn swap-vec [v a b]
-  (prn "reorder-indexes: " a b)
-  "`a` and `b` are both indexes; v is a vector"
-  (let [right (if (> a b) a b)
-        left (if (> a b) b a)
-        l-item (nth v left)
-        r-item (nth v right)]
-    (if (= a b)
-        v
-        (assoc v right l-item left r-item))))
-
-; (defn get-current-msgs []
-;   (let [course-id (:curr-course db)
-;         all-courses (get-in db [:courses])
-;         days (->> all-courses
-;                   (filter (fn [c] (= (:uid c) course-id)))
-;                   first
-;                   :days)]))
+  (map
+    (fn [[id msg]]
+      (let [{:keys [order]} msg]
+        (condp = order
+          a {id (assoc-in msg [:order] b)}
+          b {id (assoc-in msg [:order] a)}
+          {id msg})))
+    v))
 
 (reg-event-db
   :reorder_msg
   (fn [db [_ dix hix]]
-    (prn dix hix)
+    (prn "event reorder:" dix hix)
     (let [course-id (:curr-course db)
           day-id (:curr-day db)
           msgs (get-in db [:courses course-id :days day-id :messages])
-          updated (swap-vec msgs dix hix)]
+          updated (into {} (swap-vec msgs dix hix))]
       (assoc-in db [:courses course-id :days day-id :messages] updated))))
 
 (defn- insert-at [v item index]

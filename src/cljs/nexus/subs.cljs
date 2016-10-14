@@ -33,7 +33,9 @@
   (fn [db [_]]
     (let [course-id (:curr-course db)
           day-id (:curr-day db)]
-      (get-in db [:courses course-id :days day-id :messages]))))
+      (-> db
+          (get-in [:courses course-id :days day-id :messages])
+          vals))))
 
 (re-frame/reg-sub
   :my-bots
