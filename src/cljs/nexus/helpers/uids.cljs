@@ -4,7 +4,7 @@
 
 (defn gen-uid [type]
   (condp = type
-    "msg"     (str "msg@" (c/cuid))
-    "day"         (str "day@" (c/cuid))
-    "course"      (str "crs@" (c/cuid))
+    "msg"     (str "msg_" (c/cuid))
+    "day"         (str "day_" (c/cuid))
+    "course"      (str "crs_" (c/cuid))
     (prn "WRONG TYPE PASSED TO gen-uid: " type)))

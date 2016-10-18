@@ -38,7 +38,7 @@
 (reg-event-db
   :reorder_msg
   (fn [db [_ dix hix]]
-    (prn "event reorder:" dix hix)
+    ; (prn "event reorder:" dix hix)
     (let [course-id (:curr-course db)
           day-id (:curr-day db)
           msgs (get-in db [:courses course-id :days day-id :messages])

@@ -6,170 +6,91 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [nexus.helpers.core :refer [log]]
     [goog.events :as events]
-    [re-frame.core :refer [dispatch
-                           dispatch-sync]])
+    [re-frame.core :refer [dispatch]])
   (:import [goog.events EventType]))
 
-(defn set-cursor! [cursor-type]
-  (aset js/document "body" "style" "cursor" (name cursor-type)))
+; dragindex:"1"
+; dragtype: "MSG_TYPE"
+; uid:    "msg@5555555TTTT"
+; type:     "quick-reply"
+;--
+; {:target (-> e .-currentTarget)
+;  :uid (-> e .-currentTarget .-dataset .-uid)
+;  :drag-index (-> e .-currentTarget .-dataset .-dragindex int)
+;  :rect   (-> e .-currentTarget .getBoundingClientRect)})
 
-;; --------------------------
-;; STATE:
+(def state (r/atom {}))
 
-(def dnd-chan (chan))
+(def init-state {:drag-index nil
+                ;  :drag-mid nil
+                 :hover-y nil
+                 :hover-index nil
+                 :hover-mid nil})
 
-(def dnd-types ["text-message"
-                "button-template"
-                "quick-reply"
-                "generic-template"
-                "media"])
+(defn init! []
+  (reset! state init-state))
 
-(def state (r/atom {:dix nil           ;; the item we drag
-                    :hix nil           ;; the item we hover on
-                    :y nil             ;; user's clientY
-                    :h-mid nil         ;; middle of hovered item
-                    :d-mid nil         ;; middle of dragged item
-                    :msg-added false   ;; msg already added?
-                    :drag-type nil}))  ;; type of item we drag
+(init!)
 
 (defn update-state! [key val]
-  (swap! state assoc key val))
-
-;; --------------------------
-;; HELPERS:
-
-(defn parse-event [e]
-  ; (log (js->clj e))
-  ; (cond = (-> e .-type)
-  ;   "dragend" (.preventDefault e)
-  ;   "drop" (.preventDefault e)
-  ;   "dragleave" (.preventDefault e))
-  (let [ix (-> e .-target .-dataset .-dragindex int)
-        bottom (-> e .-target .getBoundingClientRect .-bottom)
-        y (-> e .-clientY)
-        top (-> e .-target .getBoundingClientRect .-top)
-        item-type (-> e .-target .-dataset .-type)
-        action (-> e .-target .-dataset .-action)
-        event-type (-> e .-type)]
-    {:ix ix                         ;; index of item where event occured
-    ;  :item-type item-type           ;; type of item where event occured
-     :event-type event-type         ;; type of event
-     :top top                       ;; top coord of bounding rect
-     :bottom bottom                 ;; bottom coord of bounding rect
-    ;  :action action                 ;; action flag
-     :y y}))                        ;; y coord of cursor
-
-;; --------------------------
-;; EVENTS:
-
-(defn on-event [e]
-  (let [parsed (parse-event e)]
-    (prn parsed)
-    (put! dnd-chan parsed)))
-
-;; ---------------------------
-;; HANDLERS
-
-(defn handle-drag-start [e]
-  (let [{:keys [ix item-type action bottom top]} e
-        mid (/ (- bottom top) 2)]
-    ; (prn "drag-start-index: " ix)
-    (do
-      (update-state! :action action)
-      (update-state! :dix ix)
-      (update-state! :drag-mid mid)
-      (update-state! :drag-type item-type))))
-
-(defn handle-drag [e]
-  ; (prn @state)
-  (update-state! :y (:y e)))
-
-(defn handle-drag-leave [e]
-  (let [{:keys [dix hix]} @state
-        {:keys [ix]} e]
-    (prn "Dragleave NIMP yep")))
-
-(defn should-reorder? [e]
-  "`bottom`, `top`, `mid` of hovered el"
-  (let [{:keys [mid dix hix y]} @state
-        {:keys [top]} e
-        hover-y (- y top)]
-
-    (prn dix hix hover-y mid)
-
-    (cond
-      (and (< dix hix) (< hover-y mid)) false
-      (and (> dix hix) (> hover-y mid)) false
-      :else true)))
-
-;;-----------------------------------------------------------------
-
-
-(defn handle-drag-over [e]
-  (let [{:keys [dix hix action drag-type]} @state   ;; index of dragged item
-        {:keys [ix bottom top item-type]} e         ;; data of hovered item
-        mid (/ (- bottom top) 2)
-        drag-mid (/ (- bottom top) 2)]
-
-    (update-state! :mid mid)
-    (update-state! :hix ix)
-
-    (if (should-reorder? e)
-      (if-not (= dix ix)
-        (do
-          (dispatch [:reorder_msg dix ix])
-          (update-state! :dix ix)
-          (update-state! :mid drag-mid))))))
-
-    ; (if (and (not (:msg-added @state)) (= action "add"))
-    ;   (do
-    ;     (dispatch [:add_msg drag-type ix])
-    ;     (update-state! :msg-added true)))))
-
-
-;;-----------------------------------------------------------------
-
-(defn handle-drag-enter [e]
-  "We compare middle of bounding rect to current mouse position"
-  (let [{:keys [ix type item-type bottom tool top]} e
-        mid (/ (- bottom top) 2)
-        {:keys [drag-type]} @state]))
-    ; (if-not (:msg-added @state)
-      ; (do
-      ;   (dispatch [:add_msg drag-type ix])
-      ;   (update-state! :msg-added true)))))
-
-(defn handle-dragend [e]
   (do
-    (update-state! :msg-added false)
-    (update-state! :dix nil)
-    (update-state! :hix nil)))
+    (swap! state assoc key val)))
+    ; (.log js/console @state)))
 
-(defn handle-drop [e]
-  "nimp")
+(defn on-drag-start [e]
+  "Update drag-index"
+  (let [drag-index (-> e .-currentTarget .-dataset .-dragindex int)
+        top (-> e .-currentTarget .getBoundingClientRect .-top)
+        bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
+        mid (/ (- bottom top) 2)]
+    (reset! state (merge @state {:drag-index drag-index
+                                 :drag-mid mid}))))
 
-(defn listen! []
-  (events/listen js/window EventType.DRAGSTART on-event)
-  (events/listen js/window EventType.DRAG      on-event)
-  ; (events/listen js/window EventType.DRAGOVER  on-event)
-  ; (events/listen js/window EventType.DRAGENTER on-event)
-  ; (events/listen js/window EventType.DRAGLEAVE on-event)
-  (events/listen js/window EventType.DRAGEND   on-event)
-  (events/listen js/window EventType.DROP      on-event)
+; (defn on-drag-enter [e]
+;   "Update hover-index"
+;   (let [hover-index (-> e .-currentTarget .-dataset .-dragindex int)
+;         top (-> e .-currentTarget .getBoundingClientRect .-top)
+;         bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
+;         mid (/ (- bottom top) 2)]
+;     (.log js/console "=== DRAG ENTER STARTS ===")
+;     (.log js/console {:hover-index hover-index
+;                       :hover-mid mid})
+;     (.log js/console "=== DRAG ENTER END ===")
+;     (reset! state (merge @state {:hover-index hover-index
+;                                  :hover-mid mid}))))
 
-  (go-loop []
-     (let [e (<! dnd-chan)
-           {:keys [event-type]} e]
-        (condp = event-type
-          ;; events fired on dragged item
-          "dragstart" (handle-drag-start e)
-          "drag"      (handle-drag e)
-          "dragend"   (handle-dragend e)
-          ;; events fired on drop targets
-          "dragenter" (handle-drag-enter e)
-          "dragleave" (handle-drag-leave e)
-          "dragover"  (handle-drag-over e)
-          "drop"      (handle-drop e))
-       (recur))))
+(defn should-reorder? []
+  (let [{:keys [drag-index hover-index hover-y hover-mid]} @state]
+    (if (= drag-index hover-index)
+      false
+      (cond
+        (and (< drag-index hover-index) (< hover-y hover-mid)) false
+        (and (> drag-index hover-index) (> hover-y hover-mid)) false
+        :else true))))
 
-(listen!)
+(defn on-drag-over [e]
+  (let [client-y (-> e .-clientY)
+        top (-> e .-currentTarget .getBoundingClientRect .-top)
+        bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
+        hover-index (-> e .-currentTarget .-dataset .-dragindex int)
+        hover-mid (/ (- bottom top) 2)
+        hover-y (- client-y top)
+        {:keys [drag-index drag-mid]} @state
+        mid (min hover-mid drag-mid)]
+
+      (reset! state (merge @state {:hover-index hover-index
+                                   :hover-y hover-y
+                                   :hover-mid mid}))
+
+      (.log js/console drag-index hover-index hover-y mid)
+
+      (if (should-reorder?)
+          (do
+           (.log js/console "we dispatch!")
+           (dispatch [:reorder_msg drag-index hover-index])
+           (reset! state (merge @state {:drag-index hover-index
+                                        :hover-index hover-index
+                                        :hover-mid mid}))))))
+
+(defn on-drag-end [e]
+  (init!))

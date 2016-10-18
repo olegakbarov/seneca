@@ -8,13 +8,19 @@
     [goog.events :as events]
     ; [nexus.helpers.core :refer [log]]
     [nexus.helpers.uids :refer [gen-uid]]
-    [nexus.templates.editor.dnd :refer [on-event
-                                        state]]
+    [nexus.templates.editor.dnd :refer [state
+                                        on-drag-start
+                                        ; on-drag
+                                        ; on-drag-enter
+                                        on-drag-over
+                                        on-drag-end]]
+
     [nexus.templates.editor.add_msg :refer [add-msg]]
     [re-frame.core :refer [reg-event-db
                            path
                            reg-sub
                            subscribe]]))
+
 
 (def reveal (r/atom nil))
 
@@ -113,7 +119,7 @@
 
 (defn on-hover [e]
   ;; currentTarget 'cause dealing with synthetic event
-  (let [x (-> e .-currentTarget .-dataset .-index)]
+  (let [x (-> e .-currentTarget .-dataset .-uid)]
     (reset! reveal x)))
 
 (defn on-unhover [e]
@@ -129,14 +135,18 @@
     (fn []
       [:div.lister_msg_container
         {:draggable true
+         :data-dragtype "MSG_TYPE"
          :class (if (= uid (:dix @state)) "msg_dragged" "")
-         :on-drag-enter on-event
-         :on-drag-over  on-event
+         :on-drag-start  on-drag-start
+         :on-drag-over   on-drag-over
+        ;  :on-drag-enter  on-drag-enter
+        ;  :on-drag        on-drag
+         :on-drag-end    on-drag-end
          ;;
          :on-mouse-enter on-hover
          :on-mouse-leave on-unhover
          ;;
-         :data-index uid
+         :data-uid uid
          :data-dragindex order
          :data-type type}
         [drag-hook uid]
