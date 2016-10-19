@@ -26,7 +26,7 @@
       [bot-img bot]
       [:div.bot_page_meta
         [:div.bot_page_meta_title title]
-        (common/button "Test" "white" nil)]]))
+        (common/button "Test" "white" "sm" nil)]]))
 
 (defn add-bot []
   [:div.bot_page_add

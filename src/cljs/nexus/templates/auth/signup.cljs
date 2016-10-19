@@ -11,4 +11,4 @@
       [text-input "password" "Password"]
       [text-input "password" "Confirm password"]
       [:div.form_submit
-        [button "Sign in" "green" #(js/console.log "Sign in")]]]])
+        [button "Sign in" "green" "mid" #(js/console.log "Sign in")]]]])

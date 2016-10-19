@@ -36,7 +36,8 @@
  '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http    :refer [serve]]
- '[deraen.boot-less      :refer [less]])
+ '[deraen.boot-less      :refer [less]]
+ '[ring.util.response :refer [resource-response]])
 
 (deftask build []
   (comp
@@ -46,7 +47,7 @@
                    #"less.main.css.map" "css/less.main.css.map"})))
 
 (deftask run []
-  (comp (serve)
+  (comp (serve :not-found (resource-response "index.html"))
         (watch)
         (cljs-repl)
         (reload)
@@ -59,7 +60,7 @@
 
 (deftask development []
   (task-options! cljs   {:optimizations :none :source-map true}
-                 reload {:on-jsload 'nexus.core/init}
+                 reload {:on-jsload 'nexus.core/mount-root}
                  less   {:source-map  true})
   identity)
 
