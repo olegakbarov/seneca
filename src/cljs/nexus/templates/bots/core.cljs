@@ -4,6 +4,7 @@
     [reagent.core :as r]
     [nexus.routes :as routes]
     [nexus.common :as common]
+    [nexus.templates.header :refer [header]]
     [re-frame.core :refer [reg-event-db
                            dispatch
                            subscribe]]))
@@ -35,12 +36,15 @@
 (defn bots []
   (fn []
     (let [bots (subscribe [:my-bots])]
-      [:div.bots_page_container
-        [:div.bots_page_title "Bots"]
-        [:div.bots_page_wrapper
-          (map-indexed
-            (fn [ix bot]
-               ^{:key ix}
-               [bot-widget bot])
-           @bots)
-          [add-bot]]])))
+     [:div
+       [header]
+       [:div.content
+        [:div.bots_page_container
+          [:div.bots_page_title "Bots"]
+          [:div.bots_page_wrapper
+            (map-indexed
+              (fn [ix bot]
+                 ^{:key ix}
+                 [bot-widget bot])
+             @bots)
+            [add-bot]]]]])))

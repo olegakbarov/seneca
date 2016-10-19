@@ -7,7 +7,8 @@
 
 (def routes ["/" {""        :editor
                   "profile" :profile
-                  "bots"    :bots}])
+                  "bots"    :bots
+                  "signup"  :signup}])
 
 (defn- parse-url [url]
   (bidi/match-route routes url))
