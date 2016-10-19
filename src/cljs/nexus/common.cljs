@@ -6,17 +6,21 @@
 (defn button [text color size action]
   [:button
     {:class (str "btn-" color " " size)
-     :on-click #(action)}
+     :on-click #(action %)}
     text])
 
 (defn- input [value type placeholder]
   [:input {:type type
-           :value @value
+           :value value
            :class "text_input"
            :placeholder placeholder
            :on-change #(reset! value (-> % .-target .-value))}])
 
-(defn text-input [type placeholder]
-  (let [val (r/atom "")]
+(defn text-input
+  ;; arity overloading ~_~
+  ([cursor type placeholder]
+   [input cursor type placeholder])
+  ([type placeholder]
+   (let [val (r/atom "")]
     (fn []
-       [input val type placeholder])))
+      [input @val type placeholder]))))

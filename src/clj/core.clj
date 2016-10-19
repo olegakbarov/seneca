@@ -1,5 +1,5 @@
 
-(ns nexus.core
+(ns nexus.server
   (:require [nexus.handler :refer [handler]]
             [config.core :refer [env]]
             ; [mount.core :refer [start-with-args]]

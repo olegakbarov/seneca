@@ -7,6 +7,7 @@
               [nexus.templates.home :refer [home]]
               [nexus.templates.profile :refer [profile]]
               [nexus.templates.auth.signup :refer [signup]]
+              [nexus.templates.auth.login :refer [login]]
               [re-com.core :as re-com]))
 
 (defmulti panels identity)
@@ -15,6 +16,7 @@
 (defmethod panels :bots       [] [bots])
 (defmethod panels :profile    [] [profile])
 (defmethod panels :signup     [] [signup])
+(defmethod panels :login      [] [login])
 (defmethod panels :default    [] [:div])
 
 (defn main-panel []

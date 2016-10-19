@@ -8,6 +8,10 @@
 
      :ui {:scroll-top 0}
 
+     :form {:email "default@mail.co"
+            :password ""
+            :password-again ""}
+
      :user {:auth    {:token "12ER2319HKJ231SDFMB3"}
             :profile {:user-id "123"
                       :email "yourmum@kek.ru"

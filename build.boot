@@ -4,7 +4,7 @@
  :dependencies '[[adzerk/boot-cljs           "1.7.228-1"  :scope "test"]
                  [adzerk/boot-cljs-repl      "0.3.0"      :scope "test"]
                  [adzerk/boot-reload         "0.4.8"      :scope "test"]
-                 [pandeiro/boot-http         "0.7.2"      :scope "test"]
+                 [pandeiro/boot-http         "0.7.3"      :scope "test"]
                  [com.cemerick/piggieback    "0.2.1"      :scope "test"]
                  [org.clojure/tools.nrepl    "0.2.12"     :scope "test"]
                  [weasel                     "0.7.0"      :scope "test"]
@@ -47,7 +47,8 @@
                    #"less.main.css.map" "css/less.main.css.map"})))
 
 (deftask run []
-  (comp (serve :not-found (resource-response "index.html"))
+  ; (comp (serve :not-found 'nexus.routes.parse-url))
+  (comp (serve)
         (watch)
         (cljs-repl)
         (reload)

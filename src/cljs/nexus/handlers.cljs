@@ -109,4 +109,9 @@
   (fn [db [_]]
     (assoc-in db [:bots 333] new-bot)))
 
-;;
+;; FORM
+
+(reg-event-db
+  :update-form
+  (fn [db [_ cursor val]]
+    (assoc-in db [:form cursor] val)))

@@ -18,7 +18,9 @@
             [:li
               [:a {:href (routes/url-for :editor)} "Weather bot"]]
             [:li
-              [:a {:href (routes/url-for :signup)} "Signup"]]]]
+              [:a {:href (routes/url-for :signup)} "Signup"]]
+            [:li
+              [:a {:href (routes/url-for :login)} "Login"]]]]
         [:div.header_right
           [:div.btn.header_save_button
             "Save"]

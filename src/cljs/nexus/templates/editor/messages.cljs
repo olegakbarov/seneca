@@ -6,12 +6,9 @@
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
-    ; [nexus.helpers.core :refer [log]]
     [nexus.helpers.uids :refer [gen-uid]]
     [nexus.templates.editor.dnd :refer [state
                                         on-drag-start
-                                        ; on-drag
-                                        ; on-drag-enter
                                         on-drag-over
                                         on-drag-end]]
 
@@ -139,13 +136,9 @@
          :class (if (= uid (:dix @state)) "msg_dragged" "")
          :on-drag-start  on-drag-start
          :on-drag-over   on-drag-over
-        ;  :on-drag-enter  on-drag-enter
-        ;  :on-drag        on-drag
          :on-drag-end    on-drag-end
-         ;;
          :on-mouse-enter on-hover
          :on-mouse-leave on-unhover
-         ;;
          :data-uid uid
          :data-dragindex order
          :data-type type}

@@ -48,3 +48,5 @@ state
 db)
 db
 (get-in state [:router])
+(doc serve)
+
