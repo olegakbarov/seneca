@@ -9,10 +9,10 @@
      :on-click #(action)}
     text])
 
-(defn- input [value type size placeholder]
+(defn- input [value type placeholder]
   [:input {:type type
            :value @value
-           :class (str "text_input " size)
+           :class "text_input"
            :placeholder placeholder
            :on-change #(reset! value (-> % .-target .-value))}])
 
