@@ -45,8 +45,8 @@
   (comp
     (cljs)
     (less)
-    (sift   :move {#"less.css"          "css/less.css"
-                   #"less.main.css.map" "css/less.main.css.map"})))
+    (sift   :move {#"less.css"          "public/less.css"
+                   #"less.main.css.map" "public/less.main.css.map"})))
 
 (deftask development []
  (task-options! cljs   {:optimizations :none :source-map true}
@@ -56,12 +56,11 @@
 
 (deftask run []
  (comp
-       ;; (serve :not-found 'server.wrapped-routes)
-       (serve :handler 'nexus.server/wrapped-routes :reload true)
-       (watch)
-       (cljs-repl)
-       (reload)
-       (bundle)))
+   (serve :handler 'nexus.server/wrapped-routes :reload true)
+   (watch)
+   (cljs-repl)
+   (reload)
+   (bundle)))
 
 (deftask dev
  "Simple alias to run application in development mode"
