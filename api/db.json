@@ -3,5 +3,9 @@
 		{"id": 123, "name": "Cute animals"},
 		{"id": 666, "name": "Speaking loud"},
 		{"id": 777, "name": "Meditation for cats"}
+	],
+	"bots": [
+		{"id": "123", "title": "im from internet", "status": "active"},
+		{"id": "333", "title": "im second one",    "status": "pending"}
 	]
 }

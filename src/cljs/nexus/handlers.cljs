@@ -2,9 +2,11 @@
 (ns nexus.handlers
     (:require [re-frame.core :refer [reg-event-db
                                      subscribe]]
+              [re-frame.core :as re-frame]
               [nexus.db :as db]
               [nexus.helpers.core :refer [log]]
-              [nexus.helpers.uids :refer [gen-uid]]))
+              [nexus.helpers.uids :refer [gen-uid]]
+              [ajax.core :as ajax]))
 
 (reg-event-db
  :initialize-db
@@ -115,3 +117,35 @@
   :update-form
   (fn [db [_ cursor val]]
     (assoc-in db [:form cursor] val)))
+
+
+
+;; FETCH DATA
+
+(reg-event-db
+  :bots-fetch
+  (fn [db _]
+    (let [endpoint "http://localhost:7777/bots"]
+      (ajax/GET endpoint
+         {:handler #(re-frame/dispatch [:bots-fetch-success %1])
+          :error-handler #(re-frame/dispatch [:bots-fetch-err %1])
+          :response-format :json
+          :keywords? true})
+      db)))
+
+(reg-event-db
+ :bots-fetch-success
+ (fn [db [_ res]]
+   (js/console.log res)
+   (let [processed (reduce
+                    (fn [obj item]
+                      (conj obj {(:id item) item}))
+                    {}
+                    res)]
+     (assoc-in db [:bots] processed))))
+
+(reg-event-db
+ :bots-fetch-err
+ (fn [db [_ response]]
+   (js/console.log response)
+   db))

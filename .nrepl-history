@@ -50,3 +50,15 @@ db
 (get-in state [:router])
 (doc serve)
 
+(run)
+
+(go)
+
+(go)
+
+(go)
+
+(go)
+
+
+(go)

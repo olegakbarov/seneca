@@ -3,8 +3,6 @@
     (:require [reagent.core :as r]
               [re-frame.core :as re-frame]
               [devtools.core :as devtools]
-              ; [mount.core :refer [start-with-args]]
-
               ;; must require both in root file
               [nexus.handlers]
               [nexus.subs]
@@ -27,5 +25,6 @@
   ; (mount/start)
   (routes/app-routes)
   (re-frame/dispatch-sync [:initialize-db])
+  (re-frame/dispatch [:bots-fetch])
   (dev-setup)
   (mount-root))

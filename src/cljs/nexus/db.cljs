@@ -21,9 +21,7 @@
      :team {:name "The Village"
             :users ["uuid-1" "uuid-2"]}
 
-     :bots {123 {:title "Village bot"
-                 :description "woop-woop"
-                 :status "active"}} ;; development, pending, active
+     :bots {} ;; development, pending, active
 
      :editor {:ui {:days-folded false
                    :topbar-folded false
