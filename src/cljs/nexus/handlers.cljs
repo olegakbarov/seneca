@@ -92,12 +92,16 @@
           updated (remove-at msgs i)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
+
+
 ;; DAYS
 
 (reg-event-db
   :set_current_day
   (fn [db [_ n]]
     (assoc db :curr-day n)))
+
+
 
 ;; BOTS
 
@@ -110,6 +114,8 @@
   :add-bot
   (fn [db [_]]
     (assoc-in db [:bots 333] new-bot)))
+
+
 
 ;; FORM
 

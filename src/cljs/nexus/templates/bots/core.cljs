@@ -33,18 +33,31 @@
     {:on-click #(dispatch [:add-bot])}
     "+"])
 
-(defn bots []
+
+
+(defn bots-templ []
   (fn []
     (let [bots (subscribe [:my-bots])]
-     [:div
-       [header]
-       [:div.content
-        [:div.bots_page_container
-          [:div.bots_page_title "Bots"]
-          [:div.bots_page_wrapper
-            (map-indexed
-              (fn [ix bot]
-                 ^{:key ix}
-                 [bot-widget bot])
-             @bots)
-            [add-bot]]]]])))
+     (if @bots
+       [:div
+         [header]
+         [:div.content
+          [:div.bots_page_container
+            [:div.bots_page_title "Bots"]
+            [:div.bots_page_wrapper
+              (map-indexed
+                (fn [ix bot]
+                   ^{:key ix}
+                   [bot-widget bot])
+               @bots)
+              [add-bot]]]]]
+       [:div "No bots yet"]))))
+
+(defn bots
+  []
+  (r/create-class
+   {:component-did-mount #(dispatch [:bots-fetch])
+    :display-name  "bots-container"
+    :reagent-render
+     (fn []
+      [bots-templ])}))

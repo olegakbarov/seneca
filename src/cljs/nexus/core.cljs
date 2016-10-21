@@ -25,6 +25,5 @@
   ; (mount/start)
   (routes/app-routes)
   (re-frame/dispatch-sync [:initialize-db])
-  (re-frame/dispatch [:bots-fetch])
   (dev-setup)
   (mount-root))
