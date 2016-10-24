@@ -66,6 +66,17 @@
   }
 }
 
+textarea.lister_msg_item_text {
+  resize: none;
+  height: 180px;
+}
+
+textarea.lister_msg_item_text:focus {
+  border: 1px solid @graphite;
+  outline-color: transparent;
+  outline-style: none;
+}
+
 .lister_msg_tools {
   display: flex;
   width: 100%;
@@ -77,6 +88,14 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.lister_msg_tools .edit,
+.lister_msg_tools .copy,
+.lister_msg_tools .remove {
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .lister_msg_item_wrap {
