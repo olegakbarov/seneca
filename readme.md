@@ -47,3 +47,26 @@ React requires unique keys for all list-style items. We can't rely on seq order 
                                 {:uid "msg@ciu6yo71d00098012dhe2hmpi" :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
                                 {:uid "msg@ciu6yo76300108012lmv63h8q" :text "Alien" :type "text-message"}]}]}]}
 ```
+
+
+### Container component pattern
+
+```clojure
+;; presentation component
+(defn bots-templ []
+  (fn []
+    (let [bots (subscribe [:my-bots])]
+     (if @bots
+         ;; iterate over bots
+         ;; or show spinner
+
+;; container component
+(defn bots
+  []
+  (r/create-class
+   {:component-did-mount #(dispatch [:bots-fetch])
+    :display-name  "bots-container"
+    :reagent-render
+     (fn []
+      [bots-templ])}))
+```
