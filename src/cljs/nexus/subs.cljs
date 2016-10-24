@@ -67,6 +67,17 @@
           pwd2 (-> db :form :password-again)]
       (= pwd pwd2))))
 
+
+;; ---------------------------------------------
+;; UI
+
+(re-frame/reg-sub
+  :ui/is-editing-id
+  (fn [db [_]]
+    (-> db :ui :is-editing-id)))
+
+
+
  ; (register-sub
  ;  :sorted-items      ;; the query id  (the name of the query)
  ;  (fn [db [_]]       ;; the handler for the subscription

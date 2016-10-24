@@ -17,8 +17,8 @@
 
 (defroutes handler-routes
    (ANY "/" [] layout/main)
-   (route/resources "/")
-   (ANY "/*" [] layout/main))
+   (route/resources "/"))
+  ;  (ANY "/*" [] layout/main))
 
 (def wrapped-routes
   (-> handler-routes

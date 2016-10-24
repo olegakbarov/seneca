@@ -14,10 +14,11 @@
       {:class status}])
 
 (defn bot-img [bot]
-  (let [{:keys [status path]} bot]
-    [:div.bot_page_placeholder
-      {:style (if path {:background-image path})}
-      [bot-status status]]))
+  (let [{:keys [status path id]} bot]
+    [:a {:href (routes/url-for :bots {:params id})}
+      [:div.bot_page_placeholder
+        {:style (if path {:background-image path})}
+        [bot-status status]]]))
 
 (defn bot-widget [item]
   (let [[id bot] item
@@ -32,8 +33,6 @@
   [:div.bot_page_add
     {:on-click #(dispatch [:add-bot])}
     "+"])
-
-
 
 (defn bots-templ []
   (fn []

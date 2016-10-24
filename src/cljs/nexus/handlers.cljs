@@ -142,7 +142,6 @@
 (reg-event-db
  :bots-fetch-success
  (fn [db [_ res]]
-   (js/console.log res)
    (let [processed (reduce
                     (fn [obj item]
                       (conj obj {(:id item) item}))
@@ -155,3 +154,12 @@
  (fn [db [_ response]]
    (js/console.log response)
    db))
+
+
+
+;; EDITOR ACTIONS
+
+(reg-event-db
+  :set-is-editing-id
+  (fn [db [_ id]]
+    (assoc-in db [:ui :is-editing-id] id)))
