@@ -70,3 +70,27 @@ React requires unique keys for all list-style items. We can't rely on seq order 
      (fn []
       [bots-templ])}))
 ```
+
+### Components with Reagent
+
+```
+(defn drag-wrapper [opts component]
+  (let [{:keys [drag-type]} opts
+        decorated-props (merge opts @state)]
+    (r/create-class
+       {:component-did-mount
+         (fn [this]
+           (let [node (reagent.dom/dom-node this)]
+             (do
+               (dispatch [:register-source node]))))
+        :render
+          (fn []
+            ;  (.log js/console (clj->js decorated-props))
+             (this-as this
+              (r/create-element
+                ;; TODO
+                "ReactClass"
+                ;; we drop-in all the dnd-state into the comp
+                (clj->js decorated-props)
+                (r/as-element component))))})))
+```
