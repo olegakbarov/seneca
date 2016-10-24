@@ -157,9 +157,14 @@
 
 
 
-;; EDITOR ACTIONS
+;; EDITOR UI ACTIONS
 
 (reg-event-db
   :set-is-editing-id
   (fn [db [_ id]]
     (assoc-in db [:ui :is-editing-id] id)))
+
+(reg-event-db
+  :unset-is-editing-id
+  (fn [db [_]]
+    (assoc-in db [:ui :is-editing-id] nil)))

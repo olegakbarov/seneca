@@ -58,10 +58,16 @@
 ;; ------------------------------------
 
 (defn render-editable-text [text]
-  (fn []
-    [:textarea.lister_msg_item_text
-      {:value text
-       :on-change #(prn (-> % -.target -.value))}]))
+  (r/create-class
+     {:component-did-mount
+       (fn [this]
+         (let [node (reagent.dom/dom-node this)]
+           (-> node .focus)))
+      :render
+        (fn []
+          [:textarea.lister_msg_item_text
+            {:value text
+             :on-change #(prn (-> % -.target -.value))}])}))
 
 ;; ------------------------------------
 ;; MULTIMETHOD
