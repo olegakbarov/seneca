@@ -57,54 +57,53 @@
 ;; EDITEBALS
 ;; ------------------------------------
 
-(defn render-editable-text [text]
-  (r/create-class
-     {:component-did-mount
-       (fn [this]
-         (let [node (reagent.dom/dom-node this)]
-           (-> node .focus)))
-      :render
-        (fn []
-          [:textarea.lister_msg_item_text
-            {:value text
-             :on-change #(prn (-> % -.target -.value))
-             :on-click #(.stopPropagation %)}])}))
+(defn render-editable-text [uid]
+  (let [text (subscribe [:ui/is-editing-msg-text])]
+    (r/create-class
+       {:component-did-mount
+         (fn [this]
+           (let [node (reagent.dom/dom-node this)]
+             (-> node .focus)))
+        :render
+          (fn []
+            [:textarea.lister_msg_item_text
+              {:value @text
+               :on-change #(dispatch [:edit-msg-text uid (-> % .-target .-value)])
+               :on-click #(.stopPropagation %)}])})))
 
 ;; ------------------------------------
 ;; MULTIMETHOD
 ;; ------------------------------------
 
 (defmulti render-msg
-  (fn [ix item]
+  (fn [ix item is-editing]
     (:type item)))
 
-(defmethod render-msg :default [ix item] "KEK")
+(defmethod render-msg :default [ix item is-editing] "KEK")
 
-(defmethod render-msg "text-message" [ix item]
-  (let [{:keys [text]} item
-        is-editing-id (subscribe [:ui/is-editing-id])
-        is-editing (= (:uid item) @is-editing-id)] ;; if current msg editable
-      ^{:key ix}
-      [:li.list_message
-        (if is-editing
-          ^{:key ix} [render-editable-text text]
-          ^{:key ix} [render-text text])]))
+(defmethod render-msg "text-message" [ix item is-editing]
+  (let [{:keys [text uid]} item]
+    ^{:key ix}
+    [:div.message_content
+      (if is-editing
+        ^{:key ix} [render-editable-text uid]
+        ^{:key ix} [render-text text])]))
 
-(defmethod render-msg "quick-reply" [ix item]
+(defmethod render-msg "quick-reply" [ix item is-editing]
   (let [text (:text item)
         btns (:buttons item)]
     ^{:key ix}
-    [:li.list_message
+    [:div.message_content
       ^{:key text}
       [render-text text]
       ^{:key btns}
       [render-qr btns]]))
 
-(defmethod render-msg "button-template" [ix item]
+(defmethod render-msg "button-template" [ix item is-editing]
   (let [text (:text item)
         btns (:buttons item)]
     ^{:key ix}
-    [:li.list_message
+    [:div.message_content
       ^{:key text}
       [render-text text "last"]
       ^{:key btns}
@@ -116,18 +115,6 @@
     {:on-click #(prn (gen-uid "msg"))}
     (str "Drag & drop here one of elements"
          " from the right panel")])
-
-(defn msg-tools [ix msg]
-  [:div.lister_msg_tools {:on-drag-start #(.stopPropagation %)
-                          :class (if (= @reveal ix) "" "hidden")}
-    [:div.edit
-      {:on-click #(dispatch [:set-is-editing-id ix])}
-      "✍🏼"]
-    [:div.copy   "📑"]
-      ;; TODO on-click
-    [:div.remove "💥"]])
-      ;; TODO on-click
-
 
 ;; ------------------------------------
 ;; ON-HOVER BUSINESS
@@ -142,43 +129,53 @@
 (defn on-unhover [e]
   (reset! reveal nil))
 
-(defn drag-hook [ix]
-  [:div.msg_drag-hook
-    {:class (if (= @reveal ix) "" "hidden")}
-    "🖐🏻"])
+(defn drag-hook [ix is-editing]
+  (let [visible (or is-editing (= @reveal ix))]
+    [:div.msg_drag-hook
+      {:class (if visible "" "hidden")}
+      "🖐🏻"]))
 
+(defn msg-tools [ix msg is-editing]
+  [:div.lister_msg_tools {:on-drag-start #(.stopPropagation %)
+                          :class (if (= @reveal ix) "" "hidden")}
+    [:div.edit
+      {:on-click #(dispatch [:set-is-editing-id ix])}
+      "✍🏼"]
+    [:div.copy   "📑"]
+      ;; TODO on-click
+    [:div.remove "💥"]])
+      ;; TODO on-click
 
 ;; ------------------------------------
 ;; WRAPPER over MSGS
 
 (defn render-msg-container [msg]
-  (let [{:keys [type uid order]} msg
-         is-editing-id (subscribe [:ui/is-editing-id])
-         is-editing (= (:uid msg) @is-editing-id)] ;; if current msg editable
-    (fn []
-      [:div.lister_msg_container
-        (if-not is-editing
-          {:draggable true
-           :data-dragtype "MSG_TYPE"
-           :class (if (= uid (:dix @state)) "msg_dragged" "")
-           :on-drag-start  on-drag-start
-           :on-drag-over   on-drag-over
-           :on-drag-end    on-drag-end
-           :on-mouse-enter on-hover
-           :on-mouse-leave on-unhover
-           :data-uid uid
-           :data-dragindex order
-           :data-type type}
-          {})
-        (if-not is-editing
-          [drag-hook uid])
-        [render-msg uid msg]
-        (if-not is-editing
-          [msg-tools uid msg])])))
+  (fn []
+    (let [{:keys [type uid order]} msg
+          is-editing-id (subscribe [:ui/is-editing-id])
+          is-editing (= (:uid msg) @is-editing-id)] ;; if current msg editable
+        [:li.list_message
+          (if-not is-editing
+            {:draggable true
+             :data-dragtype "MSG_TYPE"
+             :style {:cursor "move"}
+             :class (if (= uid (:dix @state)) "msg_dragged" "")
+             :on-drag-start  on-drag-start
+             :on-drag-over   on-drag-over
+             :on-drag-end    on-drag-end
+             :on-mouse-enter on-hover
+             :on-mouse-leave on-unhover
+             :data-uid uid
+             :data-dragindex order
+             :data-type type})
+          [drag-hook uid is-editing]
+          [render-msg uid msg is-editing]
+          [msg-tools uid msg is-editing]])))
 
 (defn lister []
   (fn []
     (let [msgs (subscribe [:curr-msgs])]
+      (js/console.log "lister re-rendered")
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper

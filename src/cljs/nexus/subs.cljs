@@ -77,6 +77,14 @@
     (-> db :ui :is-editing-id)))
 
 
+(re-frame/reg-sub
+  :ui/is-editing-msg-text
+  (fn [db [_]]
+    (let [course (:curr-course db)
+          day (:curr-day db)
+          id (subscribe [:ui/is-editing-id])]
+      (get-in db [:courses course :days day :messages @id :text]))))
+
 
  ; (register-sub
  ;  :sorted-items      ;; the query id  (the name of the query)

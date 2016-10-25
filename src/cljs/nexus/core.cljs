@@ -12,8 +12,6 @@
             [nexus.config :as config]))
             ; [externs.textarea]))
 
-; (js/console.log js/TextareaAutosize)
-
 (defn dev-setup []
   (when config/debug?
     (enable-console-print!)
@@ -30,3 +28,5 @@
   (re-frame/dispatch-sync [:initialize-db])
   (dev-setup)
   (mount-root))
+
+; (js/console.log js/Textarea)

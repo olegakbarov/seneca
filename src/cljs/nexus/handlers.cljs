@@ -168,3 +168,16 @@
   :unset-is-editing-id
   (fn [db [_]]
     (assoc-in db [:ui :is-editing-id] nil)))
+
+
+
+;; EDITOR CONTENT ACTIONS
+
+(reg-event-db
+  :edit-msg-text
+  (fn [db [_ id text]]
+    (let [course (:curr-course db)
+          day (:curr-day db)
+          msgs (get-in db [:courses course :days day :messages])
+          updated (assoc-in msgs [id :text] text)]
+      (assoc-in db [:courses course :days day :messages] updated))))
