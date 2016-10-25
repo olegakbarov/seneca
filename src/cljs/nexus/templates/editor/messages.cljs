@@ -67,7 +67,8 @@
         (fn []
           [:textarea.lister_msg_item_text
             {:value text
-             :on-change #(prn (-> % -.target -.value))}])}))
+             :on-change #(prn (-> % -.target -.value))
+             :on-click #(.stopPropagation %)}])}))
 
 ;; ------------------------------------
 ;; MULTIMETHOD

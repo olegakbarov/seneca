@@ -8,9 +8,9 @@
     [:html
      [:head
       [:meta {:charset "utf-8"}]
-      [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-      [:title "Editor 🤔"]
-      (include-css "less.css")]
+      [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]      [:title "Editor 🤔"]
+      (include-css "css/less.css")]
      [:body
       [:div#container]
-      (include-js "app.js")]]))
+      (include-js "js/main.js")]]))

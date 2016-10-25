@@ -1,15 +1,18 @@
 
 (ns nexus.core
-    (:require [reagent.core :as r]
-              [re-frame.core :as re-frame]
-              [devtools.core :as devtools]
-              ;; must require both in root file
-              [nexus.handlers]
-              [nexus.subs]
+  (:require [reagent.core :as r]
+            [re-frame.core :as re-frame]
+            [devtools.core :as devtools]
+            ;; must require both in root file
+            [nexus.handlers]
+            [nexus.subs]
 
-              [nexus.routes :as routes]
-              [nexus.views :as views]
-              [nexus.config :as config]))
+            [nexus.routes :as routes]
+            [nexus.views :as views]
+            [nexus.config :as config]))
+            ; [externs.textarea]))
+
+; (js/console.log js/TextareaAutosize)
 
 (defn dev-setup []
   (when config/debug?

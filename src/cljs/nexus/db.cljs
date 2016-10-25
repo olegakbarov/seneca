@@ -10,7 +10,7 @@
     {:router {:current ""}
 
      :ui {:scroll-top 0
-          :is-editing-id nil} 
+          :is-editing-id nil}
           ; :is-editing-id "msg@66666666KKK"}
 
      :form {:email "default@mail.co"
