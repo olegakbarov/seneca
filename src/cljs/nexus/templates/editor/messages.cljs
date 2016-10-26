@@ -11,7 +11,6 @@
                                         on-drag-start
                                         on-drag-over
                                         on-drag-end]]
-
     [nexus.templates.editor.add_msg :refer [add-msg]]
     [re-frame.core :refer [reg-event-db
                            path
@@ -48,9 +47,11 @@
     (doall
       (map-indexed
         (fn [ix item]
-          ^{:key ix}
-          [:div.lister_msg_item_qr
-            (:text item)])
+          (let [{:keys [payload]} item]
+            ^{:key ix}
+            [:div.lister_msg_item_qr
+              {:class (if payload "" "item_error")}
+              (:text item)]))
         btns))])
 
 ;; ------------------------------------
@@ -151,36 +152,105 @@
 
 (defn render-msg-container [msg]
   (fn []
-    (let [{:keys [type uid order]} msg
+    (let [{:keys [type uid order thread]} msg
           is-editing-id (subscribe [:ui/is-editing-id])
-          is-editing (= (:uid msg) @is-editing-id)] ;; if current msg editable
-        [:li.list_message
-          (if-not is-editing
-            {:draggable true
-             :data-dragtype "MSG_TYPE"
-             :style {:cursor "move"}
-             :class (if (= uid (:dix @state)) "msg_dragged" "")
-             :on-drag-start  on-drag-start
-             :on-drag-over   on-drag-over
-             :on-drag-end    on-drag-end
-             :on-mouse-enter on-hover
-             :on-mouse-leave on-unhover
-             :data-uid uid
-             :data-dragindex order
-             :data-type type})
-          [drag-hook uid is-editing]
-          [render-msg uid msg is-editing]
-          [msg-tools uid msg is-editing]])))
+          active-thread-id (subscribe [:ui/curr-thread])
+          is-editing (= (:uid msg) @is-editing-id) ;; if current msg editable
+          overlayed? (= @active-thread-id (:thread msg))
+          dragged? (when (= uid (:dix @state)) "msg_dragged")
+          classes (str dragged?)]
+        [:li.list_message_container
+          (when overlayed?
+            [:div.msg_overlay
+              {:on-mouse-enter #(-> % .stopPropagation)
+               :on-click #(dispatch [:set-curr-thread thread])}])
+          [:div.msg_inner_container
+            (if-not is-editing
+              {:draggable true
+               :data-dragtype "MSG_TYPE"
+               :style {:cursor "move"}
+               :class classes
+               :on-drag-start  on-drag-start
+               :on-drag-over   on-drag-over
+               :on-drag-end    on-drag-end
+               :on-mouse-enter on-hover
+               :on-mouse-leave on-unhover
+               :data-uid uid
+               :data-dragindex order
+               :data-type type})
+            [drag-hook uid is-editing]
+            [render-msg uid msg is-editing]
+            [msg-tools uid msg is-editing]]])))
+
+
+;;-----------------------------
+;; ADDING UI DATA FOR RENDERING
+;;-----------------------------
+
+;; "Checks if button template or quick-reply has child message,
+;;  that follows it"
+
+(defmulti has-child?
+  (fn [item]
+    (:type item)))
+
+(defmethod has-child? :default [item] nil)
+
+(defmethod has-child? "text-message" [item]
+  false)
+
+(defmethod has-child? "media" [item]
+  false)
+
+(defmethod has-child? "generic-template" [item]
+  false)
+
+(defmethod has-child? "button-template" [item]
+  (let [btns (:buttons item)]
+    (reduce
+     (fn [res item]
+      (if-not res
+              res
+              (contains? item :payload)))
+     true
+     btns)))
+
+(defmethod has-child? "quick-reply" [item]
+  (let [btns (:buttons item)]
+    (reduce
+     (fn [res item]
+      (if-not res
+              res
+              (contains? item :payload)))
+     true
+     btns)))
+
+(defn add-thread-info [m]
+  "Adds information about thread by detecting `:next nil`"
+  (let [n (atom 0)]
+    (mapv
+     (fn [[key val]]
+       (if (has-child? val)
+         (do
+           (let [v (assoc val :thread @n)]
+             (reset! n (inc @n))
+             v))
+         (assoc val :thread @n)))
+     m)))
 
 (defn lister []
   (fn []
-    (let [msgs (subscribe [:curr-msgs])]
-      (js/console.log "lister re-rendered")
+    (let [msgs (subscribe [:curr-msgs])
+          show-dropzone (> (count @msgs) 1)
+          processed (add-thread-info @msgs)]
+      (js/console.log processed)
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (for [item (sort-by :order @msgs)]
+              (for [item (sort-by :order processed)]
                   ^{:key (:uid item)}
                   [render-msg-container item]))]]))))
+        ;  (if show-dropzone
+        ;   [:div.msg_wrapper_dropzone])]))))

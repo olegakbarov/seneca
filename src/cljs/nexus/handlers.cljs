@@ -13,6 +13,7 @@
  (fn  [_ _]
    db/state))
 
+
 ;; naīve logging
 (reg-event-db
   :show_state
@@ -181,3 +182,8 @@
           msgs (get-in db [:courses course :days day :messages])
           updated (assoc-in msgs [id :text] text)]
       (assoc-in db [:courses course :days day :messages] updated))))
+
+(reg-event-db
+  :set-curr-thread
+  (fn [db [_ thread-id]]
+    (assoc-in db [:ui :curr-thread] thread-id)))

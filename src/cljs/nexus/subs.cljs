@@ -34,8 +34,7 @@
     (let [course-id (:curr-course db)
           day-id (:curr-day db)]
       (-> db
-          (get-in [:courses course-id :days day-id :messages])
-          vals))))
+          (get-in [:courses course-id :days day-id :messages])))))
 
 (re-frame/reg-sub
   :my-bots
@@ -76,7 +75,6 @@
   (fn [db [_]]
     (-> db :ui :is-editing-id)))
 
-
 (re-frame/reg-sub
   :ui/is-editing-msg-text
   (fn [db [_]]
@@ -84,6 +82,11 @@
           day (:curr-day db)
           id (subscribe [:ui/is-editing-id])]
       (get-in db [:courses course :days day :messages @id :text]))))
+
+(re-frame/reg-sub
+  :ui/curr-thread
+  (fn [db [_]]
+    (-> db :ui :curr-thread)))
 
 
  ; (register-sub
