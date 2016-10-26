@@ -2,19 +2,40 @@
 @import 'colors.less';
 @import 'globals.less';
 
-.list_message {
+.list_message_container {
+  position: relative;
+}
+
+.msg_overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: @graphite;
+  opacity: .1;
+  z-index: 999;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.msg_inner_container {
   color: rgb(214, 214, 214);
   position: relative;
   padding: 20px 0;
   cursor: default;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid @snowgray;
+}
 
-  &:hover {
-    cursor: move;
-  }
+.msg_wrapper_dropzone {
+  height: 200px;
+  // border-top: 1px solid @midgray;
+}
 
-  &:last-child {
-    border-bottom: 0px;
-  }
+.message_content {
+  margin: 0 auto;
 }
 
 .msg_dragged {
@@ -27,12 +48,6 @@
 }
 
 /* MSGS BY TYPES */
-
-.lister_msg_container {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid @lightgray;
-}
 
 @emoji: 2em;
 .msg_drag-hook {
@@ -60,6 +75,7 @@
   font-size: 14px;
   line-height: 22px;
   cursor: default;
+  border: 1px solid @lightgray;
 
   &.last_txt {
     border-radius: 14px 14px 0 0;
@@ -116,6 +132,23 @@ textarea.lister_msg_item_text:focus {
   border-radius: 100px;
   min-width: 48%;
   cursor: default;
+  opacity: .5;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.lister_msg_item_qr.item_error {
+  &:extend(.lister_msg_item_qr);
+    padding: 12px 20px;
+    color: @pink;
+    border: 1px solid @pink;
+}
+
+
+.lister_msg_item_qr.active {
+  opacity: 1;
 }
 
 .lister_msg_item_btns {
