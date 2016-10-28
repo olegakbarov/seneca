@@ -184,6 +184,6 @@
       (assoc-in db [:courses course :days day :messages] updated))))
 
 (reg-event-db
-  :set-curr-thread
+  :ui/set-active-thread
   (fn [db [_ thread-id]]
     (assoc-in db [:ui :curr-thread] thread-id)))

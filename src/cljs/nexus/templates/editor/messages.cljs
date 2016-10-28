@@ -42,15 +42,18 @@
             (:text item)])
         btns))])
 
-(defn render-qr [btns]
+(defn render-qr [btns thread]
   [:div.lister_msg_item_wrap
     (doall
       (map-indexed
         (fn [ix item]
-          (let [{:keys [payload]} item]
+          (let [{:keys [payload]} btns]
             ^{:key ix}
             [:div.lister_msg_item_qr
-              {:class (if payload "" "item_error")}
+              {:class (if payload "" "item_error")
+               :on-click #(do
+                            (js/console.log "Setted active thread " thread)
+                            (dispatch [:ui/set-active-thread] thread))}
               (:text item)]))
         btns))])
 
@@ -91,14 +94,14 @@
         ^{:key ix} [render-text text])]))
 
 (defmethod render-msg "quick-reply" [ix item is-editing]
-  (let [text (:text item)
+  (let [{:keys [text thread]} item
         btns (:buttons item)]
     ^{:key ix}
     [:div.message_content
       ^{:key text}
       [render-text text]
       ^{:key btns}
-      [render-qr btns]]))
+      [render-qr btns thread]]))
 
 (defmethod render-msg "button-template" [ix item is-editing]
   (let [text (:text item)
@@ -156,14 +159,16 @@
           is-editing-id (subscribe [:ui/is-editing-id])
           active-thread-id (subscribe [:ui/curr-thread])
           is-editing (= (:uid msg) @is-editing-id) ;; if current msg editable
-          overlayed? (= @active-thread-id (:thread msg))
+          overlayed? (if (nil? @active-thread-id)
+                         false
+                         (not= @active-thread-id (:thread msg)))
           dragged? (when (= uid (:dix @state)) "msg_dragged")
           classes (str dragged?)]
         [:li.list_message_container
           (when overlayed?
             [:div.msg_overlay
               {:on-mouse-enter #(-> % .stopPropagation)
-               :on-click #(dispatch [:set-curr-thread thread])}])
+               :on-click #(dispatch [:ui/set-active-thread thread])}])
           [:div.msg_inner_container
             (if-not is-editing
               {:draggable true
@@ -197,13 +202,13 @@
 (defmethod has-child? :default [item] nil)
 
 (defmethod has-child? "text-message" [item]
-  false)
+  true)
 
 (defmethod has-child? "media" [item]
-  false)
+  true)
 
 (defmethod has-child? "generic-template" [item]
-  false)
+  true)
 
 (defmethod has-child? "button-template" [item]
   (let [btns (:buttons item)]
@@ -241,9 +246,8 @@
 (defn lister []
   (fn []
     (let [msgs (subscribe [:curr-msgs])
-          show-dropzone (> (count @msgs) 1)
+          dropzone (> (count @msgs) 1)
           processed (add-thread-info @msgs)]
-      (js/console.log processed)
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
@@ -251,6 +255,6 @@
             (doall
               (for [item (sort-by :order processed)]
                   ^{:key (:uid item)}
-                  [render-msg-container item]))]]))))
-        ;  (if show-dropzone
-        ;   [:div.msg_wrapper_dropzone])]))))
+                  [render-msg-container item]))]
+         (if dropzone
+          [:div.msg_wrapper_dropzone])]))))
