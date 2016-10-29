@@ -11,7 +11,8 @@
 
      :ui {:scroll-top 0
           :is-editing-id nil
-          :curr-thread 0}
+          :curr-thread nil
+          :expanded-msgs #{"msg@5555555TTTT" "msg@NEXT1"}}
 
      :form {:email "default@mail.co"
             :password ""
@@ -28,9 +29,9 @@
 
      :bots {}
 
-     :editor {:ui {:days-folded false
-                   :topbar-folded false
-                   :saved true}
+     :editor {:ui {:days-folded     false
+                   :topbar-folded   false
+                   :saved           false}
 
               :errors {:editor {:type "error" ;; warning etc
                                 :text "Can't be blank"}}}
@@ -48,9 +49,11 @@
                       :order 0
                       :messages
                         {"msg@66666666KKK" {:uid "msg@66666666KKK" :order 0 :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
-                         "msg@5555555TTTT" {:uid "msg@5555555TTTT" :order 1 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply" :payload "123"}]}
-                         "msg@33333AAAAAA" {:uid "msg@33333AAAAAA" :order 3 :text "Alien" :type "text-message"}}}
-                        ;  "msg@4444444DDDD" {:uid "msg@4444444DDDD" :order 2 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}}}
+                         "msg@5555555TTTT" {:uid "msg@5555555TTTT" :order 1 :text "Normkek" :type "quick-reply" :buttons [{:text "Left"} {:text "Right" :payload "msg@NEXT1"}]}
+                         "msg@NEXT1" {:uid "msg@33333AAAAAA" :order 2 :text "This is hidden in thread" :type "text-message"}}}
+                         ;; "msg@33333AAAAAA" {:uid "msg@4444444DDDD" :order 3 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}}}
+
+                    ;; -----------------------------------------------------------------------------------------------------------------------------------------------------
 
                     "day@ciu6ymswc03453503n3wsp"
                       {:uid "day@ciu6ymswc03453503n3wsp"

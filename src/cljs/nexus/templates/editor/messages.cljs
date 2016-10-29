@@ -4,19 +4,13 @@
   (:import [goog.events EventType])
   (:require
     [reagent.core :as r]
+    [re-frame.core :refer [reg-event-db path reg-sub subscribe dispatch]]
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
     [nexus.helpers.uids :refer [gen-uid]]
-    [nexus.templates.editor.dnd :refer [state
-                                        on-drag-start
-                                        on-drag-over
-                                        on-drag-end]]
-    [nexus.templates.editor.add_msg :refer [add-msg]]
-    [re-frame.core :refer [reg-event-db
-                           path
-                           reg-sub
-                           subscribe
-                           dispatch]]))
+    [nexus.dbutils :refer [add-thread-info]]
+    [nexus.templates.editor.dnd :refer [state on-drag-start on-drag-over on-drag-end]]
+    [nexus.templates.editor.add_msg :refer [add-msg]]))
 
 (def reveal (r/atom nil))
 
@@ -42,20 +36,24 @@
             (:text item)])
         btns))])
 
-(defn render-qr [btns thread]
-  [:div.lister_msg_item_wrap
-    (doall
-      (map-indexed
-        (fn [ix item]
-          (let [{:keys [payload]} btns]
-            ^{:key ix}
-            [:div.lister_msg_item_qr
-              {:class (if payload "" "item_error")
-               :on-click #(do
-                            (js/console.log "Setted active thread " thread)
-                            (dispatch [:ui/set-active-thread] thread))}
-              (:text item)]))
-        btns))])
+(defn render-qr [msg thread]
+  (let [expanded (subscribe [:ui/expanded-msgs])
+        btns (:buttons msg)]
+    [:div.lister_msg_item_wrap
+      (doall
+        (map-indexed
+          (fn [ix item]
+            (let [classes (str
+                            (if (:payload item) "" "qr_error")
+                            (if (contains? @expanded (:payload item)) " selected" ""))]
+              ^{:key ix}
+              [:div.lister_msg_item_qr
+                {:class classes
+                 :on-click #(do
+                              (js/console.log "Setted active thread " thread)
+                              (dispatch [:ui/toggle-expanded-id] thread))}
+                (:text item)]))
+          btns))]))
 
 ;; ------------------------------------
 ;; EDITEBALS
@@ -101,7 +99,7 @@
       ^{:key text}
       [render-text text]
       ^{:key btns}
-      [render-qr btns thread]]))
+      [render-qr (merge item {:uid ix}) thread]]))
 
 (defmethod render-msg "button-template" [ix item is-editing]
   (let [text (:text item)
@@ -167,7 +165,7 @@
         [:li.list_message_container
           (when overlayed?
             [:div.msg_overlay
-              {:on-mouse-enter #(-> % .stopPropagation)
+              {:on-mouse-enter #(.stopPropagation %)
                :on-click #(dispatch [:ui/set-active-thread thread])}])
           [:div.msg_inner_container
             (if-not is-editing
@@ -188,60 +186,12 @@
             [msg-tools uid msg is-editing]]])))
 
 
-;;-----------------------------
-;; ADDING UI DATA FOR RENDERING
-;;-----------------------------
+(defn render-branch-msg [item]
+  (let [expanded (subscribe [:ui/expanded-msgs])]
+    (if (contains? @expanded (item :uid))
+      ^{:key (:uid item)}
+      [render-msg-container item])))
 
-;; "Checks if button template or quick-reply has child message,
-;;  that follows it"
-
-(defmulti has-child?
-  (fn [item]
-    (:type item)))
-
-(defmethod has-child? :default [item] nil)
-
-(defmethod has-child? "text-message" [item]
-  true)
-
-(defmethod has-child? "media" [item]
-  true)
-
-(defmethod has-child? "generic-template" [item]
-  true)
-
-(defmethod has-child? "button-template" [item]
-  (let [btns (:buttons item)]
-    (reduce
-     (fn [res item]
-      (if-not res
-              res
-              (contains? item :payload)))
-     true
-     btns)))
-
-(defmethod has-child? "quick-reply" [item]
-  (let [btns (:buttons item)]
-    (reduce
-     (fn [res item]
-      (if-not res
-              res
-              (contains? item :payload)))
-     true
-     btns)))
-
-(defn add-thread-info [m]
-  "Adds information about thread by detecting `:next nil`"
-  (let [n (atom 0)]
-    (mapv
-     (fn [[key val]]
-       (if (has-child? val)
-         (do
-           (let [v (assoc val :thread @n)]
-             (reset! n (inc @n))
-             v))
-         (assoc val :thread @n)))
-     m)))
 
 (defn lister []
   (fn []
@@ -254,7 +204,9 @@
           [:ul.list_messages
             (doall
               (for [item (sort-by :order processed)]
-                  ^{:key (:uid item)}
-                  [render-msg-container item]))]
+                  (if-not (item :buttons)
+                    ^{:key (:uid item)}
+                    [render-msg-container item]
+                    (render-branch-msg item))))]
          (if dropzone
           [:div.msg_wrapper_dropzone])]))))

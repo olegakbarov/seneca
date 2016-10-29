@@ -132,23 +132,31 @@ textarea.lister_msg_item_text:focus {
   border-radius: 100px;
   min-width: 48%;
   cursor: default;
-  opacity: .5;
 
   &:hover {
     cursor: pointer;
   }
 }
 
-.lister_msg_item_qr.item_error {
+
+.lister_msg_item_qr.qr_error {
   &:extend(.lister_msg_item_qr);
     padding: 12px 20px;
+    background-color: @white;
     color: @pink;
     border: 1px solid @pink;
 }
 
 
-.lister_msg_item_qr.active {
-  opacity: 1;
+.lister_msg_item_qr.qr_error.selected {
+  background-color: @pink;
+  color: @white;
+}
+
+
+.lister_msg_item_qr.selected {
+  background-color: @fbblue;
+  color: @white;
 }
 
 .lister_msg_item_btns {
