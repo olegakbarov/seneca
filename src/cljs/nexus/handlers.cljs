@@ -95,6 +95,7 @@
 
 
 
+;;---------------------------
 ;; DAYS
 
 (reg-event-db
@@ -104,6 +105,7 @@
 
 
 
+;;---------------------------
 ;; BOTS
 
 (def new-bot
@@ -118,6 +120,7 @@
 
 
 
+;;---------------------------
 ;; FORM
 
 (reg-event-db
@@ -127,6 +130,7 @@
 
 
 
+;;---------------------------
 ;; FETCH DATA
 
 (reg-event-db
@@ -156,8 +160,7 @@
    (js/console.log response)
    db))
 
-
-
+;;---------------------------
 ;; EDITOR UI ACTIONS
 
 (reg-event-db
@@ -171,7 +174,7 @@
     (assoc-in db [:ui :is-editing-id] nil)))
 
 
-
+;;---------------------------
 ;; EDITOR CONTENT ACTIONS
 
 (reg-event-db
@@ -184,6 +187,12 @@
       (assoc-in db [:courses course :days day :messages] updated))))
 
 (reg-event-db
-  :ui/set-active-thread
-  (fn [db [_ thread-id]]
-    (assoc-in db [:ui :curr-thread] thread-id)))
+  :ui/toggle-expanded-id
+  (fn [db [_ id]]
+    (if (nil? id)
+      db
+      (let [curr-set (-> db :ui :expanded-msgs)
+            updated (if (contains? curr-set id)
+                        (disj curr-set id)
+                        (conj curr-set id))]
+        (assoc-in db [:ui :expanded-msgs] updated)))))

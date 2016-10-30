@@ -50,13 +50,13 @@
               [:div.lister_msg_item_qr
                 {:class classes
                  :on-click #(do
-                              (js/console.log "Setted active thread " thread)
-                              (dispatch [:ui/toggle-expanded-id] thread))}
+                              (js/console.log "Toggling :payload with id " (:payload item))
+                              (dispatch [:ui/toggle-expanded-id (:payload item)]))}
                 (:text item)]))
           btns))]))
 
 ;; ------------------------------------
-;; EDITEBALS
+;; EDITABALES
 ;; ------------------------------------
 
 (defn render-editable-text [uid]
@@ -74,7 +74,7 @@
                :on-click #(.stopPropagation %)}])})))
 
 ;; ------------------------------------
-;; MULTIMETHOD
+;; RENDER MSG BY TYPE
 ;; ------------------------------------
 
 (defmulti render-msg
@@ -120,6 +120,7 @@
 
 ;; ------------------------------------
 ;; ON-HOVER BUSINESS
+;; ------------------------------------
 
 (def mouse-chan (chan))
 
@@ -150,6 +151,7 @@
 
 ;; ------------------------------------
 ;; WRAPPER over MSGS
+;; ------------------------------------
 
 (defn render-msg-container [msg]
   (fn []
@@ -187,26 +189,59 @@
 
 
 (defn render-branch-msg [item]
-  (let [expanded (subscribe [:ui/expanded-msgs])]
-    (if (contains? @expanded (item :uid))
-      ^{:key (:uid item)}
-      [render-msg-container item])))
+  (js/console.log item)
+  (fn []
+    (let [expanded (subscribe [:ui/expanded-msgs])]
+      (if (contains? @expanded (item :uid))
+        [render-msg-container item]))))
 
+(defn vec->threads [coll]
+  (map
+    #(vec %)
+    (reduce
+      (fn [acc item]
+        (let [h (butlast acc)
+              l (last acc)]
+          (if (contains? (last l) :buttons)
+            (concat acc [[item]])
+            (concat h [(concat l [item])]))))
+      []
+      coll)))
 
 (defn lister []
   (fn []
     (let [msgs (subscribe [:curr-msgs])
           dropzone (> (count @msgs) 1)
-          processed (add-thread-info @msgs)]
+          processed (vec->threads (vals @msgs))]
+      (js/console.log processed)
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (for [item (sort-by :order processed)]
-                  (if-not (item :buttons)
-                    ^{:key (:uid item)}
-                    [render-msg-container item]
-                    (render-branch-msg item))))]
+              (for [thread processed]
+                (map-indexed
+                 (fn [thread-index item]
+                    ^{:key (:uid item)} [render-msg-container item])
+                    ; ^{:key (:uid item)} [render-branch-msg item])
+                 thread)))]
          (if dropzone
           [:div.msg_wrapper_dropzone])]))))
+
+; (defn lister []
+;   (fn []
+;     (let [msgs (subscribe [:curr-msgs])
+;           dropzone (> (count @msgs) 1)
+;           ; processed (add-thread-info @msgs)
+;           processed (vec->threads @msgs)]
+;       (if (= 0 (count @msgs))
+;         [empty-day]
+;         [:div#msg_wrapper
+;           [:ul.list_messages
+;             (doall
+;               (for [item (sort-by :order processed)]
+;                   (if-not (item :buttons)
+;                     ^{:key (:uid item)} [render-msg-container item]
+;                     ^{:key (:uid item)} [render-branch-msg item])))]
+;          (if dropzone
+;           [:div.msg_wrapper_dropzone])]))))
