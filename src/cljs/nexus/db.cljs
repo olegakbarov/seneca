@@ -12,7 +12,7 @@
      :ui {:scroll-top 0
           :is-editing-id nil
           :curr-thread nil
-          :expanded-msgs [[]]}
+          :expanded-msgs []}
 
      :form {:email "default@mail.co"
             :password ""
