@@ -71,3 +71,70 @@
              v))
          (assoc val :thread @n)))
      m)))
+
+;;-----------------------------------
+;;-----------------------------------
+
+
+
+(defn keywordize-ids [m]
+  (reduce
+    (fn [acc [key val]]
+      (if (keyword? key)
+        (assoc acc key val)
+        (if (map? val)
+            (assoc acc (keyword key) (keywordize-ids val))
+            (assoc acc (keyword key) val))))
+    {}
+    m))
+
+
+(defn build-tree
+  "
+  Builds nested vector tree from hashmap
+
+  (map
+   (fn [item]
+     (build-tree item msgs))
+   msgs)
+  "
+  [[key val] m]
+  (if-let [payload (:payload val)]
+    [key (mapv
+          (fn [k]
+            (build-tree [k (get m k)] m))
+          payload)]
+    key))
+
+
+(defn vec->set
+  "Takes nested vector and returns key-to-set map"
+  [tr res]
+  (js/console.log tr res)
+  (when-not (keyword? tr)
+    (let [k (first tr)
+          v (peek tr)]
+      (if (keyword? v)
+        res
+        (recur v (assoc res k (-> v
+                                  flatten
+                                  set)))))))
+
+
+(defn make-deps-tree
+  "Creates a map of 'dependecies' from tree represented as vector"
+  [v]
+  (let [res {}]
+    (first (->> v
+                (map #(vec->set % res))
+                (remove nil?)))))
+
+
+(defn shallow-deps
+  "Returns a set of shallow dependecies, useful for init render"
+  [m]
+  (set
+    (->> (vals m)
+         (filter #(contains? % :payload))
+         (map :payload)
+         (apply concat))))

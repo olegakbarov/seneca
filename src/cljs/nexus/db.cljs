@@ -12,7 +12,8 @@
      :ui {:scroll-top 0
           :is-editing-id nil
           :curr-thread nil
-          :expanded-msgs []}
+          :msgs {:hidden #{}
+                 :deps-tree []}}
 
      :form {:email "default@mail.co"
             :password ""

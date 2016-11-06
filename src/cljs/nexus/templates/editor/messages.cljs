@@ -8,7 +8,11 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
     [nexus.helpers.uids :refer [gen-uid]]
-    [nexus.dbutils :refer [add-thread-info]]
+    [nexus.dbutils :refer [add-thread-info
+                           shallow-deps
+                           make-deps-tree
+                           keywordize-ids
+                           build-tree]]
     [nexus.templates.editor.dnd :refer [state on-drag-start on-drag-over on-drag-end]]
     [nexus.templates.editor.add_msg :refer [add-msg]]))
 
@@ -188,60 +192,29 @@
             [msg-tools uid msg is-editing]]])))
 
 
-(defn render-branch-msg [item]
-  (js/console.log item)
-  (fn []
-    (let [expanded (subscribe [:ui/expanded-msgs])]
-      (if (contains? @expanded (item :uid))
-        [render-msg-container item]))))
-
-(defn vec->threads [coll]
-  (map
-    #(vec %)
-    (reduce
-      (fn [acc item]
-        (let [h (butlast acc)
-              l (last acc)]
-          (if (contains? (last l) :buttons)
-            (concat acc [[item]])
-            (concat h [(concat l [item])]))))
-      []
-      coll)))
-
 (defn lister []
   (fn []
     (let [msgs (subscribe [:curr-msgs])
           dropzone (> (count @msgs) 1)
-          processed (vec->threads (vals @msgs))]
-      (js/console.log processed)
+          m (keywordize-ids @msgs)
+          tree (map
+                 (fn [item]
+                   (build-tree item m))
+                 m)
+          msg-state (atom {:hidden (shallow-deps m)
+                           :deps (make-deps-tree tree)})
+          hidden (:hidden @msg-state)
+          processed (reduce
+                     (fn [acc [key val]]
+                       (if (contains? hidden key)
+                         acc
+                         (assoc acc key val))) {} m)]
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
           [:ul.list_messages
             (doall
-              (for [thread processed]
-                (map-indexed
-                 (fn [thread-index item]
-                    ^{:key (:uid item)} [render-msg-container item])
-                    ; ^{:key (:uid item)} [render-branch-msg item])
-                 thread)))]
+              (for [[key item] processed]
+                ^{:key key} [render-msg-container item]))]
          (if dropzone
           [:div.msg_wrapper_dropzone])]))))
-
-; (defn lister []
-;   (fn []
-;     (let [msgs (subscribe [:curr-msgs])
-;           dropzone (> (count @msgs) 1)
-;           ; processed (add-thread-info @msgs)
-;           processed (vec->threads @msgs)]
-;       (if (= 0 (count @msgs))
-;         [empty-day]
-;         [:div#msg_wrapper
-;           [:ul.list_messages
-;             (doall
-;               (for [item (sort-by :order processed)]
-;                   (if-not (item :buttons)
-;                     ^{:key (:uid item)} [render-msg-container item]
-;                     ^{:key (:uid item)} [render-branch-msg item])))]
-;          (if dropzone
-;           [:div.msg_wrapper_dropzone])]))))
