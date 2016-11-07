@@ -18,7 +18,7 @@
 (reg-event-db
   :show_state
   (fn [db [_]]
-    (log db)
+    (js/console.log (-> db :ui :msgs))
     db))
 
 (reg-event-db
@@ -187,14 +187,18 @@
 
 (reg-event-db
   :ui/toggle-expanded-id
-  (fn [db [_ id]]
-    (if (nil? id)
-      db
-      (let [curr-set (-> db :ui :expanded-msgs)
-            updated (if (contains? curr-set id)
-                        (disj curr-set id)
-                        (conj curr-set id))]
-        (assoc-in db [:ui :expanded-msgs] updated)))))
+  (fn [db [_ [parent child]]]
+    (if (nil? parent)
+        (js/console.log "ERROR CHILD CANT BE NIL")
+        (if (nil? child)
+          db
+          (let [hidden (-> db :ui :msgs :hidden)
+                parent-deps (-> db :ui :msgs :deps parent)
+                clean (clojure.set/difference hidden parent-deps)
+                res (conj clean child)]
+            (js/console.log parent-deps)
+            (js/console.log clean)
+            (assoc-in db [:ui :msgs :hidden] res))))))
 
 (reg-event-db
   :ui/create-msgs-state

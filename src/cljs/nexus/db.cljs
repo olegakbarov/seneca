@@ -48,11 +48,11 @@
                      {:uid "day@ciu6ymswc00018012503n3wsf"
                       :order 0
                       :messages
-                        {:1 {:uid "msg@1"
+                        {:1 {:uid :1
                                   :order 0
                                   :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch."
                                   :type "text-message"}
-                         :2 {:uid "msg@2"
+                         :2 {:uid :2
                                   :order 1
                                   :text "Normkek"
                                   :type "quick-reply"
@@ -60,11 +60,11 @@
                                              :next :4}
                                             {:text "Right"
                                              :next :3}]}
-                         :3 {:uid "msg@3"
+                         :3 {:uid :3
                                   :order 2
                                   :text "This is hidden in thread"
                                   :type "text-message"}
-                         :4 {:uid "msg@4"
+                         :4 {:uid :4
                                   :order 1
                                   :text "Normkek"
                                   :type "quick-reply"

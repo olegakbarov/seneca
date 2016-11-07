@@ -41,24 +41,26 @@
         btns))])
 
 (defn render-qr [msg thread]
-  (let [
-        expanded (subscribe [:ui/expanded-msgs])
+  (let [hidden (subscribe [:ui/hidden-msgs])
         btns (:payload msg)]
+    (js/console.log msg)
     [:div.lister_msg_item_wrap
       (doall
         (map-indexed
           (fn [ix item]
-            (prn item)
+            ; (prn item)
             (let [next (-> item :next)
-                  classes (str
-                            (if next "" "qr_error")
-                            (if (contains? @expanded next) " selected" ""))]
+                  id (:uid msg)]
+                  ; classes (str
+                  ;           (if next "" "qr_error")
+                  ;           (if-not (contains? @hidden next) " selected" ""))]
               ^{:key ix}
               [:div.lister_msg_item_qr
-                {:class classes
+                {
+                ;  :class classes
                  :on-click #(do
-                              (js/console.log "Toggling :payload with id " next)
-                              (dispatch [:ui/toggle-expanded-id next]))}
+                              (js/console.log "Toggling " [id next])
+                              (dispatch [:ui/toggle-expanded-id [id next]]))}
                 (:text item)]))
           btns))]))
 
@@ -209,11 +211,10 @@
             (let [msgs (subscribe [:curr-msgs])
                   dropzone (> (count @msgs) 1)
                   tree (build-tree @msgs)
-                  state {:hidden (shallow-deps @msgs)
-                         :deps (make-deps-tree tree)}
+                  state (subscribe [:ui/msgs-state])
                   processed (reduce
                              (fn [acc [key val]]
-                               (let [hidden (:hidden state)]
+                               (let [hidden (:hidden @state)]
                                  (if (contains? hidden key)
                                    acc
                                    (assoc acc key val))))

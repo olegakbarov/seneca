@@ -89,9 +89,14 @@
     (-> db :ui :curr-thread)))
 
 (re-frame/reg-sub
-  :ui/expanded-msgs
+  :ui/hidden-msgs
   (fn [db [_]]
-    (-> db :ui :expanded-msgs)))
+    (-> db :ui :msgs :hidden)))
+
+(re-frame/reg-sub
+  :ui/msgs-state
+  (fn [db [_]]
+    (-> db :ui :msgs)))
 
  ; (register-sub
  ;  :sorted-items      ;; the query id  (the name of the query)
