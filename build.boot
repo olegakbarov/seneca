@@ -1,15 +1,15 @@
 (set-env!
  :source-paths    #{"src/clj" "src/cljs" "less"}
- :resource-paths  #{"resources"}
- :dependencies '[[adzerk/boot-cljs           "1.7.228-1"  :scope "test"]
+ :resource-paths  #{"resources" "src/clj"}
+ :dependencies '[[adzerk/boot-cljs           "1.7.228-2"  :scope "test"]
                  [adzerk/boot-cljs-repl      "0.3.0"      :scope "test"]
                  [adzerk/boot-reload         "0.4.8"      :scope "test"]
                  [pandeiro/boot-http         "0.7.3"      :scope "test"]
                  [com.cemerick/piggieback    "0.2.1"      :scope "test"]
                  [org.clojure/tools.nrepl    "0.2.12"     :scope "test"]
                  [weasel                     "0.7.0"      :scope "test"]
-                 [org.clojure/clojurescript "1.7.228"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/clojurescript  "1.9.216"]
+                 [org.clojure/core.async     "0.1.346.0-17112a-alpha"]
 
                  [cljs-http "0.1.39"]
                  [hiccup "1.0.5"]
@@ -18,6 +18,7 @@
 
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
+                 [metosin/ring-http-response "0.8.0"]
                  [ring "1.4.0"]
                  [compojure "1.4.0"]
 
@@ -39,12 +40,13 @@
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http    :refer [serve]]
  '[deraen.boot-less      :refer [less]]
- '[mount.core :as mount]
- 'nexus.server)
+ '[clojure.tools.namespace.repl :as repl]
+ '[mount.core :as mount])
+ ; '[nexus.server :refer [start!]])
+
 
 (deftask bundle []
   (comp
-    (cljs)
     (less)
     (sift   :move {#"less.css"          "public/less.css"
                    #"less.main.css.map" "public/less.main.css.map"})))
@@ -55,13 +57,18 @@
                 less   {:source-map  true})
  identity)
 
+
 (deftask run []
  (comp
-   (serve :handler 'nexus.server/wrapped-routes :reload true)
    (watch)
-   (cljs-repl)
    (reload)
-   (bundle)))
+   (cljs-repl :ids #{"js/main"})
+   (cljs :ids #{"js/main"})
+   (less)
+   (serve :handler 'nexus.server/wrapped-routes :reload true)
+   (sift :move {#"less.css"          "css/less.css"
+                #"less.main.css.map" "css/less.main.css.map"})))
+
 
 (deftask dev
  "Simple alias to run application in development mode"
@@ -69,12 +76,16 @@
  (comp (development)
        (run)))
 
+
+;; ------------------------------------
+;; BUILD
+
 (deftask build []
   (comp
     (cljs :optimizations :advanced)
     (less :compression true)
-    (sift :move {#"less.css"          "public/css/less.css"
-                 #"less.main.css.map" "public/less.main.css.map"})
+    (sift :move {#"less.css"          "css/less.css"
+                 #"less.main.css.map" "css/less.main.css.map"})
     (aot)
     (pom)
     (uber)
