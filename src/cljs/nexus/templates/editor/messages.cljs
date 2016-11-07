@@ -48,7 +48,8 @@
       (doall
         (map-indexed
           (fn [ix item]
-            (let [next (-> item :payload :next)
+            (prn item)
+            (let [next (-> item :next)
                   classes (str
                             (if next "" "qr_error")
                             (if (contains? @expanded next) " selected" ""))]
@@ -193,31 +194,31 @@
             [render-msg uid msg is-editing]
             [msg-tools uid msg is-editing]]])))
 
-
-(defn lister []
+(defn lister [uid]
   (fn []
     (let [msgs (subscribe [:curr-msgs])
           dropzone (> (count @msgs) 1)
           tree (build-tree @msgs)
-          msg-state (atom {:hidden (shallow-deps @msgs)
-                           :deps (make-deps-tree tree)})
+          state {:hidden (shallow-deps @msgs)
+                 :deps (make-deps-tree tree)}
           processed (reduce
                      (fn [acc [key val]]
-                       (let [hidden (:hidden @msg-state)]
+                       (let [hidden (:hidden state)]
                          (if (contains? hidden key)
                            acc
                            (assoc acc key val))))
                      {}
                      @msgs)]
-
-      (js/console.log processed)
-
-      (if (= 0 (count @msgs))
-        [empty-day]
-        [:div#msg_wrapper
-          [:ul.list_messages
-            (doall
-              (for [[key item] processed]
-                ^{:key key} [render-msg-container item]))]
-         (if dropzone
-          [:div.msg_wrapper_dropzone])]))))
+      (r/create-class
+         {:component-did-mount #(dispatch [:ui/create-msgs-state state])
+          :render
+            (fn []
+              (if (= 0 (count @msgs))
+                [empty-day]
+                [:div#msg_wrapper
+                  [:ul.list_messages
+                    (doall
+                      (for [[key item] processed]
+                        ^{:key key} [render-msg-container item]))]
+                 (if dropzone
+                  [:div.msg_wrapper_dropzone])]))}))))
