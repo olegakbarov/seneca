@@ -22,95 +22,54 @@
      []
      coll)))
 
-
-(defmulti has-child?
-  (fn [item]
-    (:type item)))
-
-(defmethod has-child? :default [item] nil)
-
-(defmethod has-child? "text-message" [item]
-  true)
-
-(defmethod has-child? "media" [item]
-  true)
-
-(defmethod has-child? "generic-template" [item]
-  true)
-
-(defmethod has-child? "button-template" [item]
-  (let [btns (:buttons item)]
-    (reduce
-     (fn [res item]
-      (if-not res
-              res
-              (contains? item :payload)))
-     true
-     btns)))
-
-(defmethod has-child? "quick-reply" [item]
-  (let [btns (:buttons item)]
-    (reduce
-     (fn [res item]
-      (if-not res
-              res
-              (contains? item :payload)))
-     true
-     btns)))
-
-
-(defn add-thread-info [m]
-  "Adds information about thread by detecting `:next nil`"
-  (let [n (atom 0)]
-    (mapv
-     (fn [[key val]]
-       (if (has-child? val)
-         (do
-           (let [v (assoc val :thread @n)]
-             (reset! n (inc @n))
-             v))
-         (assoc val :thread @n)))
-     m)))
+; (defn add-thread-info [m]
+;   "Adds information about thread by detecting `:next nil`"
+;   (let [n (atom 0)]
+;     (mapv
+;      (fn [[key val]]
+;        (if (has-child? val)
+;          (do
+;            (let [v (assoc val :thread @n)]
+;              (reset! n (inc @n))
+;              v))
+;          (assoc val :thread @n)))
+;      m)))
 
 ;;-----------------------------------
 ;;-----------------------------------
 
-
-
-(defn keywordize-ids [m]
-  (reduce
-    (fn [acc [key val]]
-      (if (keyword? key)
-        (assoc acc key val)
-        (if (map? val)
-            (assoc acc (keyword key) (keywordize-ids val))
-            (assoc acc (keyword key) val))))
-    {}
-    m))
-
-
-(defn build-tree
-  "
-  Builds nested vector tree from hashmap
-
-  (map
+;; might not necessary
+(defn kwrdze [v]
+  (mapv
    (fn [item]
-     (build-tree item msgs))
-   msgs)
-  "
+    (if (vector? item)
+        (kwrdze item)
+        (keyword item)))
+   v))
+
+(defn walk-kv-pair
+  "Recursively walks tree and returns dependecy vector"
   [[key val] m]
   (if-let [payload (:payload val)]
     [key (mapv
-          (fn [k]
-            (build-tree [k (get m k)] m))
+          (fn [p]
+            (if-let [n (:next p)]
+              (walk-kv-pair [n (get m n)] m)
+              key))
           payload)]
     key))
+
+(defn build-tree
+  "Builds nested vector tree from hashmap"
+  [m]
+  (->> m
+       (mapv (fn [item] (walk-kv-pair item m)))))
+      ;  kwrdze))
 
 
 (defn vec->set
   "Takes nested vector and returns key-to-set map"
   [tr res]
-  (js/console.log tr res)
   (when-not (keyword? tr)
     (let [k (first tr)
           v (peek tr)]
@@ -124,12 +83,14 @@
 (defn make-deps-tree
   "Creates a map of 'dependecies' from tree represented as vector"
   [v]
+  ; (js/console.log v)
   (let [res {}]
     (first (->> v
                 (map #(vec->set % res))
                 (remove nil?)))))
 
 
+;; TODO: this is hella ugly
 (defn shallow-deps
   "Returns a set of shallow dependecies, useful for init render"
   [m]
@@ -137,4 +98,8 @@
     (->> (vals m)
          (filter #(contains? % :payload))
          (map :payload)
-         (apply concat))))
+         (map flatten)
+         flatten
+         (map :next)
+         (remove nil?)
+         (map keyword))))

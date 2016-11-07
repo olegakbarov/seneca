@@ -49,11 +49,28 @@
                      {:uid "day@ciu6ymswc00018012503n3wsf"
                       :order 0
                       :messages
-                        {"msg@66666666KKK" {:uid "msg@66666666KKK" :order 0 :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch." :type "text-message"}
-                         "msg@5555555TTTT" {:uid "msg@5555555TTTT" :order 1 :text "Normkek" :type "quick-reply" :buttons [{:text "Left"} {:text "Right" :payload "msg@NEXT1"}]}
-                         "msg@NEXT1" {:uid "msg@NEXT1" :order 2 :text "This is hidden in thread" :type "text-message"}
-                         "msg@NEXT2" {:uid "msg@NEXT2" :order 1 :text "Normkek" :type "quick-reply" :buttons [{:text "Left"} {:text "Right" :payload "msg@NEXT1"}]}}}
-                         ;; "msg@33333AAAAAA" {:uid "msg@4444444DDDD" :order 3 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}}}
+                        {:1 {:uid "msg@1"
+                                  :order 0
+                                  :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch."
+                                  :type "text-message"}
+                         :2 {:uid "msg@2"
+                                  :order 1
+                                  :text "Normkek"
+                                  :type "quick-reply"
+                                  :payload [{:text "Left"
+                                             :next :4}
+                                            {:text "Right"
+                                             :next :3}]}
+                         :3 {:uid "msg@3"
+                                  :order 2
+                                  :text "This is hidden in thread"
+                                  :type "text-message"}
+                         :4 {:uid "msg@4"
+                                  :order 1
+                                  :text "Normkek"
+                                  :type "quick-reply"
+                                  :payload [{:text "Left"}
+                                            {:text "Right"}]}}}
 
                     ;; -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -61,9 +78,9 @@
                       {:uid "day@ciu6ymswc03453503n3wsp"
                        :order 1
                        :messages
-                         {"msg@00000000099999" {:uid "msg@00000000099999" :order 0 :text "Normkek" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
-                          "msg@11111111199999" {:uid "msg@11111111199999" :order 1 :text "Topkek" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-                          "msg@22222222999999" {:uid "msg@22222222999999" :order 2 :text "Alien" :type "text-message"}}}
+                         {:21 {:uid :21 :order 0 :text "Normkek" :type "quick-reply" :payload [{:text "Quick"} {:text "Reply"}]}
+                          :22 {:uid :22 :order 1 :text "Topkek" :type "quick-reply" :payload [{:text "Forward"} {:text "Back"}]}
+                          :23 {:uid :23 :order 2 :text "Alien" :type "text-message"}}}
 
                     "day@234sdf123sdf23"
                       {:uid "day@234sdf123sdf23"

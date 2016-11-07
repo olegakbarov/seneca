@@ -8,10 +8,10 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
     [nexus.helpers.uids :refer [gen-uid]]
-    [nexus.dbutils :refer [add-thread-info
+    [nexus.dbutils :refer [
+                          ;  add-thread-info
                            shallow-deps
                            make-deps-tree
-                           keywordize-ids
                            build-tree]]
     [nexus.templates.editor.dnd :refer [state on-drag-start on-drag-over on-drag-end]]
     [nexus.templates.editor.add_msg :refer [add-msg]]))
@@ -41,21 +41,23 @@
         btns))])
 
 (defn render-qr [msg thread]
-  (let [expanded (subscribe [:ui/expanded-msgs])
-        btns (:buttons msg)]
+  (let [
+        expanded (subscribe [:ui/expanded-msgs])
+        btns (:payload msg)]
     [:div.lister_msg_item_wrap
       (doall
         (map-indexed
           (fn [ix item]
-            (let [classes (str
-                            (if (:payload item) "" "qr_error")
-                            (if (contains? @expanded (:payload item)) " selected" ""))]
+            (let [next (-> item :payload :next)
+                  classes (str
+                            (if next "" "qr_error")
+                            (if (contains? @expanded next) " selected" ""))]
               ^{:key ix}
               [:div.lister_msg_item_qr
                 {:class classes
                  :on-click #(do
-                              (js/console.log "Toggling :payload with id " (:payload item))
-                              (dispatch [:ui/toggle-expanded-id (:payload item)]))}
+                              (js/console.log "Toggling :payload with id " next)
+                              (dispatch [:ui/toggle-expanded-id next]))}
                 (:text item)]))
           btns))]))
 
@@ -97,7 +99,7 @@
 
 (defmethod render-msg "quick-reply" [ix item is-editing]
   (let [{:keys [text thread]} item
-        btns (:buttons item)]
+        btns (:payload item)]
     ^{:key ix}
     [:div.message_content
       ^{:key text}
@@ -107,7 +109,7 @@
 
 (defmethod render-msg "button-template" [ix item is-editing]
   (let [text (:text item)
-        btns (:buttons item)]
+        btns (:payload item)]
     ^{:key ix}
     [:div.message_content
       ^{:key text}
@@ -196,19 +198,20 @@
   (fn []
     (let [msgs (subscribe [:curr-msgs])
           dropzone (> (count @msgs) 1)
-          m (keywordize-ids @msgs)
-          tree (map
-                 (fn [item]
-                   (build-tree item m))
-                 m)
-          msg-state (atom {:hidden (shallow-deps m)
+          tree (build-tree @msgs)
+          msg-state (atom {:hidden (shallow-deps @msgs)
                            :deps (make-deps-tree tree)})
-          hidden (:hidden @msg-state)
           processed (reduce
                      (fn [acc [key val]]
-                       (if (contains? hidden key)
-                         acc
-                         (assoc acc key val))) {} m)]
+                       (let [hidden (:hidden @msg-state)]
+                         (if (contains? hidden key)
+                           acc
+                           (assoc acc key val))))
+                     {}
+                     @msgs)]
+
+      (js/console.log processed)
+
       (if (= 0 (count @msgs))
         [empty-day]
         [:div#msg_wrapper
