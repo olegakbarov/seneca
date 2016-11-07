@@ -12,7 +12,8 @@
      :ui {:scroll-top 0
           :is-editing-id nil
           :curr-thread nil
-          :msgs {}}
+          :msgs-active []
+          :msgs {}}      ;; separate, because reset!'ed on init
 
      :form {:email "default@mail.co"
             :password ""
@@ -66,10 +67,10 @@
                                   :type "text-message"}
                          :4 {:uid :4
                                   :order 1
-                                  :text "Normkek"
+                                  :text "Message with id :4"
                                   :type "quick-reply"
-                                  :payload [{:text "Left"}
-                                            {:text "Right"}]}}}
+                                  :payload [{:text "Good"}
+                                            {:text "Evil"}]}}}
 
                     ;; -----------------------------------------------------------------------------------------------------------------------------------------------------
 

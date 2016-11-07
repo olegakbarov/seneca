@@ -196,8 +196,6 @@
                 parent-deps (-> db :ui :msgs :deps parent)
                 clean (clojure.set/difference hidden parent-deps)
                 res (conj clean child)]
-            (js/console.log parent-deps)
-            (js/console.log clean)
             (assoc-in db [:ui :msgs :hidden] res))))))
 
 (reg-event-db

@@ -41,28 +41,30 @@
         btns))])
 
 (defn render-qr [msg thread]
-  (let [hidden (subscribe [:ui/hidden-msgs])
-        btns (:payload msg)]
-    (js/console.log msg)
-    [:div.lister_msg_item_wrap
-      (doall
-        (map-indexed
-          (fn [ix item]
-            ; (prn item)
-            (let [next (-> item :next)
-                  id (:uid msg)]
-                  ; classes (str
-                  ;           (if next "" "qr_error")
-                  ;           (if-not (contains? @hidden next) " selected" ""))]
-              ^{:key ix}
-              [:div.lister_msg_item_qr
-                {
-                ;  :class classes
-                 :on-click #(do
-                              (js/console.log "Toggling " [id next])
-                              (dispatch [:ui/toggle-expanded-id [id next]]))}
-                (:text item)]))
-          btns))]))
+  (fn []
+    (let [btns (:payload msg)]
+      ; (js/console.log msg)
+      [:div.lister_msg_item_wrap
+        (doall
+          (map-indexed
+            (fn [ix item]
+              (let [hidden (subscribe [:ui/hidden-msgs])
+                    id (:uid msg)
+                    next (-> item :next)
+                    selected (not (contains? @hidden next))
+                    classes (str
+                              (if next "" "qr_error")
+                              (if selected "" " selected"))]
+                (js/console.log  @hidden id)
+                ^{:key ix}
+                [:div.lister_msg_item_qr
+                  {
+                   :class classes
+                   :on-click #(do
+                                (js/console.log "Toggling " [id next])
+                                (dispatch [:ui/toggle-expanded-id [id next]]))}
+                  (:text item)]))
+            btns))])))
 
 ;; ------------------------------------
 ;; EDITABALES
@@ -195,6 +197,7 @@
             [drag-hook uid is-editing]
             [render-msg uid msg is-editing]
             [msg-tools uid msg is-editing]]])))
+
 
 (defn lister []
   (fn []
