@@ -196,7 +196,6 @@
                         (conj curr-set id))]
         (assoc-in db [:ui :expanded-msgs] updated)))))
 
-
 (reg-event-db
   :ui/create-msgs-state
   (fn [db [_ state]]

@@ -194,25 +194,31 @@
             [render-msg uid msg is-editing]
             [msg-tools uid msg is-editing]]])))
 
-(defn lister [uid]
+(defn lister []
   (fn []
-    (let [msgs (subscribe [:curr-msgs])
-          dropzone (> (count @msgs) 1)
-          tree (build-tree @msgs)
-          state {:hidden (shallow-deps @msgs)
-                 :deps (make-deps-tree tree)}
-          processed (reduce
-                     (fn [acc [key val]]
-                       (let [hidden (:hidden state)]
-                         (if (contains? hidden key)
-                           acc
-                           (assoc acc key val))))
-                     {}
-                     @msgs)]
-      (r/create-class
-         {:component-did-mount #(dispatch [:ui/create-msgs-state state])
-          :render
-            (fn []
+    (r/create-class
+       {:component-will-mount
+        (fn []
+          (let [msgs (subscribe [:curr-msgs])
+                tree (build-tree @msgs)
+                state {:hidden (shallow-deps @msgs)
+                       :deps (make-deps-tree tree)}]
+            (dispatch [:ui/create-msgs-state state])))
+        :render
+          (fn []
+            (let [msgs (subscribe [:curr-msgs])
+                  dropzone (> (count @msgs) 1)
+                  tree (build-tree @msgs)
+                  state {:hidden (shallow-deps @msgs)
+                         :deps (make-deps-tree tree)}
+                  processed (reduce
+                             (fn [acc [key val]]
+                               (let [hidden (:hidden state)]
+                                 (if (contains? hidden key)
+                                   acc
+                                   (assoc acc key val))))
+                             {}
+                             @msgs)]
               (if (= 0 (count @msgs))
                 [empty-day]
                 [:div#msg_wrapper
@@ -221,4 +227,4 @@
                       (for [[key item] processed]
                         ^{:key key} [render-msg-container item]))]
                  (if dropzone
-                  [:div.msg_wrapper_dropzone])]))}))))
+                  [:div.msg_wrapper_dropzone])])))})))
