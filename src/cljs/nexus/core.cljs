@@ -9,8 +9,8 @@
 
             [nexus.routes :as routes]
             [nexus.views :as views]
-            [nexus.config :as config]))
-            ; [externs.textarea]))
+            [nexus.config :as config]
+            [npm-packages]))
 
 (defn dev-setup []
   (when config/debug?
@@ -28,5 +28,3 @@
   (re-frame/dispatch-sync [:initialize-db])
   (dev-setup)
   (mount-root))
-
-; (js/console.log js/Textarea)

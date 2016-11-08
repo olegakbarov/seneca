@@ -4,6 +4,7 @@
   (:import [goog.events EventType])
   (:require
     [reagent.core :as r]
+    [npm-packages]
     [re-frame.core :refer [reg-event-db path reg-sub subscribe dispatch]]
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
@@ -51,11 +52,11 @@
               (let [hidden (subscribe [:ui/hidden-msgs])
                     id (:uid msg)
                     next (-> item :next)
-                    selected (not (contains? @hidden next))
+                    selected (contains? @hidden next)
                     classes (str
                               (if next "" "qr_error")
-                              (if selected "" " selected"))]
-                (js/console.log  @hidden id)
+                              (if selected " selected" ""))]
+                (js/console.log  selected)
                 ^{:key ix}
                 [:div.lister_msg_item_qr
                   {
@@ -121,6 +122,9 @@
       [render-text text "last"]
       ^{:key btns}
       [render-buttons btns]]))
+
+
+
 
 (defn empty-day []
   [:div.lister_msg_empty
@@ -198,6 +202,9 @@
             [render-msg uid msg is-editing]
             [msg-tools uid msg is-editing]]])))
 
+; (def textarea-autosize
+;   (r/adapt-react-class
+;     (aget js/npm "react-textarea-autosize")))
 
 (defn lister []
   (fn []

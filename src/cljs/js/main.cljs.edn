@@ -1,0 +1,6 @@
+{:require [nexus.core]
+ :init-fns [nexus.core/init]
+ :compiler-options {:asset-path "js/main.out"
+                    :parallel-build true
+                    ; :preloads [devtools.preload] causes wierd errors in console
+                    :external-config {:devtools/config {:features-to-install [:formatters :hints :async]}}}}
