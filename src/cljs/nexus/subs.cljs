@@ -103,11 +103,9 @@
   (fn [db [_]]
     (-> db :ui :msgs :active)))
 
-
- ; (register-sub
- ;  :sorted-items      ;; the query id  (the name of the query)
- ;  (fn [db [_]]       ;; the handler for the subscription
- ;    (reaction
- ;       (let [items      (get-in @db [:items])     ;; extract items from db
- ;             sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
- ;           (sort-by sort-attr items))))))        ;; return them sorted
+(re-frame/reg-sub
+  :ui/text
+  (fn [db [_ uid]]
+    (let [course (:curr-course db)
+          day (:curr-day db)]
+      (get-in db [:courses course :days day :messages uid :text]))))

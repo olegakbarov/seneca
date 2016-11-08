@@ -186,7 +186,7 @@
       (assoc-in db [:courses course :days day :messages] updated))))
 
 ;; TODO rewrite this handler, it sucks.
-
+;; 'cause it updates two entities at a time
 (reg-event-db
   :ui/toggle-expanded-id
   (fn [db [_ [parent child]]]

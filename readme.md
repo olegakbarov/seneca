@@ -1,5 +1,18 @@
 # Nexus
 
+### Setup
+
+For JS shinanigans you need `npm >3.0`
+
+`npm i` from `resourses/npm`
+
+### Messages compose rules
+
+1. First message of the day should be with button (quick-reply or button template)
+
+2. Quick replies or buttons are necessary to have `payload` otherwise they are invalid
+
+3. Messages linked with payload are grouped
 
 ### Why uids everywhere?
 
@@ -73,7 +86,7 @@ React requires unique keys for all list-style items. We can't rely on seq order 
 
 ### Components with Reagent
 
-```
+```clojure
 (defn drag-wrapper [opts component]
   (let [{:keys [drag-type]} opts
         decorated-props (merge opts @state)]
@@ -93,4 +106,14 @@ React requires unique keys for all list-style items. We can't rely on seq order 
                 ;; we drop-in all the dnd-state into the comp
                 (clj->js decorated-props)
                 (r/as-element component))))})))
+```
+
+```
+ ; (register-sub
+ ;  :sorted-items      ;; the query id  (the name of the query)
+ ;  (fn [db [_]]       ;; the handler for the subscription
+ ;    (reaction
+ ;       (let [items      (get-in @db [:items])     ;; extract items from db
+ ;             sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
+ ;           (sort-by sort-attr items))))))        ;; return them sorted
 ```
