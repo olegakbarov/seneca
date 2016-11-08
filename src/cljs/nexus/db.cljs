@@ -12,8 +12,9 @@
      :ui {:scroll-top 0
           :is-editing-id nil
           :curr-thread nil
-          :msgs-active []
-          :msgs {}}      ;; separate, because reset!'ed on init
+          :msgs {:hidden #{}      ;; separate, because reset!'ed on init
+                 :deps []
+                 :active #{}}}
 
      :form {:email "default@mail.co"
             :password ""
@@ -51,7 +52,7 @@
                       :messages
                         {:1 {:uid :1
                                   :order 0
-                                  :text "It is very unlikely that a <Header> element is going to generate a DOM that is going to look like what a <Content> would generate. Instead of spending time trying to match those two structures, React just re-builds the tree from scratch."
+                                  :text "aaaaaaaaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaa aaaaa aaaa aaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaa aaaaaa aaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaa aaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaa aaaaaaaa aaaaa aaaaaaa aaaa aaaaaaaaa aaaaaa aaaaaaa aaaaa aaaaaa aaaa"
                                   :type "text-message"}
                          :2 {:uid :2
                                   :order 1

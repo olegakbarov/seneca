@@ -50,13 +50,14 @@
           (map-indexed
             (fn [ix item]
               (let [hidden (subscribe [:ui/hidden-msgs])
+                    active (subscribe [:ui/active-msgs])
                     id (:uid msg)
                     next (-> item :next)
-                    selected (contains? @hidden next)
+                    selected (contains? @active next)
                     classes (str
                               (if next "" "qr_error")
                               (if selected " selected" ""))]
-                (js/console.log  selected)
+                (js/console.log selected)
                 ^{:key ix}
                 [:div.lister_msg_item_qr
                   {
@@ -123,9 +124,6 @@
       ^{:key btns}
       [render-buttons btns]]))
 
-
-
-
 (defn empty-day []
   [:div.lister_msg_empty
     ;; TODO remove
@@ -148,14 +146,14 @@
   (reset! reveal nil))
 
 (defn drag-hook [ix is-editing]
-  (let [visible (or is-editing (= @reveal ix))]
+  (let [visible (or is-editing (= (keyword @reveal) ix))]
     [:div.msg_drag-hook
       {:class (if visible "" "hidden")}
       "🖐🏻"]))
 
 (defn msg-tools [ix msg is-editing]
   [:div.lister_msg_tools {:on-drag-start #(.stopPropagation %)
-                          :class (if (= @reveal ix) "" "hidden")}
+                          :class (if (= (keyword @reveal) ix) "" "hidden")}
     [:div.edit
       {:on-click #(dispatch [:set-is-editing-id ix])}
       "✍🏼"]
@@ -206,36 +204,38 @@
 ;   (r/adapt-react-class
 ;     (aget js/npm "react-textarea-autosize")))
 
+(defn list-component [items]
+  (let [dropzone (> 1 (count items))]
+    [:div#msg_wrapper
+      [:ul.list_messages
+        (doall
+          (for [[key item] items]
+            ^{:key key} [render-msg-container item]))]
+      (if dropzone
+        [:div.msg_wrapper_dropzone])]))
+
 (defn lister []
-  (fn []
-    (r/create-class
-       {:component-will-mount
+  (r/create-class
+     {:component-will-mount
+      (fn []
+        (let [msgs (subscribe [:curr-msgs])
+              tree (build-tree @msgs)
+              state {:hidden (shallow-deps @msgs)
+                     :deps (make-deps-tree tree)}]
+          (dispatch [:ui/create-msgs-state state])))
+      :render
         (fn []
           (let [msgs (subscribe [:curr-msgs])
                 tree (build-tree @msgs)
-                state {:hidden (shallow-deps @msgs)
-                       :deps (make-deps-tree tree)}]
-            (dispatch [:ui/create-msgs-state state])))
-        :render
-          (fn []
-            (let [msgs (subscribe [:curr-msgs])
-                  dropzone (> (count @msgs) 1)
-                  tree (build-tree @msgs)
-                  state (subscribe [:ui/msgs-state])
-                  processed (reduce
-                             (fn [acc [key val]]
-                               (let [hidden (:hidden @state)]
-                                 (if (contains? hidden key)
-                                   acc
-                                   (assoc acc key val))))
-                             {}
-                             @msgs)]
-              (if (= 0 (count @msgs))
-                [empty-day]
-                [:div#msg_wrapper
-                  [:ul.list_messages
-                    (doall
-                      (for [[key item] processed]
-                        ^{:key key} [render-msg-container item]))]
-                 (if dropzone
-                  [:div.msg_wrapper_dropzone])])))})))
+                state (subscribe [:ui/msgs-state])
+                processed (reduce
+                           (fn [acc [key val]]
+                             (let [hidden (:hidden @state)]
+                               (if (contains? hidden key)
+                                 acc
+                                 (assoc acc key val))))
+                           {}
+                           @msgs)]
+            (if (= 0 (count processed))
+              [empty-day]
+              [list-component processed])))}))

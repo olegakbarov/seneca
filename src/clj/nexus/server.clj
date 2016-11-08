@@ -8,18 +8,32 @@
              [defaults :refer [site-defaults wrap-defaults]]
              [not-modified :refer [wrap-not-modified]]
              [reload :refer [wrap-reload]]]
+            [ring.util.response :refer [redirect]]
+            [ring.util.http-response :refer :all]
             [nexus.layout :as layout]
             [mount.core :refer [defstate]]
-            [compojure.core :refer [routes GET ANY defroutes]]
+            [compojure.core :refer [GET ANY defroutes]]
             [compojure.route :as route])
-  (:gen-class)
-  (:use [ring.middleware.content-type]))
+  (:use [ring.middleware.content-type])
+  (:gen-class))
 
-(defroutes handler-routes
-   (ANY "/" [] layout/main)
-   (route/resources "/"))
-  ;  (ANY "/*" [] layout/main))
+; (defroutes routes
+;  (ANY "/" [] layout/main)
+;  (route/resources "/")
+ ; (ANY "/**" [] layout/main))
+
+(defroutes routes
+ (route/resources "/js" {:root "js"})
+ (route/resources "/css" {:root "css"})
+
+ (GET "/" []
+   ; Use (resource-response "index.html") to serve index.html from classpath
+   (-> (ok layout/main) (content-type "text/html")))
+ (ANY "/**" [] layout/main))
 
 (def wrapped-routes
-  (-> handler-routes
+  (-> routes
       (wrap-content-type)))
+
+; (defn start! []
+;   (run-jetty wrapped-routes {:join? false :port 3000}))

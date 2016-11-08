@@ -185,6 +185,8 @@
           updated (assoc-in msgs [id :text] text)]
       (assoc-in db [:courses course :days day :messages] updated))))
 
+;; TODO rewrite this handler, it sucks.
+
 (reg-event-db
   :ui/toggle-expanded-id
   (fn [db [_ [parent child]]]
@@ -192,13 +194,18 @@
         (js/console.log "ERROR CHILD CANT BE NIL")
         (if (nil? child)
           db
-          (let [hidden (-> db :ui :msgs :hidden)
-                parent-deps (-> db :ui :msgs :deps parent)
-                clean (clojure.set/difference hidden parent-deps)
-                res (conj clean child)]
-            (assoc-in db [:ui :msgs :hidden] res))))))
+          (let [parent-deps (-> db :ui :msgs :deps parent)
+                hidden (-> db :ui :msgs :hidden)
+                diff-hidden (clojure.set/difference hidden parent-deps)
+                new-hidden (conj diff-hidden child)
+                updated-db (assoc-in db [:ui :msgs :hidden] new-hidden)
+
+                active (-> db :ui :msgs :active)
+                diff-active (clojure.set/difference hidden parent-deps)
+                new-active (conj diff-active child)]
+             (assoc-in updated-db [:ui :msgs :active] new-active))))))
 
 (reg-event-db
   :ui/create-msgs-state
   (fn [db [_ state]]
-    (assoc-in db [:ui :msgs] state)))
+    (update-in db [:ui :msgs] merge state)))

@@ -1,6 +1,6 @@
 (set-env!
  :source-paths    #{"src/clj" "src/cljs" "less"}
- :resource-paths  #{"resources" "src/clj"}
+ :resource-paths  #{"src/clj"}
  :dependencies '[[adzerk/boot-cljs           "1.7.228-2"  :scope "test"]
                  [adzerk/boot-cljs-repl      "0.3.0"      :scope "test"]
                  [adzerk/boot-reload         "0.4.8"      :scope "test"]
@@ -31,6 +31,7 @@
 
                  [re-frame "0.8.0"]
                  [reagent "0.6.0-rc"]
+                ;  [reagent "0.6.0-rc" :exclusions [cljsjs/react cljsjs/react-dom]]
                  [reagent-utils "0.2.0"]
                  [deraen/boot-less "0.2.1" :scope "test"]])
 
@@ -57,6 +58,10 @@
                 less   {:source-map  true})
  identity)
 
+;; TODO
+; {:foreign-libs [{:file "resources/npm/bundle.js"
+;                  :file-min "resources/npm/bundle.min.js"
+;                  :provides ["npm-packages"]}]}
 
 (deftask run []
  (comp
