@@ -7,5 +7,13 @@
 	"bots": [
 		{"id": "123", "title": "im from internet", "status": "active"},
 		{"id": "333", "title": "im second one",    "status": "pending"}
+	],
+	"users": [
+		{
+			"id": 1,
+			"email": "email@adress",
+			"firstname": "Oleg",
+			"lastname": "Akbarov"
+		}
 	]
 }
