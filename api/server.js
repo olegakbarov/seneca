@@ -22,7 +22,8 @@ app.use(jwt({
 }));
 
 function generateToken(email, password) {
-  const payload = { email, password };
+  const id = "user123"
+  const payload = { email, password, id };
   return jwtToken.sign(payload, config.token.secret);
 }
 
@@ -33,18 +34,12 @@ function extractToken(header) {
 // here comes the real hardcode
 const HARDCODED_EMAIL = 'email@adress';
 const HARDCODED_PASSWORD = 'pass';
-// const HARDCODED_USER = {
-//   id: 4,
-//   email: 'email@adress',
-//   password: 'pass'
-// };
 
 app.post('/api/v1/auth/token', (req, res) => {
   const { email, password } = req.body;
   console.log(email, password)
   if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
     const token = generateToken(email, password);
-    const user = HARDCODED_USER;
     res.send({ token });
   } else {
     res.sendStatus(401);
@@ -55,14 +50,15 @@ app.get('/api/v1/courses', (req, res) => {
   try {
     const token = extractToken(req.headers.authorization);
     const decode = jwtToken.decode(token);
-    const { email } = decode;
-    console.log(email)
+    console.log(decode)
+    const { email, id } = decode;
+
     fs.readFile(jsonPath, {
       encoding: 'utf-8'
     }, (error, db) => {
-      const users  = (JSON.parse(db)).users;
-      const user = _.find(users, (user) => user.email === email);
-      res.send(user);
+      const courses  = (JSON.parse(db)).courses;
+      const result = _.find(courses, (course => course.author === id));
+      res.send(result);
     });
   } catch (error) {
     res.sendStatus(401);

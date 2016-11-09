@@ -1,8 +1,8 @@
 {
 	"courses": [
-		{"id": 123, "name": "Cute animals"},
-		{"id": 666, "name": "Speaking loud"},
-		{"id": 777, "name": "Meditation for cats"}
+		{"id": 123,
+		 "author": "user123",
+		 "name": "Cute animals"}
 	],
 	"bots": [
 		{"id": "123", "title": "im from internet", "status": "active"},
@@ -10,7 +10,7 @@
 	],
 	"users": [
 		{
-			"id": 1,
+			"id": "user123",
 			"email": "email@adress",
 			"firstname": "Oleg",
 			"lastname": "Akbarov"
