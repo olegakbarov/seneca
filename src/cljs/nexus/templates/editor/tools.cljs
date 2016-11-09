@@ -4,6 +4,8 @@
   (:require
     [goog.dom :as dom]
     [reagent.core :as r]
+    [nexus.templates.editor.dnd :refer [state
+                                        update-state!]]
     [nexus.chans :refer [scroll-chan
                          cur-scroll-y
                          prev-scroll-y]]))
@@ -82,6 +84,7 @@
     [:div.msg_type_item.msg_item_text
       {:draggable true
        :data-type "text-message"
+       :on-drag-start #(update-state! :adding-type "text-message")
        :data-action "add"}
      [text-placeholder 3 true]]])
 

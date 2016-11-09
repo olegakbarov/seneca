@@ -25,7 +25,10 @@
                 ;  :drag-mid nil
                  :hover-y nil
                  :hover-index nil
-                 :hover-mid nil})
+                 :hover-mid nil
+
+                 :adding-type nil
+                 :msg-added false})
 
 (defn init! []
   (reset! state init-state))
@@ -34,8 +37,8 @@
 
 (defn update-state! [key val]
   (do
-    (swap! state assoc key val)))
-    ; (.log js/console @state)))
+    (swap! state assoc key val)
+    (.log js/console @state)))
 
 (defn on-drag-start [e]
   "Update drag-index"
@@ -46,18 +49,14 @@
     (reset! state (merge @state {:drag-index drag-index
                                  :drag-mid mid}))))
 
-; (defn on-drag-enter [e]
-;   "Update hover-index"
-;   (let [hover-index (-> e .-currentTarget .-dataset .-dragindex int)
-;         top (-> e .-currentTarget .getBoundingClientRect .-top)
-;         bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
-;         mid (/ (- bottom top) 2)]
-;     (.log js/console "=== DRAG ENTER STARTS ===")
-;     (.log js/console {:hover-index hover-index
-;                       :hover-mid mid})
-;     (.log js/console "=== DRAG ENTER END ===")
-;     (reset! state (merge @state {:hover-index hover-index
-;                                  :hover-mid mid}))))
+(defn on-drag-enter [e]
+  "Update hover-index"
+  (let [hover-index (-> e .-currentTarget .-dataset .-dragindex int)
+        type (-> e .-currentTarget .-dataset .-dragtype)
+        top (-> e .-currentTarget .getBoundingClientRect .-top)
+        bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
+        mid (/ (- bottom top) 2)]
+      (dispatch [:add-msg (@state :adding-type) hover-index])))
 
 (defn should-reorder? []
   (let [{:keys [drag-index hover-index hover-y hover-mid]} @state]
@@ -82,7 +81,7 @@
                                    :hover-y hover-y
                                    :hover-mid mid}))
 
-      (.log js/console drag-index hover-index hover-y mid)
+      ; (.log js/console drag-index hover-index hover-y mid)
 
       (if (should-reorder?)
           (do

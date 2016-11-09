@@ -14,7 +14,11 @@
                            shallow-deps
                            make-deps-tree
                            build-tree]]
-    [nexus.templates.editor.dnd :refer [state on-drag-start on-drag-over on-drag-end]]
+    [nexus.templates.editor.dnd :refer [state
+                                        on-drag-start
+                                        on-drag-over
+                                        on-drag-end
+                                        on-drag-enter]]
     [nexus.templates.editor.add_msg :refer [add-msg]]))
 
 (def reveal (r/atom nil))
@@ -190,6 +194,7 @@
                :on-drag-start  on-drag-start
                :on-drag-over   on-drag-over
                :on-drag-end    on-drag-end
+               :on-drag-enter  on-drag-enter
                :on-mouse-enter on-hover
                :on-mouse-leave on-unhover
                :data-uid uid

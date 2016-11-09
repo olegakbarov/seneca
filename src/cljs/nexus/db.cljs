@@ -16,12 +16,13 @@
                  :deps []
                  :active #{}}}
 
-     :form {:email "default@mail.co"
+     :form {:email ""
             :password ""
             :password-again ""}
 
-     :user {:auth    {:token "12ER2319HKJ231SDFMB3"}
-            :profile {:user-id "123"
+     :auth {:token nil}
+
+     :user {:profile {:user-id "123"
                       :email "yourmum@kek.ru"
                       :userpic "http://s3.azazozon.com"}
             :plan    {:current "platinum"}}
@@ -52,7 +53,7 @@
                       :messages
                         {:1 {:uid :1
                                   :order 0
-                                  :text "aaaaaaaaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaa aaaaa aaaa aaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaa aaaaaa aaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaa aaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaa aaaaaaaa aaaaa aaaaaaa aaaa aaaaaaaaa aaaaaa aaaaaaa aaaaa aaaaaa aaaa"
+                                  :text "In this great future we cant forget the past ... In this great future we cant forget the past .. In this great future we cant forget the past "
                                   :type "text-message"}
                          :2 {:uid :2
                                   :order 1

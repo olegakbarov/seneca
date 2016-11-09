@@ -24,7 +24,11 @@
 (reg-event-db
   :set-active-panel
   (fn [db [_ active-panel]]
-    (assoc-in db [:router :current] active-panel)))
+    (js/console.log ":set-active panel handler " active-panel)
+    ;; нехилый костыль
+    (if (keyword? active-panel)
+      (assoc-in db [:router :current] active-panel)
+      (assoc-in db [:router :current] (active-panel)))))
 
 ;; MESSAGES
 
@@ -65,9 +69,9 @@
       "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123})))
 
 (reg-event-db
-  :add_msg
+  :add-msg
   (fn [db [_ type hix]]
-    ; (prn (str "hix: " hix))
+    (prn (str "hix: " hix))
     (let [course (:curr-course db)
           day (:curr-day db)
           msgs (get-in db [:courses course :days day :messages])

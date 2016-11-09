@@ -2,6 +2,8 @@
 (ns nexus.core
   (:require [reagent.core :as r]
             [re-frame.core :as re-frame]
+            [re-frame.core :refer [dispatch-sync
+                                   subscribe]]
             [devtools.core :as devtools]
             ;; must require both in root file
             [nexus.handlers]
@@ -24,7 +26,11 @@
 
 (defn ^:export init []
   ; (mount/start)
+  (dispatch-sync [:initialize-db])
   (routes/app-routes)
-  (re-frame/dispatch-sync [:initialize-db])
+  (let [token (subscribe [:auth/token])]
+    (when @token
+      (js/console.log "GOT TOKEN " @token)))
+      ; (re-frame/dispatch-sync [:set-authentication-token token])))
   (dev-setup)
   (mount-root))

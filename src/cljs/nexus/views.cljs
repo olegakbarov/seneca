@@ -7,7 +7,8 @@
               [nexus.templates.home :refer [home]]
               [nexus.templates.profile :refer [profile]]
               [nexus.templates.auth.signup :refer [signup]]
-              [nexus.templates.auth.login :refer [login]]))
+              [nexus.templates.auth.login :refer [login]]
+              [nexus.templates.notfound :refer [notfound]]))
 
 (defmulti panels identity)
 (defmethod panels :home       [] [home])
@@ -16,10 +17,12 @@
 (defmethod panels :profile    [] [profile])
 (defmethod panels :signup     [] [signup])
 (defmethod panels :login      [] [login])
-(defmethod panels :default    [] [:div])
+(defmethod panels :notfound   [] [notfound])
+(defmethod panels :default    [] [:notfound])
 
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [:active-panel])]
+    (js/console.log "main panel called with " @active-panel)
     (fn []
       [:div
         (panels @active-panel)])))

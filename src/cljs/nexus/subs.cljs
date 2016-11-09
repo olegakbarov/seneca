@@ -10,6 +10,19 @@
   (fn [db _]
    (-> db :router :current)))
 
+
+;;-------------------------
+;; AUTH
+
+(re-frame/reg-sub
+  :auth/token
+  (fn [db _]
+   (-> db :auth :token)))
+
+
+;;-------------------------
+;; CURRENTS
+
 (re-frame/reg-sub
   :curr-day
   (fn [db [_]]

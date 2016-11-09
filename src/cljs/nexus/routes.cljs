@@ -2,23 +2,35 @@
 (ns nexus.routes
   (:require [bidi.bidi :as bidi]
             [pushy.core :as pushy]
-            [re-frame.core :as re-frame]
-            [nexus.helpers.core :refer [log]]))
+            [nexus.helpers.core :refer [log]]
+            [re-frame.core :refer [subscribe dispatch]]))
 
-(def routes ["/" {""        :editor
-                  "profile" :profile
-                  "signup"  :signup
-                  "login"   :login
-                  "bots"    :bots}])
+(defn auth-handler [page]
+  (let [token (subscribe [:auth/token])]
+    (js/console.log @token)
+    (if @token
+      (dispatch [:set-active-panel page])
+      (dispatch [:set-active-panel :login]))))
+
+(def routes ["/" {"signup"        :signup
+                  "login"         :login
+                  "editor"        #(auth-handler :editor)
+                  "profile"       :profile
+                  "bots"          :bots
+                  true            :notfound}])
 
 (defn- parse-url [url]
   (bidi/match-route routes url))
 
 (defn- dispatch-route [matched-route]
   (let [panel-name (:handler matched-route)]
-    (re-frame/dispatch [:set-active-panel panel-name])))
+    (dispatch [:set-active-panel panel-name])))
 
 (defn app-routes []
-  (pushy/start! (pushy/pushy dispatch-route parse-url)))
+  (let [host (aget js/window "location" "host")
+        redirect (str host "/login")]
+    (pushy/start! (pushy/pushy dispatch-route parse-url))))
+    ;; TODO fix pushState
+    ; (set! (.-location js/window) redirect)))
 
 (def url-for (partial bidi/path-for routes))
