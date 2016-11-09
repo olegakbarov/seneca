@@ -9,9 +9,38 @@
               [ajax.core :as ajax]))
 
 (reg-event-db
- :initialize-db
- (fn  [_ _]
-   db/state))
+  :initialize-db
+  (fn  [_ _]
+    db/state))
+
+;;---------------------------
+;; AUTH
+
+(reg-event-db
+ :auth/login
+ (fn [db _]
+   (let [endpoint "http://localhost:7777/api/v1/auth/token"
+         creds (subscribe [:form])
+         {:keys [email password]} @creds]
+     (ajax/POST endpoint
+        {:body {:email email :password password}
+         :handler #(re-frame/dispatch [:auth/login-success %1])
+         :error-handler #(re-frame/dispatch [:auth/login-err %1])
+         :response-format :json
+         :keywords? true})
+     db)))
+
+(reg-event-db
+  :auth/login-success
+  (fn [db [_ res]]))
+
+
+(reg-event-db
+  :auth/login-err
+  (fn [db [_ res]]))
+
+;;---------------------------
+;; AUTH
 
 
 ;; naīve logging
@@ -130,7 +159,6 @@
   :update-form
   (fn [db [_ cursor val]]
     (assoc-in db [:form cursor] val)))
-
 
 
 ;;---------------------------

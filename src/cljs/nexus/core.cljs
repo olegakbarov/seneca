@@ -12,6 +12,7 @@
             [nexus.routes :as routes]
             [nexus.views :as views]
             [nexus.config :as config]
+            [nexus.localstorage :as ls]
             [npm-packages]))
 
 (defn dev-setup []
@@ -20,14 +21,22 @@
     (println "dev mode")
     (devtools/install!)))
 
+
+(defn check-for-token! []
+  (let [localstorage-imp (ls/new-localstorage-imp)]
+    (ls/read localstorage-imp "nadya")))
+
+
 (defn mount-root []
   (r/render [views/main-panel]
     (.getElementById js/document "container")))
+
 
 (defn ^:export init []
   ; (mount/start)
   (dispatch-sync [:initialize-db])
   (routes/app-routes)
+  (check-for-token!)
   (let [token (subscribe [:auth/token])]
     (when @token
       (js/console.log "GOT TOKEN " @token)))

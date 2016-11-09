@@ -19,7 +19,6 @@
   (fn [db _]
    (-> db :auth :token)))
 
-
 ;;-------------------------
 ;; CURRENTS
 
@@ -56,6 +55,11 @@
 
 ;; ---------------------------------------------
 ;; FORMS
+
+(re-frame/reg-sub
+  :form
+  (fn [db [_]]
+    (-> db :form)))
 
 (re-frame/reg-sub
   :form/email
