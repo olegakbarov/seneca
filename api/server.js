@@ -8,11 +8,13 @@ import jwtToken from 'jsonwebtoken';
 import path from 'path';
 import fs from 'fs';
 import _ from 'lodash';
+import cors from 'cors';
 
 const jsonPath = path.join(__dirname, 'db.json');
 const app = express();
 
 // app.use(jsonServer.defaults);
+app.use(cors());
 app.use(bodyParser.json());
 app.use(jwt({
   secret: config.token.secret
@@ -37,6 +39,7 @@ const HARDCODED_PASSWORD = 'pass';
 
 app.post('/api/v1/auth/token', (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body)
   console.log(email, password)
   if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
     const token = generateToken(email, password);
@@ -46,7 +49,7 @@ app.post('/api/v1/auth/token', (req, res) => {
   }
 });
 
-app.get('/api/v1/courses', (req, res) => {
+app.get('/api/v1/publisher/courses', (req, res) => {
   try {
     const token = extractToken(req.headers.authorization);
     const decode = jwtToken.decode(token);

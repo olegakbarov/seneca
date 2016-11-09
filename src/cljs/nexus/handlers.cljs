@@ -23,21 +23,25 @@
          creds (subscribe [:form])
          {:keys [email password]} @creds]
      (ajax/POST endpoint
-        {:body {:email email :password password}
+        {:params {:email email :password password}
          :handler #(re-frame/dispatch [:auth/login-success %1])
          :error-handler #(re-frame/dispatch [:auth/login-err %1])
-         :response-format :json
+         :format (ajax/json-request-format)
          :keywords? true})
      db)))
 
 (reg-event-db
   :auth/login-success
-  (fn [db [_ res]]))
+  (fn [db [_ res]]
+    (js/console.log res)
+    db))
 
 
 (reg-event-db
   :auth/login-err
-  (fn [db [_ res]]))
+  (fn [db [_ res]]
+    (js/console.log res)
+    db))
 
 ;;---------------------------
 ;; AUTH
