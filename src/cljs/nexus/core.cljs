@@ -23,8 +23,10 @@
 
 
 (defn check-for-token! []
-  (let [localstorage-imp (ls/new-localstorage-imp)]
-    (ls/read localstorage-imp "nadya")))
+  (let [localstorage-imp (ls/new-localstorage-imp)
+        token (ls/read localstorage-imp "nadya-token")]
+    (if token
+      (re-frame/dispatch-sync [:auth/save-token-db token]))))
 
 
 (defn mount-root []
@@ -37,9 +39,5 @@
   (dispatch-sync [:initialize-db])
   (routes/app-routes)
   (check-for-token!)
-  (let [token (subscribe [:auth/token])]
-    (when @token
-      (js/console.log "GOT TOKEN " @token)))
-      ; (re-frame/dispatch-sync [:set-authentication-token token])))
   (dev-setup)
   (mount-root))

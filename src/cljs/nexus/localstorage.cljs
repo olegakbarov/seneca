@@ -1,8 +1,10 @@
 
 (ns nexus.localstorage
   (:require [cljs.reader :as reader]
-            ; [frontend.utils :as utils :include-macros true]
             [goog.storage.mechanism.HTML5LocalStorage]))
+
+(defn new-localstorage-imp []
+  (goog.storage.mechanism.HTML5LocalStorage.))
 
 (defn is-available? [localstorage-imp]
   (.isAvailable localstorage-imp))
@@ -21,6 +23,3 @@
   (when (is-available? localstorage-imp)
     (some-> (.get localstorage-imp key)
             reader/read-string)))
-
-(defn new-localstorage-imp []
-  (goog.storage.mechanism.HTML5LocalStorage.))

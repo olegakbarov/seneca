@@ -39,8 +39,6 @@ const HARDCODED_PASSWORD = 'pass';
 
 app.post('/api/v1/auth/token', (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body)
-  console.log(email, password)
   if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
     const token = generateToken(email, password);
     res.send({ token });

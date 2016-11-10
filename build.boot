@@ -24,7 +24,7 @@
 
                  [cuid "0.1.1"]
 
-                 [bidi "2.0.10"]
+                 [bidi "2.0.14"]
                  [kibu/pushy "0.3.6"]
 
                  [binaryage/devtools "0.6.1"]
@@ -67,7 +67,7 @@
  (comp
    (watch)
    (reload)
-   (cljs-repl :ids #{"js/main"})
+   (cljs-repl)
    (cljs :ids #{"js/main"})
    (less)
    (serve :handler 'nexus.server/wrapped-routes :reload true)

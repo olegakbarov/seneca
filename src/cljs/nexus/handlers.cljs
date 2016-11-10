@@ -6,7 +6,8 @@
             [nexus.db :as db]
             [nexus.helpers.core :refer [log]]
             [nexus.helpers.uids :refer [gen-uid]]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax]
+            [nexus.localstorage :as ls]))
 
 (reg-event-db
  :initialize-db
@@ -45,19 +46,31 @@
 (reg-event-db
  :auth/login-success
  (fn [db [_ res]]
-  ;  (js/console.log res)
    (let [token (get res "token")
          page-redirect (-> db :router :redirect)
          redirect (if-not page-redirect :editor page-redirect)]
       (do
         (re-frame/dispatch [:set-active-panel redirect])
-        (assoc-in db [:auth :token] token)))))
+        (re-frame/dispatch [:auth/save-token-ls! token])
+        (re-frame/dispatch [:auth/save-token-db token])))))
 
 (reg-event-db
  :auth/login-err
  (fn [db [_ res]]
    (js/console.log res)
    db))
+
+(reg-event-db
+ :auth/save-token-ls!
+ (fn [db [_ token]]
+   (ls/save! (ls/new-localstorage-imp) "nadya-token" token)
+   db))
+
+(reg-event-db
+ :auth/save-token-db
+ (fn [db [_ token]]
+   (js/console.log "SAVING TOKEN TO DB")
+   (assoc-in db [:auth :token] token)))
 
 ;; LOGGING
 
