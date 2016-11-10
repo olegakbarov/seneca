@@ -7,7 +7,8 @@
 (def initial-state {})
 
 (def state
-    {:router {:current ""}
+    {:router {:current ""
+              :redirect nil} ;; store next location
 
      :ui {:scroll-top 0
           :is-editing-id nil
