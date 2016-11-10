@@ -5,3 +5,4 @@ snippets.cljs
 dnd.md
 .nrepl-history
 resources/npm
+node_modules
