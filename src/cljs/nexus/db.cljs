@@ -53,11 +53,9 @@
                       :order 0
                       :messages
                         {:1 {:uid :1
-                                  :order 0
                                   :text "In this great future we cant forget the past ... In this great future we cant forget the past .. In this great future we cant forget the past "
                                   :type "text-message"}
                          :2 {:uid :2
-                                  :order 1
                                   :text "Normkek"
                                   :type "quick-reply"
                                   :payload [{:text "Left"
@@ -65,11 +63,9 @@
                                             {:text "Right"
                                              :next :3}]}
                          :3 {:uid :3
-                                  :order 2
                                   :text "This is hidden in thread"
                                   :type "text-message"}
                          :4 {:uid :4
-                                  :order 1
                                   :text "Message with id :4"
                                   :type "quick-reply"
                                   :payload [{:text "Good"}

@@ -7,7 +7,6 @@
 
 (defn auth-handler [page]
   (let [token (subscribe [:auth/token])]
-    (js/console.log @token)
     (if @token
       (dispatch [:set-active-panel page])
       (dispatch [:set-active-panel :login]))))
@@ -15,8 +14,8 @@
 (def routes ["/" {"signup"        :signup
                   "login"         :login
                   "editor"        #(auth-handler :editor)
-                  "profile"       :profile
-                  "bots"          :bots
+                  "profile"       #(auth-handler :profile)
+                  "bots"          #(auth-handler :bots)
                   true            :notfound}])
 
 (defn- parse-url [url]

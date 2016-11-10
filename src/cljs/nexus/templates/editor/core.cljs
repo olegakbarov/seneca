@@ -18,7 +18,7 @@
      [:div.editor
        [days-row]
        [:div.editor_wrapper
-         [:div#editor_messenger_wrapper ;; need for proper on-scroll
+         [:div#editor_messenger_wrapper ;; TODO: need for proper on-scroll
           [:div.editor_messenger
             [lister]]]
          [tools-list]]]]))

@@ -52,7 +52,8 @@
       (do
         (re-frame/dispatch [:set-active-panel redirect])
         (re-frame/dispatch [:auth/save-token-ls! token])
-        (re-frame/dispatch [:auth/save-token-db token])))))
+        (re-frame/dispatch [:auth/save-token-db token]))
+      db)))
 
 (reg-event-db
  :auth/login-err
@@ -102,12 +103,19 @@
          updated (into {} (swap-vec msgs dix hix))]
      (assoc-in db [:courses course-id :days day-id :messages] updated))))
 
-(defn- insert-at [v item index]
-  (if (= index (+ 1 (count v)))
-    (concat v [item])
-    (let [left (subvec v 0 index)
-          right (subvec v index)]
-      (into [] (concat left [item] right)))))
+(defn- insert-at [m item index]
+  (js/console.log m)
+  (reduce
+   (fn [acc [id msg]]
+    (js/console.log id index)
+    (let [order (:order msg)
+          length (count m)]
+      (cond
+        (< order index) (assoc acc id msg)
+        (= order index) (assoc acc (:uid item) item)
+        (> order index) (assoc acc id (update-in msg [:order] inc)))))
+   {}
+   m))
 
 (defn- default-message [type]
   (let [uid (gen-uid "msg")]
@@ -121,11 +129,11 @@
 (reg-event-db
  :add-msg
  (fn [db [_ type hix]]
-   (prn (str "hix: " hix))
    (let [course (:curr-course db)
          day (:curr-day db)
          msgs (get-in db [:courses course :days day :messages])
          updated (insert-at msgs (default-message type) hix)]
+     (js/console.log updated)
      (assoc-in db [:courses course :days day :messages] updated))))
 
 (defn remove-at [v i]
