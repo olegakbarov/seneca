@@ -14,6 +14,7 @@
  (fn  [_ _]
    db/state))
 
+
 ;;---------------------------
 ;; ROUTER
 
@@ -25,6 +26,7 @@
    (if (keyword? active-panel)
      (assoc-in db [:router :current] active-panel)
      (assoc-in db [:router :current] (active-panel)))))
+
 
 ;;---------------------------
 ;; AUTH
@@ -73,6 +75,8 @@
    (js/console.log "SAVING TOKEN TO DB")
    (assoc-in db [:auth :token] token)))
 
+
+;;---------------------------
 ;; LOGGING
 
 (reg-event-db
@@ -81,41 +85,74 @@
    (js/console.log (-> db :ui :msgs))
    db))
 
+
+;;---------------------------
 ;; MESSAGES
 
-(defn swap-vec [v a b]
-  (map
-   (fn [[id msg]]
-     (let [{:keys [order]} msg]
-       (condp = order
-         a {id (assoc-in msg [:order] b)}
-         b {id (assoc-in msg [:order] a)}
-         {id msg})))
-   v))
+(defn recursively-create-deps
+ "Recursively walks tree and returns dependecy vector"
+ [item]
+ (let [msgs (get-in db ["data" "course-id-42" :days "day-id-123" :messages])
+       id (:uid item)]
+   (if-let [payload (:payload item)]
+     [id (mapv
+          (fn [p]
+            (if-let [n (:next p)]
+              (let [next (first (filter #(= (:uid %) n) msgs))]
+                (prn next)
+                (create-deps next))))
+          payload)]
+     id)))
+
+(defn create-deps
+ "Given map returns vector of dependencies"
+ [msgs]
+ (mapv
+  #(create-deps %)
+  msgs))
+
+
+; (reg-event-db
+;  :ui/create-msgs-state
+;  (fn [db [_ state]]
+;    (update-in db [:ui :msgs] merge state)))
 
 (reg-event-db
- :reorder_msg
- (fn [db [_ dix hix]]
-    ; (prn "event reorder:" dix hix)
-   (let [course-id (:curr-course db)
-         day-id (:curr-day db)
-         msgs (get-in db [:courses course-id :days day-id :messages])
-         updated (into {} (swap-vec msgs dix hix))]
-     (assoc-in db [:courses course-id :days day-id :messages] updated))))
+ :swap-msgs
+ (fn [db [_ index1 index2]]
+  (let [
+        current-course "course-id-42"
+        current-day "day-id-123"
+        msg-cursor ["data" current-course :days current-day :messages]
 
-(defn- insert-at [m item index]
-  (js/console.log m)
-  (reduce
-   (fn [acc [id msg]]
-    (js/console.log id index)
-    (let [order (:order msg)
-          length (count m)]
-      (cond
-        (< order index) (assoc acc id msg)
-        (= order index) (assoc acc (:uid item) item)
-        (> order index) (assoc acc id (update-in msg [:order] inc)))))
-   {}
-   m))
+        msgs (get-in db msg-cursor)
+        msg1 (get msgs index1)
+        msg2 (get msgs index2)]
+    (when-not (nil? (or msg1 msg2))
+      (let [edited (-> msgs
+                       (assoc-in [index1] msg2)
+                       (assoc-in [index2] msg1))]
+        (assoc-in db msg-cursor edited)))
+    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index)))))
+
+
+(defn- insert-at [v item index]
+  (if (> index (count v))
+    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index))
+    (if (= index (+ 1 (count v)))
+      (concat v [item])
+      (let [left (subvec v 0 index)
+            right (subvec v index)]
+        (into [] (concat left [item] right))))))
+
+(defn insert-msg-at [index item]
+  (let [current-course "course-id-42"
+        current-day "day-id-123"
+        msg-cursor ["data" current-course :days current-day :messages]
+        msgs (get-in db msg-cursor)]
+    (assoc-in db msg-cursor (insert-at msgs item index))))
+
+;; ADD MSG
 
 (defn- default-message [type]
   (let [uid (gen-uid "msg")]
@@ -147,13 +184,22 @@
         (into [] (concat left right))))))
 
 (reg-event-db
- :remove_msg
+ :remove-msg
  (fn [db [_ i]]
    (let [course (:curr-course db)
          day (:curr-day db)
          msgs (get-in db [:courses course :days day :messages])
          updated (remove-at msgs i)]
      (assoc-in db [:courses course :days day :messages] updated))))
+
+
+
+
+
+
+
+
+
 
 ;;---------------------------
 ;; DAYS
@@ -166,7 +212,7 @@
 ;;---------------------------
 ;; BOTS
 
-(def new-bot
+(def default-bot
   {:title "New bot"
    :description ""
    :status "development"})
@@ -174,7 +220,7 @@
 (reg-event-db
  :add-bot
  (fn [db [_]]
-   (assoc-in db [:bots 333] new-bot)))
+   (assoc-in db [:bots 333] default-bot)))
 
 ;;---------------------------
 ;; FORM
@@ -258,8 +304,3 @@
              diff-active (clojure.set/difference hidden parent-deps)
              new-active (conj diff-active child)]
          (assoc-in updated-db [:ui :msgs :active] new-active))))))
-
-(reg-event-db
- :ui/create-msgs-state
- (fn [db [_ state]]
-   (update-in db [:ui :msgs] merge state)))

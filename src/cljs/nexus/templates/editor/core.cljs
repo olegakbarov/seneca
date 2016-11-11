@@ -7,6 +7,7 @@
     [nexus.templates.editor.messages :refer [lister]]
     [nexus.templates.editor.tools :refer [tools-list]]
     [nexus.templates.header :refer [header]]))
+
 ;; ---------------------------------
 ;; Editor
 

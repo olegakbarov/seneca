@@ -1,3 +1,4 @@
+
 (ns nexus.dbutils)
 
 (defn threads->frames [coll]
@@ -47,24 +48,25 @@
         (keyword item)))
    v))
 
-(defn walk-kv-pair
-  "Recursively walks tree and returns dependecy vector"
-  [[key val] m]
-  (if-let [payload (:payload val)]
-    [key (mapv
-          (fn [p]
-            (if-let [n (:next p)]
-              (walk-kv-pair [n (get m n)] m)
-              key))
-          payload)]
-    key))
 
-(defn build-tree
-  "Builds nested vector tree from hashmap"
-  [m]
-  (->> m
-       (mapv (fn [item] (walk-kv-pair item m)))))
-      ;  kwrdze))
+; (defn walk-kv-pair
+;   "Recursively walks tree and returns dependecy vector"
+;   [[key val] m]
+;   (if-let [payload (:payload val)]
+;     [key (mapv
+;           (fn [p]
+;             (if-let [n (:next p)]
+;               (walk-kv-pair [n (get m n)] m)
+;               key))
+;           payload)]
+;     key))
+;
+; (defn build-tree
+;   "Builds nested vector tree from hashmap"
+;   [m]
+;   (->> m
+;        (mapv (fn [item] (walk-kv-pair item m)))))
+;       ;  kwrdze))
 
 
 (defn vec->set
