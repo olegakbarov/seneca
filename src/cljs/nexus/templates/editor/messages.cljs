@@ -9,11 +9,6 @@
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]
     [nexus.helpers.uids :refer [gen-uid]]
-    [nexus.dbutils :refer [
-                          ;  add-thread-info
-                           shallow-deps
-                           make-deps-tree
-                           build-tree]]
     [nexus.templates.editor.dnd :refer [state
                                         on-drag-start
                                         on-drag-over
@@ -222,25 +217,14 @@
   (r/create-class
      {:component-will-mount
       (fn []
-        (let [msgs (subscribe [:curr-msgs])
-              tree (build-tree @msgs)
-              state {:hidden (shallow-deps @msgs)
-                     :deps (make-deps-tree tree)}]
-          (dispatch [:ui/create-msgs-state state])))
+        (dispatch [:ui/create-msgs-state]))
 
       :render
         (fn []
           (let [msgs (subscribe [:curr-msgs])
-                tree (build-tree @msgs)
                 state (subscribe [:ui/msgs-state])
-                processed (reduce
-                           (fn [acc [key val]]
-                             (let [hidden (:hidden @state)]
-                               (if (contains? hidden key)
-                                 acc
-                                 (assoc acc key val))))
-                           {}
-                           @msgs)]
+                processed (fn [])]
+                              ;; rendering strategy
             (if (= 0 (count processed))
               [empty-day]
               [list-component processed])))}))

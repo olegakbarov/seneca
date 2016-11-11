@@ -89,18 +89,31 @@
 ;;---------------------------
 ;; MESSAGES
 
+;; TODO: this is hella ugly
+(defn shallow-deps
+  "Returns a set of shallow dependecies, useful for init render"
+  [m]
+  (set
+    (->> (vals m)
+         (filter #(contains? % :payload))
+         (map :payload)
+         (map flatten)
+         flatten
+         (map :next)
+         (remove nil?)
+         (map keyword))))
+
+
 (defn recursively-create-deps
  "Recursively walks tree and returns dependecy vector"
- [item]
- (let [msgs (get-in db ["data" "course-id-42" :days "day-id-123" :messages])
-       id (:uid item)]
+ [item msgs]
+ (let [id (:uid item)]
    (if-let [payload (:payload item)]
      [id (mapv
           (fn [p]
             (if-let [n (:next p)]
               (let [next (first (filter #(= (:uid %) n) msgs))]
-                (prn next)
-                (create-deps next))))
+                (recursively-create-deps next msgs))))
           payload)]
      id)))
 
@@ -108,23 +121,47 @@
  "Given map returns vector of dependencies"
  [msgs]
  (mapv
-  #(create-deps %)
+  #(create-deps % msgs)
   msgs))
 
+(defn vec->set
+  "Takes nested vector and returns key-to-set map"
+  [tr res]
+  (when-not (keyword? tr)
+    (let [k (first tr)
+          v (peek tr)]
+      (if (keyword? v)
+        res
+        (recur v (assoc res k (-> v
+                                  flatten
+                                  set)))))))
 
-; (reg-event-db
-;  :ui/create-msgs-state
-;  (fn [db [_ state]]
-;    (update-in db [:ui :msgs] merge state)))
+(defn make-deps-tree
+  "Creates a map of 'dependecies' from tree represented as vector"
+  [v]
+  ; (js/console.log v)
+  (let [res {}]
+    (first (->> v
+                (map #(vec->set % res))
+                (remove nil?)))))
+
+
+(reg-event-db
+ :ui/create-msgs-state
+ (fn [db [_]]
+  (let [msgs (subscribe [:curr-msgs])
+        tree (create-deps @msgs)
+        state {:hidden (shallow-deps @msgs)
+               :deps (make-deps-tree tree)}]
+   (update-in db [:ui :msgs] merge state))))
+
 
 (reg-event-db
  :swap-msgs
  (fn [db [_ index1 index2]]
-  (let [
-        current-course "course-id-42"
-        current-day "day-id-123"
-        msg-cursor ["data" current-course :days current-day :messages]
-
+  (let [course (:curr-course db)
+        day (:curr-day db)
+        msg-cursor [:courses course :days day :messages]
         msgs (get-in db msg-cursor)
         msg1 (get msgs index1)
         msg2 (get msgs index2)]
@@ -133,24 +170,8 @@
                        (assoc-in [index1] msg2)
                        (assoc-in [index2] msg1))]
         (assoc-in db msg-cursor edited)))
-    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index)))))
+    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index1 index2)))))
 
-
-(defn- insert-at [v item index]
-  (if (> index (count v))
-    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index))
-    (if (= index (+ 1 (count v)))
-      (concat v [item])
-      (let [left (subvec v 0 index)
-            right (subvec v index)]
-        (into [] (concat left [item] right))))))
-
-(defn insert-msg-at [index item]
-  (let [current-course "course-id-42"
-        current-day "day-id-123"
-        msg-cursor ["data" current-course :days current-day :messages]
-        msgs (get-in db msg-cursor)]
-    (assoc-in db msg-cursor (insert-at msgs item index))))
 
 ;; ADD MSG
 
@@ -163,15 +184,25 @@
       "generic-template" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
       "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123})))
 
+(defn- insert-at [v item index]
+  (if (> index (count v))
+    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index))
+    (if (= index (+ 1 (count v)))
+      (concat v [item])
+      (let [left (subvec v 0 index)
+            right (subvec v index)]
+        (into [] (concat left [item] right))))))
+
 (reg-event-db
  :add-msg
- (fn [db [_ type hix]]
+ (fn [db [_ type index]]
    (let [course (:curr-course db)
          day (:curr-day db)
          msgs (get-in db [:courses course :days day :messages])
-         updated (insert-at msgs (default-message type) hix)]
-     (js/console.log updated)
-     (assoc-in db [:courses course :days day :messages] updated))))
+         msg-cursor [:courses course :days day :messages]
+         msgs (get-in db msg-cursor)
+         item (default-message type)]
+    (assoc-in db msg-cursor (insert-at msgs item index)))))
 
 (defn remove-at [v i]
   "Removes item with index `i` from vector `v`"
@@ -191,14 +222,6 @@
          msgs (get-in db [:courses course :days day :messages])
          updated (remove-at msgs i)]
      (assoc-in db [:courses course :days day :messages] updated))))
-
-
-
-
-
-
-
-
 
 
 ;;---------------------------
