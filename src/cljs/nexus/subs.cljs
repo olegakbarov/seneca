@@ -124,5 +124,8 @@
   :ui/text
   (fn [db [_ uid]]
     (let [course (:curr-course db)
-          day (:curr-day db)]
-      (get-in db [:courses course :days day :messages uid :text]))))
+          day (:curr-day db)
+          msgs (get-in db [:courses course :days day :messages])
+          one (->> msgs
+                   (filter #(= (:uid %) uid)))]
+      (:text (first one)))))

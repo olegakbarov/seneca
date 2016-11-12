@@ -21,7 +21,7 @@
 (reg-event-db
  :set-active-panel
  (fn [db [_ active-panel]]
-   (js/console.log ":set-active panel handler " active-panel)
+  ;  (js/console.log ":set-active panel handler " active-panel)
     ;; нехилый костыль
    (if (keyword? active-panel)
      (assoc-in db [:router :current] active-panel)
@@ -94,8 +94,7 @@
   "Returns a set of shallow dependecies, useful for init render"
   [m]
   (set
-    (->> (vals m)
-         (filter #(contains? % :payload))
+    (->> (filter #(contains? % :payload))
          (map :payload)
          (map flatten)
          flatten
@@ -120,9 +119,11 @@
 (defn create-deps
  "Given map returns vector of dependencies"
  [msgs]
- (mapv
-  #(create-deps % msgs)
-  msgs))
+ (let [res (mapv
+            #(recursively-create-deps % msgs)
+            msgs)]
+  (js/console.log res)
+  res))
 
 (defn vec->set
   "Takes nested vector and returns key-to-set map"
@@ -139,7 +140,6 @@
 (defn make-deps-tree
   "Creates a map of 'dependecies' from tree represented as vector"
   [v]
-  ; (js/console.log v)
   (let [res {}]
     (first (->> v
                 (map #(vec->set % res))
@@ -256,6 +256,37 @@
 ;;---------------------------
 ;; FETCH DATA
 
+;; FETCH COURESES
+
+(reg-event-db
+ :courses-fetch
+ (fn [db _]
+   (let [endpoint "http://localhost:7777/api/v2/publisher/courses"]
+     (ajax/GET endpoint
+               {:handler #(re-frame/dispatch [:courses-fetch-success %1])
+                :error-handler #(re-frame/dispatch [:courses-fetch-err %1])
+                :response-format :json
+                :keywords? true})
+     db)))
+
+(reg-event-db
+ :courses-fetch-success
+ (fn [db [_ res]]
+   (let [processed (reduce
+                    (fn [obj item]
+                      (conj obj {(:id item) item}))
+                    {}
+                    res)]
+     (assoc-in db [:bots] processed))))
+
+(reg-event-db
+ :courses-fetch-err
+ (fn [db [_ response]]
+   (js/console.log response)
+   db))
+
+;; FETCH BOTS
+
 (reg-event-db
  :bots-fetch
  (fn [db _]
@@ -314,7 +345,7 @@
  :ui/toggle-expanded-id
  (fn [db [_ [parent child]]]
    (if (nil? parent)
-     (js/console.log "ERROR CHILD CANT BE NIL")
+     (throw (js/Error. "ERROR! parent CANT BE NIL" parent))
      (if (nil? child)
        db
        (let [parent-deps (-> db :ui :msgs :deps parent)

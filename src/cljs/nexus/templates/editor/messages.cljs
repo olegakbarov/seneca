@@ -165,8 +165,9 @@
 ;; ------------------------------------
 
 (defn render-msg-container [msg]
+  (js/console.log msg)
   (fn []
-    (let [{:keys [type uid order thread]} msg
+    (let [{:keys [type uid]} msg
           is-editing-id (subscribe [:ui/is-editing-id])
           active-thread-id (subscribe [:ui/curr-thread])
           is-editing (= (:uid msg) @is-editing-id) ;; if current msg editable
@@ -193,7 +194,7 @@
                :on-mouse-enter on-hover
                :on-mouse-leave on-unhover
                :data-uid uid
-               :data-dragindex order
+              ;  :data-dragindex order
                :data-type type})
             [drag-hook uid is-editing]
             [render-msg uid msg is-editing]
@@ -204,12 +205,13 @@
 ;     (aget js/npm "react-textarea-autosize")))
 
 (defn list-component [items]
-  (let [dropzone (> 1 (count items))]
+  (js/console.log items)
+  (let [dropzone (> 0 (count items))]
     [:div#msg_wrapper
-      [:ul.list_messages
+      [:ul.list_messages;
         (doall
-          (for [[key item] items]
-            ^{:key key} [render-msg-container item]))]
+          (for [item items]
+            ^{:key (:uid item)} [render-msg-container item]))]
       (if dropzone
         [:div.msg_wrapper_dropzone])]))
 
@@ -218,13 +220,21 @@
      {:component-will-mount
       (fn []
         (dispatch [:ui/create-msgs-state]))
-
       :render
         (fn []
           (let [msgs (subscribe [:curr-msgs])
                 state (subscribe [:ui/msgs-state])
-                processed (fn [])]
-                              ;; rendering strategy
+                processed (->> @msgs
+                               (map
+                                (fn [item]
+                                 (let [id (:uid item)]
+                                   (if (:payload item)
+                                       (if (contains? id (:hidden @state))
+                                           item)
+                                       item))))
+                               (remove nil?))]
+            (js/console.log "processed")
+            (js/console.log processed)
             (if (= 0 (count processed))
-              [empty-day]
-              [list-component processed])))}))
+                [empty-day]
+                [list-component processed])))}))
