@@ -2,25 +2,35 @@
 
 ### TODO
 
-[ ] add new text messages
+- [x] secure routes
 
-[ ] add message with quick-reply
+- [x] add new text messages
 
-[ ] secure routes
+- [ ] add message with quick-reply
 
-[ ] get course from db
+- [ ] divide into threads and add overlaying
 
-[ ] save course (to db)
+--
 
-[ ] validate saving course
+- [ ] get course from db
 
-[ ] add new day
+- [ ] validate saving course
 
-[ ] add new course (to db)
+- [ ] save course (to db)
 
-[ ] add profile page
+--
 
-[ ]
+- [ ] map router in db to window.location
+
+--
+
+- [ ] add new day
+
+- [ ] ? add new course (to db)
+
+- [ ] add profile page
+
+- [ ] fix layout on repaint (editor)
 
 
 ### Setup
