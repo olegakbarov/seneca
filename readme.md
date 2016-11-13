@@ -6,11 +6,11 @@
 
 - [x] add new text messages
 
+- [x] add new day
+
 - [ ] add message with quick-reply
 
 - [ ] divide into threads and add overlaying
-
---
 
 - [ ] get course from db
 
@@ -18,13 +18,7 @@
 
 - [ ] save course (to db)
 
---
-
 - [ ] map router in db to window.location
-
---
-
-- [ ] add new day
 
 - [ ] ? add new course (to db)
 

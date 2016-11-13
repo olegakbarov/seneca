@@ -224,17 +224,16 @@
         days (subscribe [:curr-days])
         order (inc (count @days))]
     {:uid uid
-     :order order}))
+     :order order
+     :messages []}))
 
 (reg-event-db
  :add-day
  (fn [db [_]]
    (let [course (:curr-course db)
-         days-pointer [:courses course]
-         days (get-in db days-pointer)
-         d (new-day)
-         new-days (into [] (concat days d))]
-      (assoc-in db (:uid d) (new-days)))))
+         days (get-in db [:courses course :days])
+         d (new-day)]
+      (assoc-in db [:courses course :days (:uid d)] d))))
 
 
 ;;---------------------------

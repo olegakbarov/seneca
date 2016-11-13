@@ -33,7 +33,11 @@
                   [:div.days_row_item
                      {:class (get-item-classes day)
                       :on-click #(dispatch [:set_current_day uid])}
-                    (:errors day)])))]]]))
+                    (:errors day)])))
+          ^{:key "add_item_cell"}
+          [:div.days_row_item.plus
+              {:on-click #(dispatch [:add-day])}
+            "+"]]]]))
 
 (defn days [items]
   (let [groups (partition-all 7 items) ;; 7 = week
@@ -59,6 +63,8 @@
                          @curr-days)]
     [days days-processed]))
 
+
+;; TODO move to common chans
 (defn listen! []
   (let [chan (scroll-chan)]
     (go-loop []
