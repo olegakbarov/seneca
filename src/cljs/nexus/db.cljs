@@ -14,7 +14,7 @@
           :is-editing-id nil
           :curr-thread nil
           :msgs {:hidden #{}
-                 :deps []
+                 :deps {}
                  :active #{}}}
 
      :form {:email ""
@@ -67,7 +67,7 @@
                          {:uid "780"
                           :text "This is hidden in thread"
                           :type "text-message"}
-                          
+
                          {:uid "012"
                           :text "Message with id :4"
                           :type "quick-reply"

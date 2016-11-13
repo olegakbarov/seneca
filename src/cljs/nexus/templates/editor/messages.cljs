@@ -59,9 +59,7 @@
                 ^{:key ix}
                 [:div.lister_msg_item_qr
                   {:class classes
-                   :on-click #(do
-                                (js/console.log "Toggling " [id next])
-                                (dispatch [:ui/toggle-expanded-id [id next]]))}
+                   :on-click #(dispatch [:ui/toggle-expanded-id [id next]])}
                   (:text item)]))
             btns))])))
 
@@ -213,27 +211,22 @@
       (if dropzone
         [:div.msg_wrapper_dropzone])]))
 
-
 (defn lister []
   (r/create-class
      {:component-will-mount
-      (fn []
-        (dispatch [:ui/create-msgs-state]))
+       (fn []
+         (dispatch [:ui/create-msgs-state]))
       :render
         (fn []
           (let [msgs (subscribe [:curr-msgs])
                 state (subscribe [:ui/msgs-state])
-                processed (->> @msgs
-                               (map
-                                (fn [item]
-                                 (let [id (:uid item)]
-                                   (if (:payload item)
-                                       (if (contains? id (:hidden @state))
-                                           item)
-                                       item))))
-                               (remove nil?))]
-            ; (js/console.log "processed")
-            ; (js/console.log processed)
+                processed (reduce
+                            (fn [acc item]
+                             (if-not (contains? (:hidden @state) (:uid item))
+                               (conj acc item)
+                               acc))
+                            []
+                            @msgs)]
             (if (= 0 (count processed))
                 [empty-day]
                 [list-component processed])))}))
