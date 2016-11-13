@@ -88,19 +88,6 @@
 ;; UI
 
 (re-frame/reg-sub
-  :ui/is-editing-id
-  (fn [db [_]]
-    (-> db :ui :is-editing-id)))
-
-(re-frame/reg-sub
-  :ui/is-editing-msg-text
-  (fn [db [_]]
-    (let [course (:curr-course db)
-          day (:curr-day db)
-          id (subscribe [:ui/is-editing-id])]
-      (get-in db [:courses course :days day :messages @id :text]))))
-
-(re-frame/reg-sub
   :ui/curr-thread
   (fn [db [_]]
     (-> db :ui :curr-thread)))
@@ -119,6 +106,11 @@
   :ui/active-msgs
   (fn [db [_]]
     (-> db :ui :msgs :active)))
+
+(re-frame/reg-sub
+  :ui/is-editing-id
+  (fn [db [_]]
+    (-> db :ui :is-editing-id)))
 
 (re-frame/reg-sub
   :ui/text

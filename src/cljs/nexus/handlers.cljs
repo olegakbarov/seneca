@@ -320,10 +320,13 @@
  (fn [db [_ id text]]
    (let [course (:curr-course db)
          day (:curr-day db)
-         msgs (get-in db [:courses course :days day :messages])
-         updated (assoc-in msgs [id :text] text)]
-     (assoc-in db [:courses course :days day :messages] updated))))
-
+         msg-cursor [:courses course :days day :messages]
+         msgs (get-in db msg-cursor)
+         edited (->> msgs
+                     (mapv #(if (= (% :uid) id)
+                                (merge % {:text text})
+                                %)))]
+      (assoc-in db msg-cursor edited))))
 
 
 (reg-event-db

@@ -69,7 +69,7 @@
 
 (defn render-editable-text [uid]
   (fn []
-    (let [text (subscribe [:ui/is-editing-msg-text])]
+    (let [text (subscribe [:ui/text uid])]
       (r/create-class
          {:component-did-mount
            (fn [this]
