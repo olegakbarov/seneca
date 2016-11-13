@@ -56,7 +56,10 @@
         top (-> e .-currentTarget .getBoundingClientRect .-top)
         bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
         mid (/ (- bottom top) 2)]
-      (dispatch [:add-msg (@state :adding-type) hover-index])))
+      (if-not (:msg-added @state)
+        (do
+          (dispatch [:add-msg (@state :adding-type) hover-index])
+          (reset! state (merge @state {:msg-added true}))))))
 
 (defn should-reorder? []
   (let [{:keys [drag-index hover-index hover-y hover-mid]} @state]
@@ -86,7 +89,7 @@
       (if (should-reorder?)
           (do
            (.log js/console "we dispatch!")
-           (dispatch [:reorder_msg drag-index hover-index])
+           (dispatch [:reorder-msg drag-index hover-index])
            (reset! state (merge @state {:drag-index hover-index
                                         :hover-index hover-index
                                         :hover-mid mid}))))))
