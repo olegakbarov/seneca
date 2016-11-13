@@ -22,7 +22,7 @@
  :set-active-panel
  (fn [db [_ active-panel]]
   ;  (js/console.log ":set-active panel handler " active-panel)
-    ;; нехилый костыль
+  ;; нехилый костыль
    (if (keyword? active-panel)
      (assoc-in db [:router :current] active-panel)
      (assoc-in db [:router :current] (active-panel)))))
@@ -92,16 +92,15 @@
 ;; TODO: this is hella ugly
 (defn shallow-deps
   "Returns a set of shallow dependecies, useful for init render"
-  [m]
+  [v]
   (set
-    (->> (filter #(contains? % :payload))
+    (->> v
+         (filter #(contains? % :payload))
          (map :payload)
          (map flatten)
          flatten
          (map :next)
-         (remove nil?)
-         (map keyword))))
-
+         (remove nil?))))
 
 (defn recursively-create-deps
  "Recursively walks tree and returns dependecy vector"
@@ -119,32 +118,17 @@
 (defn create-deps
  "Given map returns vector of dependencies"
  [msgs]
- (let [res (mapv
-            #(recursively-create-deps % msgs)
-            msgs)]
-  (js/console.log res)
-  res))
+ (mapv
+  #(recursively-create-deps % msgs)
+  msgs))
 
-(defn vec->set
-  "Takes nested vector and returns key-to-set map"
-  [tr res]
-  (when-not (keyword? tr)
-    (let [k (first tr)
-          v (peek tr)]
-      (if (keyword? v)
-        res
-        (recur v (assoc res k (-> v
-                                  flatten
-                                  set)))))))
-
-(defn make-deps-tree
-  "Creates a map of 'dependecies' from tree represented as vector"
-  [v]
-  (let [res {}]
-    (first (->> v
-                (map #(vec->set % res))
-                (remove nil?)))))
-
+(defn make-deps-map [acc item]
+  (if (vector? item)
+      (assoc acc (first item) (set
+                                (->> (peek item)
+                                     flatten
+                                     (remove nil?))))
+      (assoc acc item #{})))
 
 (reg-event-db
  :ui/create-msgs-state
@@ -152,7 +136,8 @@
   (let [msgs (subscribe [:curr-msgs])
         tree (create-deps @msgs)
         state {:hidden (shallow-deps @msgs)
-               :deps (make-deps-tree tree)}]
+               :deps (reduce make-deps-map {} tree)}]
+   (prn tree)
    (update-in db [:ui :msgs] merge state))))
 
 
@@ -165,12 +150,12 @@
         msgs (get-in db msg-cursor)
         msg1 (get msgs index1)
         msg2 (get msgs index2)]
-    (when-not (nil? (or msg1 msg2))
+    (if-not (nil? (or msg1 msg2))
       (let [edited (-> msgs
                        (assoc-in [index1] msg2)
                        (assoc-in [index2] msg1))]
-        (assoc-in db msg-cursor edited)))
-    (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index1 index2)))))
+        (assoc-in db msg-cursor edited))
+      (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index1 index2))))))
 
 
 ;; ADD MSG

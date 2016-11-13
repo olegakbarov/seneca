@@ -26,7 +26,6 @@
 
 (defn render-text [uid & last]
   (let [text (subscribe [:ui/text uid])]
-    (js/console.log @text)
     ^{:key @text}
     [:div.lister_msg_item_text
       {:class (if (not (nil? last)) "last_txt" "")}
@@ -144,14 +143,14 @@
   (reset! reveal nil))
 
 (defn drag-hook [ix is-editing]
-  (let [visible (or is-editing (= (keyword @reveal) ix))]
+  (let [visible (= @reveal ix)]
     [:div.msg_drag-hook
       {:class (if visible "" "hidden")}
       "🖐🏻"]))
 
 (defn msg-tools [ix msg is-editing]
   [:div.lister_msg_tools {:on-drag-start #(.stopPropagation %)
-                          :class (if (= (keyword @reveal) ix) "" "hidden")}
+                          :class (if (= @reveal ix) "" "hidden")}
     [:div.edit
       {:on-click #(dispatch [:set-is-editing-id ix])}
       "✍🏼"]
@@ -205,7 +204,6 @@
 ;     (aget js/npm "react-textarea-autosize")))
 
 (defn list-component [items]
-  (js/console.log items)
   (let [dropzone (> 0 (count items))]
     [:div#msg_wrapper
       [:ul.list_messages;
@@ -214,6 +212,7 @@
             ^{:key (:uid item)} [render-msg-container item]))]
       (if dropzone
         [:div.msg_wrapper_dropzone])]))
+
 
 (defn lister []
   (r/create-class
@@ -233,8 +232,8 @@
                                            item)
                                        item))))
                                (remove nil?))]
-            (js/console.log "processed")
-            (js/console.log processed)
+            ; (js/console.log "processed")
+            ; (js/console.log processed)
             (if (= 0 (count processed))
                 [empty-day]
                 [list-component processed])))}))
