@@ -325,10 +325,6 @@
      (assoc-in db [:courses course :days day :messages] updated))))
 
 
-;  (if (nil? parent)
-;    (throw (js/Error. "ERROR! parent CANT BE NIL" parent))
-;  (if (nil? child)
-;    db
 
 (reg-event-db
  :ui/toggle-expanded-id
@@ -340,11 +336,10 @@
          active (-> db :ui :msgs :active)
          diff-active (clojure.set/difference hidden parent-deps)
          new-active (conj diff-active child)]
-      ; (js/console.log parent-deps)
-      ; (js/console.log hidden)
-      ; (js/console.log diff-hidden)
-      ; (js/console.log new-hidden)
-      ; (js/console.log active)
-      (-> db
-          (assoc-in [:ui :msgs :hidden] new-hidden)
-          (assoc-in [:ui :msgs :active] new-active)))))
+     (if (nil? parent)
+       (throw (js/Error. "ERROR! parent CANT BE NIL" parent))
+       (if (nil? child)
+         db
+         (-> db
+             (assoc-in [:ui :msgs :hidden] new-hidden)
+             (assoc-in [:ui :msgs :active] new-active)))))))
