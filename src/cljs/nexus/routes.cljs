@@ -2,7 +2,6 @@
 (ns nexus.routes
   (:require [bidi.bidi :as bidi]
             [pushy.core :as pushy]
-            [nexus.helpers.core :refer [log]]
             [re-frame.core :refer [subscribe dispatch]]))
 
 (defn auth-handler [page]

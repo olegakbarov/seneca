@@ -4,7 +4,6 @@
                                    subscribe]]
             [re-frame.core :as re-frame]
             [nexus.db :as db]
-            [nexus.helpers.core :refer [log]]
             [nexus.helpers.uids :refer [gen-uid]]
             [ajax.core :as ajax]
             [nexus.localstorage :as ls]))
@@ -219,6 +218,24 @@
  :set_current_day
  (fn [db [_ n]]
    (assoc db :curr-day n)))
+
+(defn new-day []
+  (let [uid (gen-uid "day")
+        days (subscribe [:curr-days])
+        order (inc (count @days))]
+    {:uid uid
+     :order order}))
+
+(reg-event-db
+ :add-day
+ (fn [db [_]]
+   (let [course (:curr-course db)
+         days-pointer [:courses course]
+         days (get-in db days-pointer)
+         d (new-day)
+         new-days (into [] (concat days d))]
+      (assoc-in db (:uid d) (new-days)))))
+
 
 ;;---------------------------
 ;; BOTS

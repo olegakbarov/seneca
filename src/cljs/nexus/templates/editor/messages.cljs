@@ -14,7 +14,6 @@
                                         on-drag-over
                                         on-drag-end
                                         on-drag-enter]]))
-    ; [nexus.templates.editor.add_msg :refer [add-msg]]))
 
 (def reveal (r/atom nil))
 
@@ -190,7 +189,7 @@
                :on-mouse-enter on-hover
                :on-mouse-leave on-unhover
                :data-uid uid
-               :data-dragindex order 
+               :data-dragindex order
                :data-type type})
             [drag-hook uid is-editing]
             [render-msg uid msg is-editing]

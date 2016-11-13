@@ -262,19 +262,19 @@
                         millis (* 1000 (js/Math.floor (/ millis 1000)))
                         [{:keys [divisor display] :as current} & remaining-factors] millis-factors
                         acc []]
-                        (if divisor
-                          (let [whole-result (quot millis divisor)
-                                remainder (rem millis divisor)
+                       (if divisor
+                         (let [whole-result (quot millis divisor)
+                               remainder (rem millis divisor)
                                 ;; don't add leading 0's to result
-                                next-acc (if (and (empty? acc) (zero? whole-result))
-                                           acc
-                                           (conj acc [whole-result display]))]
-                            (if (> remainder 0)
-                              (recur remainder remaining-factors next-acc)
-                              next-acc))
-                          acc))]
-           (str/join " " (map (fn [[num unit]]
-                                (str num unit)) result)))))
+                               next-acc (if (and (empty? acc) (zero? whole-result))
+                                          acc
+                                          (conj acc [whole-result display]))]
+                           (if (> remainder 0)
+                             (recur remainder remaining-factors next-acc)
+                             next-acc))
+                         acc))]
+         (str/join " " (map (fn [[num unit]]
+                              (str num unit)) result)))))
 
 (defn nice-floor-duration
   "Returns millis floored to a nice value for printing."

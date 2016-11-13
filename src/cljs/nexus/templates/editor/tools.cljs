@@ -97,7 +97,8 @@
     [:div.msg_type_item
       {:draggable true
        :data-type "button-template"
-       :data-action "add"}
+       :data-action "add"
+       :on-drag-end on-drag-end}
      [text-placeholder 2 false]
      [buttons-placeholder 2]]])
 
@@ -107,7 +108,8 @@
     [:div.msg_type_item
       {:draggable true
        :data-type "quick-reply"
-       :data-action "add"}
+       :data-action "add"
+       :on-drag-end on-drag-end}
      [text-placeholder 2 true]
      [quick-replies 2]]])
 
@@ -117,7 +119,8 @@
     [:div.msg_type_item
       {:draggable true
        :data-type "generic-template"
-       :data-action "add"}
+       :data-action "add"
+       :on-drag-end on-drag-end}
      [img-placeholder]
      [buttons-placeholder 2]]])
 

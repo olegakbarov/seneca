@@ -2,7 +2,6 @@
 (ns nexus.templates.editor.core
   (:require
     [reagent.core :as r]
-    [nexus.helpers.core :refer [log]]
     [nexus.templates.editor.days_row :refer [days-row]]
     [nexus.templates.editor.messages :refer [lister]]
     [nexus.templates.editor.tools :refer [tools-list]]

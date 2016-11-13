@@ -4,7 +4,6 @@
   (:require
     [reagent.core :as r]
     [cljs.core.async :refer [<! put! chan timeout]]
-    [nexus.helpers.core :refer [log]]
     [goog.events :as events]
     [re-frame.core :refer [dispatch]])
   (:import [goog.events EventType]))

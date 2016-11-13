@@ -1,6 +1,8 @@
 
 (ns nexus.dbutils)
 
+;; TODO rewrite or get rid of
+
 (defn threads->frames [coll]
   "Converts ui-friendly threads to db-friendly frames."
   (let [tmp (atom {:frames []})
@@ -35,15 +37,3 @@
 ;              v))
 ;          (assoc val :thread @n)))
 ;      m)))
-
-;;-----------------------------------
-;;-----------------------------------
-
-;; might not necessary
-(defn kwrdze [v]
-  (mapv
-   (fn [item]
-    (if (vector? item)
-        (kwrdze item)
-        (keyword item)))
-   v))

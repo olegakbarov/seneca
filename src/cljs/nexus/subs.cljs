@@ -2,7 +2,6 @@
 (ns nexus.subs
   (:require [re-frame.core :as re-frame]
             [nexus.db :as db]
-            [nexus.helpers.core :refer [log]]
             [re-frame.core :refer [subscribe]]))
 
 (re-frame/reg-sub
@@ -26,6 +25,11 @@
   :curr-day
   (fn [db [_]]
    (:curr-day db)))
+
+(re-frame/reg-sub
+  :curr-days
+  (let [course (:curr-course db)]
+    (get-in db [:courses course :days])))
 
 (re-frame/reg-sub
  :curr-course
