@@ -5,7 +5,8 @@
     [goog.dom :as dom]
     [reagent.core :as r]
     [nexus.templates.editor.dnd :refer [state
-                                        update-state!]]
+                                        update-state!
+                                        on-drag-end]]
     [nexus.chans :refer [scroll-chan
                          cur-scroll-y
                          prev-scroll-y]]))
@@ -85,7 +86,8 @@
       {:draggable true
        :data-type "text-message"
        :on-drag-start #(update-state! :adding-type "text-message")
-       :data-action "add"}
+       :data-action "add"
+       :on-drag-end on-drag-end}
      [text-placeholder 3 true]]])
 
 ;; BTN TEMPLATE

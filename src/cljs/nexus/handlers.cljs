@@ -82,7 +82,8 @@
 (reg-event-db
  :show_state
  (fn [db [_]]
-   (js/console.log (-> db :ui :msgs))
+  ;  (js/console.log (-> db :ui :msgs))
+   (js/console.log db)
    db))
 
 
@@ -150,12 +151,12 @@
         msgs (get-in db msg-cursor)
         msg1 (get msgs index1)
         msg2 (get msgs index2)]
-    (if-not (nil? (or msg1 msg2))
+    (if (nil? (or msg1 msg2))
+      (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index1 index2))
       (let [edited (-> msgs
                        (assoc-in [index1] msg2)
                        (assoc-in [index2] msg1))]
-        (assoc-in db msg-cursor edited))
-      (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index1 index2))))))
+        (assoc-in db msg-cursor edited))))))
 
 
 ;; ADD MSG
@@ -172,8 +173,8 @@
 (defn- insert-at [v item index]
   (if (> index (count v))
     (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index))
-    (if (= index (+ 1 (count v)))
-      (concat v [item])
+    (if (= index 0)
+      (into [] (concat [item] v))
       (let [left (subvec v 0 index)
             right (subvec v index)]
         (into [] (concat left [item] right))))))
@@ -181,13 +182,14 @@
 (reg-event-db
  :add-msg
  (fn [db [_ type index]]
+   (js/console.log "adding msg to index " index)
    (let [course (:curr-course db)
          day (:curr-day db)
-         msgs (get-in db [:courses course :days day :messages])
          msg-cursor [:courses course :days day :messages]
          msgs (get-in db msg-cursor)
-         item (default-message type)]
-    (assoc-in db msg-cursor (insert-at msgs item index)))))
+         item (default-message type)
+         edited (insert-at msgs item index)]
+      (assoc-in db msg-cursor edited))))
 
 (defn remove-at [v i]
   "Removes item with index `i` from vector `v`"
@@ -206,6 +208,7 @@
          day (:curr-day db)
          msgs (get-in db [:courses course :days day :messages])
          updated (remove-at msgs i)]
+     (prn updated)
      (assoc-in db [:courses course :days day :messages] updated))))
 
 

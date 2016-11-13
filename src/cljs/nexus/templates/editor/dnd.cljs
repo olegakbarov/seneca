@@ -79,20 +79,19 @@
         hover-y (- client-y top)
         {:keys [drag-index drag-mid]} @state
         mid (min hover-mid drag-mid)]
-
       (reset! state (merge @state {:hover-index hover-index
                                    :hover-y hover-y
                                    :hover-mid mid}))
-
-      ; (.log js/console drag-index hover-index hover-y mid)
-
       (if (should-reorder?)
           (do
-           (.log js/console "we dispatch!")
-           (dispatch [:reorder-msg drag-index hover-index])
+          ;  (dispatch [:swap-msgs drag-index hover-index])
            (reset! state (merge @state {:drag-index hover-index
                                         :hover-index hover-index
                                         :hover-mid mid}))))))
 
+;; TODO wrong behavior
 (defn on-drag-end [e]
-  (init!))
+  (do
+    (js/console.log "ON DRAG END")
+    (init!)
+    (js/console.log @state)))

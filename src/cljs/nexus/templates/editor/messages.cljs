@@ -13,8 +13,8 @@
                                         on-drag-start
                                         on-drag-over
                                         on-drag-end
-                                        on-drag-enter]]
-    [nexus.templates.editor.add_msg :refer [add-msg]]))
+                                        on-drag-enter]]))
+    ; [nexus.templates.editor.add_msg :refer [add-msg]]))
 
 (def reveal (r/atom nil))
 
@@ -161,8 +161,7 @@
 ;; WRAPPER over MSGS
 ;; ------------------------------------
 
-(defn render-msg-container [msg]
-  (js/console.log msg)
+(defn render-msg-container [msg order]
   (fn []
     (let [{:keys [type uid]} msg
           is-editing-id (subscribe [:ui/is-editing-id])
@@ -191,7 +190,7 @@
                :on-mouse-enter on-hover
                :on-mouse-leave on-unhover
                :data-uid uid
-              ;  :data-dragindex order
+               :data-dragindex order 
                :data-type type})
             [drag-hook uid is-editing]
             [render-msg uid msg is-editing]
@@ -206,8 +205,10 @@
     [:div#msg_wrapper
       [:ul.list_messages;
         (doall
-          (for [item items]
-            ^{:key (:uid item)} [render-msg-container item]))]
+          (map-indexed
+            (fn [index item]
+              ^{:key (:uid item)} [render-msg-container item index])
+            items))]
       (if dropzone
         [:div.msg_wrapper_dropzone])]))
 
