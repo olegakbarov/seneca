@@ -16,13 +16,10 @@
             [:li
               [:a {:href (routes/url-for :bots)} "My Bots"]]
             [:li
-              [:a {:href (routes/url-for :editor)} "Weather bot"]]
-            [:li
-              [:a {:href (routes/url-for :signup)} "Signup"]]
-            [:li
-              [:a {:href (routes/url-for :login)} "Login"]]]]
+              [:a {:href (routes/url-for :editor)} "Weather bot"]]]]
         [:div.header_right
           [:div.btn.header_save_button
+            {:on-click #(dispatch [:course/create])}
             "Save"]
           [:div.btn.header_test_button
             {:on-click #(dispatch [:show_state])}

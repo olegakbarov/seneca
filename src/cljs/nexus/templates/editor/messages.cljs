@@ -40,7 +40,7 @@
             (:text item)])
         btns))])
 
-(defn render-qr [msg thread]
+(defn render-qr [msg]
   (fn []
     (let [btns (:payload msg)]
       [:div.lister_msg_item_wrap
@@ -81,6 +81,40 @@
                  :on-change #(dispatch [:edit-msg-text uid (-> % .-target .-value)])
                  :on-click #(.stopPropagation %)}])}))))
 
+; (defn render-editable-qr [msg]
+;  (fn []
+;    (let [text (subscribe [:ui/text uid])]
+;      (r/create-class
+;         {:component-did-mount
+;           (fn [this]
+;             (let [node (reagent.dom/dom-node this)]
+;               (-> node .focus)))
+;          :render
+;            (fn []
+;              (let [btns (:payload msg)]
+;                [:div.lister_msg_item_wrap
+;                 [:textarea.lister_msg_item_text
+;                   {:value @text
+;                    :on-change #(dispatch [:edit-msg-text uid (-> % .-target .-value)])
+;                    :on-click #(.stopPropagation %)}
+;                  (doall
+;                    (map-indexed
+;                      (fn [ix item]
+;                        (let [hidden (subscribe [:ui/hidden-msgs])
+;                              active (subscribe [:ui/active-msgs])
+;                              id (:uid msg)
+;                              next (-> item :next)
+;                              selected (contains? @active next)
+;                              classes (str
+;                                        (if next "" "qr_error")
+;                                        (if selected " selected" ""))]
+;                          ^{:key ix}
+;                          [:div.lister_msg_item_qr
+;                            {:class classes}
+;                            [:input {:type "text"}]]))
+;                      btns))]]))}))))
+
+
 ;; ------------------------------------
 ;; RENDER MSG BY TYPE
 ;; ------------------------------------
@@ -105,6 +139,9 @@
                   btns (:payload item)]
               ^{:key ix}
               [:div.message_content
+                ; (if is-editing
+                ;   ^{:key ix} [render-editable-text uid]
+                ;   ^{:key ix} [render-text uid])
                 ^{:key text}
                 [render-text ix]
                 ^{:key btns}

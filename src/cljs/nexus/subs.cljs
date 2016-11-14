@@ -22,6 +22,14 @@
 ;; CURRENTS
 
 (re-frame/reg-sub
+  :courses
+  (fn [db [_]]
+    (-> db :courses)))
+
+;;-------------------------
+;; CURRENTS
+
+(re-frame/reg-sub
   :curr-day
   (fn [db [_]]
    (:curr-day db)))

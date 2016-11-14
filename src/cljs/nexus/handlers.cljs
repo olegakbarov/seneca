@@ -33,7 +33,9 @@
 (reg-event-db
  :auth/login
  (fn [db _]
-   (let [endpoint "http://localhost:7777/api/v1/auth/token"
+   (let [
+         endpoint "https://dev.nadya.tech/api/v2/auth/get_token"
+        ;  endpoint "http://localhost:7777/api/v2/auth/token"
          creds (subscribe [:form])
          {:keys [email password]} @creds]
      (ajax/POST endpoint
@@ -285,6 +287,43 @@
  (fn [db [_ cursor val]]
    (assoc-in db [:form cursor] val)))
 
+
+;;---------------------------
+;; POST DATA
+;;---------------------------
+
+(reg-event-db
+ :course/create
+ (fn [db _]
+   (let [endpoint "https://dev.nadya.tech/api/v2/publisher/courses/create"
+         course-id (subscribe [:curr-course])
+         course (get-in db [:courses @course-id])
+         token (get-in db [:auth :token])]
+     (js/console.log course)
+     (ajax/POST endpoint
+                {:params {:data course}
+                 :handler #(re-frame/dispatch [:course/create-success %1])
+                 :error-handler #(re-frame/dispatch [:course/create-err %1])
+                 :format (ajax/json-request-format)
+                 :headers {:authorization token}
+                 :keywords? true})
+    db)))
+
+(reg-event-db
+ :course/create-success
+ (fn [db [_ res]]
+   (let [token (get res "token")
+         page-redirect (-> db :router :redirect)
+         redirect (if-not page-redirect :editor page-redirect)]
+     (js/console.log res)
+    db)))
+
+(reg-event-db
+ :course/create-err
+ (fn [db [_ res]]
+   (js/console.log res)
+   db))
+
 ;;---------------------------
 ;; FETCH DATA
 ;;---------------------------
@@ -294,7 +333,7 @@
 (reg-event-db
  :courses-fetch
  (fn [db _]
-   (let [endpoint "http://localhost:7777/api/v2/publisher/courses"]
+   (let [endpoint "https://dev.nadya.tech/api/v2/publisher/courses"]
      (ajax/GET endpoint
                {:handler #(re-frame/dispatch [:courses-fetch-success %1])
                 :error-handler #(re-frame/dispatch [:courses-fetch-err %1])
@@ -323,7 +362,7 @@
 (reg-event-db
  :bots-fetch
  (fn [db _]
-   (let [endpoint "http://localhost:7777/bots"]
+   (let [endpoint "https://dev.nadya.tech/api/v2/publisher/bots"]
      (ajax/GET endpoint
                {:handler #(re-frame/dispatch [:bots-fetch-success %1])
                 :error-handler #(re-frame/dispatch [:bots-fetch-err %1])

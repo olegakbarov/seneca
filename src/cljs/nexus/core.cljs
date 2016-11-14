@@ -6,11 +6,13 @@
             [re-frame.core :refer [dispatch-sync
                                    subscribe]]
             [devtools.core :as devtools]
+            
             ;; must require both in root file
             [nexus.handlers]
             [nexus.subs]
-            [nexus.config :as config]
+            ;;
 
+            [nexus.config :as config]
             [nexus.routes :as routes]
             [nexus.views :as views]
             [nexus.localstorage :as ls]
