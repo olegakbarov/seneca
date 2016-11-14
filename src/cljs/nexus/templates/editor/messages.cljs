@@ -123,7 +123,11 @@
 
 (defn empty-day []
   [:div.lister_msg_empty
-     "Drag & drop here one of elements from the right panel"])
+    {:on-drag-enter #(do
+                       (dispatch [:add-msg (@state :adding-type) 0]) ;; adding msg with index 0
+                       (reset! state (merge @state {:msg-added true})))
+     :on-drag-end on-drag-end}
+    "Drag & drop here one of elements from the right panel"])
 
 ;; ------------------------------------
 ;; ON-HOVER BUSINESS
