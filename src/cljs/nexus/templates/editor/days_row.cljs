@@ -18,6 +18,12 @@
         er (if (> (:errors day) 0) "error " "")]
     (str cur er em)))
 
+(defn add-day []
+  [:div.days_group_inner
+    [:div.days_row_item.plus
+      {:on-click #(dispatch [:add-day])}
+      "+"]])
+
 (defn days-group [group index n]
   (let [is-first (= index 0)
         is-last  (= index (count (partition-all 7 (range n))))]
@@ -33,25 +39,24 @@
                   [:div.days_row_item
                      {:class (get-item-classes day)
                       :on-click #(dispatch [:set_current_day uid])}
-                    (:errors day)])))
-          ^{:key "add_item_cell"}
-          [:div.days_row_item.plus
-              {:on-click #(dispatch [:add-day])}
-            "+"]]]]))
+                    (:errors day)])))]]]))
 
 (defn days [items]
   (let [groups (partition-all 7 items) ;; 7 = week
         n (count items)]
       [:div.days_row_wrapper {:style @style}
-        (doall
-          (map-indexed
-            (fn [index group]
-              ^{:key index}
-              [days-group group index n])
-           groups))]))
+        [:div.days_row_container
+          (doall
+            (map-indexed
+              (fn [index group]
+                ^{:key index}
+                [days-group group index n])
+             groups))
+          [add-day]]]))
 
 (defn days-row []
   (let [curr-days (subscribe [:curr-days])
+        ordered (sort-by :order @curr-days)
         days-processed (map
                          (fn [day]
                            (let [is-empty (empty? (:messages day))
@@ -60,7 +65,7 @@
                             {:empty? is-empty
                              :errors errors
                              :uid uid}))
-                         @curr-days)]
+                         ordered)]
     [days days-processed]))
 
 
