@@ -30,11 +30,10 @@
             [:div.bots_page_title "Courses"]
             [:div.bots_page_wrapper
               (map-indexed
-                (fn [ix bot]
+                (fn [ix item]
                    ^{:key ix}
                    [course-widget item])
-               @bots)
-              [add-bot]]]]]
+               @courses)]]]]
        [:div "No bots yet"]))))
 
 (defn courses

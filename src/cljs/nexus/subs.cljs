@@ -19,7 +19,7 @@
    (-> db :auth :token)))
 
 ;;-------------------------
-;; CURRENTS
+;; COURSES
 
 (re-frame/reg-sub
   :courses

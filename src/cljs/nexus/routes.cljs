@@ -13,6 +13,7 @@
 (def routes ["/" {"signup"        :signup
                   "login"         :login
                   "editor"        #(auth-handler :editor)
+                  "courses"       #(auth-handler :courses)
                   "profile"       #(auth-handler :profile)
                   "bots"          #(auth-handler :bots)
                   true            :notfound}])

@@ -5,6 +5,7 @@
               [nexus.templates.bots.core :refer [bots]]
               [nexus.templates.editor.core :refer [editor]]
               [nexus.templates.home :refer [home]]
+              [nexus.templates.courses.core :refer [courses]]
               [nexus.templates.profile :refer [profile]]
               [nexus.templates.auth.signup :refer [signup]]
               [nexus.templates.auth.login :refer [login]]
@@ -14,6 +15,7 @@
 (defmethod panels :home       [] [home])
 (defmethod panels :editor     [] [editor])
 (defmethod panels :bots       [] [bots])
+(defmethod panels :courses    [] [courses])
 (defmethod panels :profile    [] [profile])
 (defmethod panels :signup     [] [signup])
 (defmethod panels :login      [] [login])

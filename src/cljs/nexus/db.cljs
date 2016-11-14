@@ -43,50 +43,53 @@
      :curr-course "crs@tiu6ywsic00018012503n3wso"
      :curr-day "day@ciu6ymswc00018012503n3wsf"
 
-     :courses {"crs@tiu6ywsic00018012503n3wso"
-                {:title "A Course about Stuff"
-                 :uid "crs@tiu6ywsic00018012503n3wso"
-                 :subtitle "Subtitle of course about stuff"
-                 :days
-                   {"day@ciu6ymswc00018012503n3wsf"
-                     {:uid "day@ciu6ymswc00018012503n3wsf"
-                      :order 0
-                      :messages
-                        [{:uid "123"
-                          :text "In this great future we cant forget the past ... In this great future we cant forget the past .. In this great future we cant forget the past "
-                          :type "text-message"}
+     :courses {}})
 
-                         {:uid "456"
-                          :text "Normkek"
-                          :type "quick-reply"
-                          :payload [{:text "Left"
-                                     :next "780"}
-                                    {:text "Right"
-                                     :next "012"}]}
 
-                         {:uid "780"
-                          :text "This is hidden in thread"
-                          :type "text-message"}
-
-                         {:uid "012"
-                          :text "Message with id :4"
-                          :type "quick-reply"
-                          :payload [{:text "Good"
-                                     :payload nil}
-                                    {:text "Evil"
-                                     :payload nil}]}]}
-
-                    ;; -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-                    "day@ciu6ymswc03453503n3wsp"
-                      {:uid "day@ciu6ymswc03453503n3wsp"
-                       :order 1
-                       :messages
-                         [{:uid "msgs@1" :order 0 :text "Normkek" :type "quick-reply" :payload [{:text "Quick" :next nil} {:text "Reply" :next nil}]}
-                          {:uid "msgs@2" :order 1 :text "Topkek" :type "quick-reply" :payload [{:text "Forward" :next nil} {:text "Back" :next nil}]}
-                          {:uid "msgs@3" :order 2 :text "Alien" :type "text-message"}]}
-
-                    "day@234sdf123sdf23"
-                      {:uid "day@234sdf123sdf23"
-                       :order 2
-                       :messages []}}}}})
+; "crs@tiu6ywsic00018012503n3wso"
+;                 {:title "A Course about Stuff"
+;                  :uid "crs@tiu6ywsic00018s12503n3ws"
+;                  :subtitle "Subtitle of course about stuff"
+;                  :days
+;                    {"day@ciu6ymswc00018012503n3wsf"
+;                      {:uid "day@ciu6ymswc00018012503n3wsf"
+;                       :order 0
+;                       :messages
+;                         [{:uid "123"
+;                           :text "In this great future we cant forget the past ... In this great future we cant forget the past .. In this great future we cant forget the past "
+;                           :type "text-message"}
+;
+;                          {:uid "456"
+;                           :text "Normkek"
+;                           :type "quick-reply"
+;                           :payload [{:text "Left"
+;                                      :next "780"}
+;                                     {:text "Right"
+;                                      :next "012"}]}
+;
+;                          {:uid "780"
+;                           :text "This is hidden in thread"
+;                           :type "text-message"}
+;
+;                          {:uid "012"
+;                           :text "Message with id :4"
+;                           :type "quick-reply"
+;                           :payload [{:text "Good"
+;                                      :payload nil}
+;                                     {:text "Evil"
+;                                      :payload nil}]}]}
+;
+;                     ;; -----------------------------------------------------------------------------------------------------------------------------------------------------
+;
+;                     "day@ciu6ymswc03453503n3wsp"
+;                       {:uid "day@ciu6ymswc03453503n3wsp"
+;                        :order 1
+;                        :messages
+;                          [{:uid "msgs@1" :order 0 :text "Normkek" :type "quick-reply" :payload [{:text "Quick" :next nil} {:text "Reply" :next nil}]}
+;                           {:uid "msgs@2" :order 1 :text "Topkek" :type "quick-reply" :payload [{:text "Forward" :next nil} {:text "Back" :next nil}]}
+;                           {:uid "msgs@3" :order 2 :text "Alien" :type "text-message"}]}
+;
+;                     "day@234sdf123sdf23"
+;                       {:uid "day@234sdf123sdf23"
+;                        :order 2
+;                        :messages []}}}

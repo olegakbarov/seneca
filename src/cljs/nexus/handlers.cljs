@@ -333,23 +333,26 @@
 (reg-event-db
  :courses-fetch
  (fn [db _]
-   (let [endpoint "https://dev.nadya.tech/api/v2/publisher/courses"]
+   (let [endpoint "https://dev.nadya.tech/api/v2/publisher/courses"
+         token (get-in db [:auth :token])]
      (ajax/GET endpoint
                {:handler #(re-frame/dispatch [:courses-fetch-success %1])
                 :error-handler #(re-frame/dispatch [:courses-fetch-err %1])
                 :response-format :json
+                :headers {:authorization token}
                 :keywords? true})
      db)))
 
 (reg-event-db
  :courses-fetch-success
  (fn [db [_ res]]
+   (js/console.log (:courses res))
    (let [processed (reduce
-                    (fn [obj item]
-                      (conj obj {(:id item) item}))
+                    (fn [acc item]
+                      (assoc acc (:uid item) item))
                     {}
-                    res)]
-     (assoc-in db [:bots] processed))))
+                    (:courses res))]
+     (assoc db :courses processed))))
 
 (reg-event-db
  :courses-fetch-err
