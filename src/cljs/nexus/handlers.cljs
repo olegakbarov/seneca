@@ -237,6 +237,23 @@
           (assoc-in db [:courses course :days (:uid d)] d)
           db))))
 
+(reg-event-db
+ :remove-day
+ (fn [db [_ id order]]
+   (let [course (:curr-course db)
+         days (get-in db [:courses course :days])
+         edited (reduce
+                 (fn [acc item]
+                   (let [uid (:uid item)
+                         new-order (:order item)]
+                      (if-not (= uid id)
+                              (assoc-in acc uid (if (> new-order order)
+                                                    (merge item {:order (dec new-order)})
+                                                    item))
+                              acc)))
+                 {}
+                 days)])))
+
 
 ;;---------------------------
 ;; BOTS
@@ -262,6 +279,7 @@
 
 ;;---------------------------
 ;; FETCH DATA
+;;---------------------------
 
 ;; FETCH COURESES
 
