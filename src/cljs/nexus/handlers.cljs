@@ -223,9 +223,6 @@
   (let [uid (gen-uid "day")
         days (subscribe [:curr-days])
         order (inc (count (vals @days)))]
-    (js/console.log days)
-    (js/console.log (count @days))
-    (js/console.log order)
     {:uid uid
      :order order
      :messages []}))
@@ -236,8 +233,9 @@
    (let [course (:curr-course db)
          days (get-in db [:courses course :days])
          d (new-day)]
-      (js/console.log (get-in db [:courses course :days]))
-      (assoc-in db [:courses course :days (:uid d)] d))))
+      (if (< (count days) 28)
+          (assoc-in db [:courses course :days (:uid d)] d)
+          db))))
 
 
 ;;---------------------------
