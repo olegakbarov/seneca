@@ -26,10 +26,10 @@
   (fn [db [_]]
    (:curr-day db)))
 
-(re-frame/reg-sub
-  :curr-days
-  (let [course (:curr-course db)]
-    (get-in db [:courses course :days])))
+; (re-frame/reg-sub
+;   :curr-days
+;   (let [course (:curr-course db)]
+;     (get-in db [:courses course :days])))
 
 (re-frame/reg-sub
  :curr-course

@@ -49,16 +49,18 @@
                                  :drag-mid mid}))))
 
 (defn on-drag-enter [e]
-  "Update hover-index"
+  "Handles the adding message to thread"
   (let [hover-index (-> e .-currentTarget .-dataset .-dragindex int)
         type (-> e .-currentTarget .-dataset .-dragtype)
         top (-> e .-currentTarget .getBoundingClientRect .-top)
         bottom (-> e .-currentTarget .getBoundingClientRect .-bottom)
         mid (/ (- bottom top) 2)]
+      (reset! state (merge @state {:drag-index hover-index}))
       (if-not (:msg-added @state)
-        (do
-          (dispatch [:add-msg (@state :adding-type) hover-index])
-          (reset! state (merge @state {:msg-added true}))))))
+        (if-not (= (@state :drag-type) "MSG_TYPE")
+          (do
+            (dispatch [:add-msg (@state :adding-type) hover-index])
+            (reset! state (merge @state {:msg-added true})))))))
 
 (defn should-reorder? []
   (let [{:keys [drag-index hover-index hover-y hover-mid]} @state]
@@ -78,19 +80,21 @@
         hover-y (- client-y top)
         {:keys [drag-index drag-mid]} @state
         mid (min hover-mid drag-mid)]
-      (reset! state (merge @state {:hover-index hover-index
-                                   :hover-y hover-y
-                                   :hover-mid mid}))
-      (if (should-reorder?)
-          (do
-          ;  (dispatch [:swap-msgs drag-index hover-index])
-           (reset! state (merge @state {:drag-index hover-index
-                                        :hover-index hover-index
-                                        :hover-mid mid}))))))
+      (do
+        (reset! state (merge @state {:hover-index hover-index
+                                     :hover-y hover-y
+                                     :hover-mid mid}))
+        (if (should-reorder?)
+            (do
+             (dispatch [:swap-msgs (@state :drag-index) hover-index])
+             (reset! state (merge @state {:drag-index hover-index
+                                          :hover-index hover-index
+                                          :hover-mid mid})))))))
 
 ;; TODO wrong behavior
 (defn on-drag-end [e]
   (do
     (js/console.log "ON DRAG END")
+    (js/console.log @state)
     (init!)
     (js/console.log @state)))

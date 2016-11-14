@@ -144,6 +144,7 @@
 (reg-event-db
  :swap-msgs
  (fn [db [_ index1 index2]]
+  (js/console.log index1 index2)
   (let [course (:curr-course db)
         day (:curr-day db)
         msg-cursor [:courses course :days day :messages]
@@ -164,12 +165,14 @@
   (let [uid (gen-uid "msg")]
     (condp = type
       "text-message" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
-      "button-template" {:uid uid  :text "New btn tmpl" :type "button-template" :buttons [{:text "Forward"} {:text "Back"}]}
-      "quick-reply" {:uid uid  :text "New QR!" :type "quick-reply" :buttons [{:text "Quick"} {:text "Reply"}]}
+      "button-template" {:uid uid  :text "New btn tmpl" :type "button-template" :payload [{:text "Forward"} {:text "Back"}]}
+      "quick-reply" {:uid uid  :text "New QR!" :type "quick-reply" :payload [{:text "Quick" :payload nil} {:text "Reply" :payload nil}]}
       "generic-template" {:uid uid  :type "text-message" :text "New!New!New!" :id 123}
-      "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123})))
+      "media" {:uid uid :type "text-message" :text "New!New!New!" :id 123}
+      (js/console.log "Cant create msg with type " type))))
 
 (defn- insert-at [v item index]
+  (js/console.log index)
   (if (> index (count v))
     (throw (js/Error. "Can't insert at this index (OUT OF BOUNDS) " index))
     (if (= index 0)
@@ -189,6 +192,11 @@
          item (default-message type)
          edited (insert-at msgs item index)]
       (assoc-in db msg-cursor edited))))
+
+;; TODO
+; (reg-event-db
+;  :clone-msg
+;  (fn [db [_ type index]]))
 
 (defn remove-at [v i]
   "Removes item with index `i` from vector `v`"

@@ -155,10 +155,10 @@
     [:div.edit
       {:on-click #(dispatch [:set-is-editing-id ix])}
       "✍🏼"]
-    [:div.copy   "📑"]
-      ;; TODO on-click
+    [:div.copy "📑"]
+      ; {:on-click #(dispatch [:clone-msg ix])}]])
     [:div.remove "💥"]])
-      ;; TODO on-click
+      ; {:on-click #(dispatch [:remove-msg ix])}]])
 
 ;; ------------------------------------
 ;; WRAPPER over MSGS

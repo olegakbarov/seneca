@@ -1,5 +1,6 @@
 
 (ns nexus.core
+  (:require-macros [nexus.conf :refer [getenv]])
   (:require [reagent.core :as r]
             [re-frame.core :as re-frame]
             [re-frame.core :refer [dispatch-sync
@@ -8,10 +9,10 @@
             ;; must require both in root file
             [nexus.handlers]
             [nexus.subs]
+            [nexus.config :as config]
 
             [nexus.routes :as routes]
             [nexus.views :as views]
-            [nexus.config :as config]
             [nexus.localstorage :as ls]
             [npm-packages]))
 
@@ -20,7 +21,6 @@
     (enable-console-print!)
     (println "dev mode")
     (devtools/install!)))
-
 
 (defn check-for-token! []
   (let [localstorage-imp (ls/new-localstorage-imp)

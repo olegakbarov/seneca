@@ -84,6 +84,7 @@
     [:div.msg_type_title "Text message"]
     [:div.msg_type_item.msg_item_text
       {:draggable true
+       :data-dragtype "TMPL_TYPE"
        :data-type "text-message"
        :on-drag-start #(update-state! :adding-type "text-message")
        :data-action "add"
@@ -96,7 +97,9 @@
     [:div.msg_type_title "Button template"]
     [:div.msg_type_item
       {:draggable true
+       :data-dragtype "TMPL_TYPE"
        :data-type "button-template"
+       :on-drag-start #(update-state! :adding-type "button-template")
        :data-action "add"
        :on-drag-end on-drag-end}
      [text-placeholder 2 false]
@@ -108,6 +111,8 @@
     [:div.msg_type_item
       {:draggable true
        :data-type "quick-reply"
+       :data-dragtype "TMPL_TYPE"
+       :on-drag-start #(update-state! :adding-type "quick-reply")
        :data-action "add"
        :on-drag-end on-drag-end}
      [text-placeholder 2 true]
@@ -119,6 +124,7 @@
     [:div.msg_type_item
       {:draggable true
        :data-type "generic-template"
+       :data-dragtype "TMPL_TYPE"
        :data-action "add"
        :on-drag-end on-drag-end}
      [img-placeholder]
@@ -144,6 +150,8 @@
         [generic-template]
         [media-attach]]]])
 
+
+;; TODO move to scroll channel
 (defn listen! []
   (let [chan (scroll-chan)]
     (go-loop []
