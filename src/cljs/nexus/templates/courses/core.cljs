@@ -33,7 +33,7 @@
                 (fn [ix item]
                    ^{:key ix}
                    [course-widget item])
-               @courses)]]]]
+               (vals @courses))]]]]
        [:div "No bots yet"]))))
 
 (defn courses

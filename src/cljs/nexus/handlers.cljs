@@ -346,13 +346,13 @@
 (reg-event-db
  :courses-fetch-success
  (fn [db [_ res]]
-   (js/console.log (:courses res))
-   (let [processed (reduce
+   (let [data (:courses res)
+         processed (reduce
                     (fn [acc item]
-                      (assoc acc (:uid item) item))
+                      (assoc-in acc [(:uid item)] item))
                     {}
-                    (:courses res))]
-     (assoc db :courses processed))))
+                    data)]
+     (assoc-in db [:courses] processed))))
 
 (reg-event-db
  :courses-fetch-err
