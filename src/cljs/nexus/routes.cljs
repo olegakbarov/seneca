@@ -1,35 +1,71 @@
 
 (ns nexus.routes
-  (:require [bidi.bidi :as bidi]
-            [pushy.core :as pushy]
-            [re-frame.core :refer [subscribe dispatch]]))
+  ; (:require [bidi.bidi :as bidi]
+  ;           [pushy.core :as pushy])
+  (:require [secretary.core :as secretary :refer-macros [defroute]]
+            [re-frame.core :refer [subscribe dispatch]]
+            [goog.events :as events]
+            [goog.history.EventType :as HistoryEventType]
+            [accountant.core :as accountant])
+  (:import goog.History))
 
-(defn auth-handler [page]
-  (let [token (subscribe [:auth/token])]
-    (if @token
-      (dispatch [:set-active-panel page])
-      (dispatch [:set-active-panel :login]))))
+(defn logged-in? []
+  @(subscribe [:auth/token]))
 
-(def routes ["/" {"signup"        :signup
-                  "login"         :login
-                  "editor"        #(auth-handler :editor)
-                  "courses"       #(auth-handler :courses)
-                  "profile"       #(auth-handler :profile)
-                  "bots"          #(auth-handler :bots)
-                  true            :notfound}])
+(defn redirect-to
+  [resource]
+  (secretary/dispatch! resource)
+  (.setToken (History.) resource))
 
-(defn- parse-url [url]
-  (bidi/match-route routes url))
+(defn run-events [events]
+  (doseq [event events]
+    (if (logged-in?)
+      (dispatch event)
+      (dispatch [:add-login-event event]))))
 
-(defn- dispatch-route [matched-route]
-  (let [panel-name (:handler matched-route)]
-    (dispatch [:set-active-panel panel-name])))
+(defn context-url [url]
+  (str js/context url))
 
-(defn app-routes []
-  (let [host (aget js/window "location" "host")
-        redirect (str host "/login")]
-    (pushy/start! (pushy/pushy dispatch-route parse-url))))
-    ;; TODO fix pushState
-    ; (set! (.-location js/window) redirect)))
+(defn href [url]
+  {:href (str js/context url)})
 
-(def url-for (partial bidi/path-for routes))
+(defn navigate! [url]
+  (accountant/navigate! (context-url url)))
+
+(defn home-page-events [& events]
+  (.scrollTo js/window 0 0)
+  (run-events (into
+                [
+                ;  [:load-tags]
+                 [:set-active-page :home]]
+                events)))
+
+; (secretary/set-config! :prefix "#")
+
+(secretary/defroute "/bots" []
+  (dispatch [:set-active-panel :bots]))
+
+(secretary/defroute "/editor" []
+  (dispatch [:set-active-panel :editor]))
+
+(secretary/defroute "/editor/:course-id" {:as params}
+  (dispatch [:set-active-panel :editor params]))
+
+; (secretary/defroute "*" []
+;   (redirect-to "/notfound"))
+
+(defn hook-browser-navigation! []
+  (doto (History.)
+    (events/listen
+      HistoryEventType/NAVIGATE
+      (fn [event]
+        (secretary/dispatch! (.-token event))))
+    (.setEnabled true))
+  (accountant/configure-navigation!
+    {:nav-handler
+     (fn [path]
+       (secretary/dispatch! path))
+     :path-exists?
+     (fn [path]
+       (secretary/locate-route path))})
+  (accountant/dispatch-current!))

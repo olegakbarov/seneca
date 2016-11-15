@@ -44,4 +44,4 @@
         #(dispatch [:courses-fetch])
      :display-name  "courses-container"
      :render (fn []
-                [editor-templ])}))
+               [editor-templ])}))

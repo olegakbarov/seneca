@@ -11,19 +11,19 @@
     [:div.header
       [:div.header_wrapper
         [:div.header_left
-          [:a.header_logo {:href (routes/url-for :home)}]
+          [:a.header_logo {:href "/profile"}]
           [:ul.header_crumbs
             [:li
-              [:a {:href (routes/url-for :bots)} "My Bots"]]
+              [:a {:href "/bots"} "My Bots"]]
             [:li
-              [:a {:href (routes/url-for :editor)} "Weather bot"]]]]
+              [:a {:href "/editor"} "Weather bot"]]]]
         [:div.header_right
           [:div.btn.header_save_button
-            {:on-click #(dispatch [:course/create])}
+            {:on-click #(dispatch [:course/create-save])}
             "Save"]
           [:div.btn.header_test_button
             {:on-click #(dispatch [:show_state])}
             "Test"]
           [:div.header_userpic]
-          [:a {:href (routes/url-for :profile)}
+          [:a {:href "/profile"}
              "Oleg Akbarov"]]]]))

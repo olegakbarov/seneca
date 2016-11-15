@@ -11,13 +11,14 @@
 
 
 (defn add-course []
-  [:div
+  [:button
     {:on-click #(dispatch [:course/create])}
-    [:h1 "Add course"]])
+    "Add course"])
 
 (defn course-widget [item]
   (fn []
-    [:div (:title item)]))
+    [:li
+      [:a {:href "/editor"} (:title item)]]))
 
 (defn courses-templ []
   (fn []

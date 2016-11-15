@@ -2,21 +2,13 @@
 
 ### TODO
 
-- [x] secure routes
-
-- [x] add new text messages
-
-- [x] add new day
-
 - [ ] add message with quick-reply
+
+- [ ] editable message with quick-reply
 
 - [ ] divide into threads and add overlaying
 
-- [ ] get course from db
-
 - [ ] validate saving course
-
-- [ ] save course (to db)
 
 - [ ] map router in db to window.location
 
@@ -26,12 +18,22 @@
 
 - [ ] fix layout on repaint (editor)
 
+- [ ] don't show `+` when 28 days
+
 
 ### Setup
 
 For JS shinanigans you need `npm >3.0`
 
 `npm i` from `resourses/npm`
+
+### config
+
+```
+(js/console.log (getenv "ENV"))
+```
+
+Check it for compatibility with JS.
 
 ### Messages compose rules
 

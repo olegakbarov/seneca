@@ -6,7 +6,7 @@
             [re-frame.core :refer [dispatch-sync
                                    subscribe]]
             [devtools.core :as devtools]
-            
+
             ;; must require both in root file
             [nexus.handlers]
             [nexus.subs]
@@ -30,16 +30,14 @@
     (if token
       (re-frame/dispatch-sync [:auth/save-token-db token]))))
 
-
 (defn mount-root []
   (r/render [views/main-panel]
-    (.getElementById js/document "container")))
-
+    (.getElementById js/document "root")))
 
 (defn ^:export init []
   ; (mount/start)
   (dispatch-sync [:initialize-db])
-  (routes/app-routes)
   (check-for-token!)
+  (routes/hook-browser-navigation!)
   (dev-setup)
   (mount-root))

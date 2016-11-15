@@ -20,11 +20,12 @@
 (reg-event-db
  :set-active-panel
  (fn [db [_ active-panel]]
-  ;  (js/console.log ":set-active panel handler " active-panel)
-  ;; нехилый костыль
-   (if (keyword? active-panel)
-     (assoc-in db [:router :current] active-panel)
-     (assoc-in db [:router :current] (active-panel)))))
+   (assoc-in db [:router :current] active-panel)))
+  ; ;  (js/console.log ":set-active panel handler " active-panel)
+  ; ;; нехилый костыль
+  ;  (if (keyword? active-panel)
+  ;    (assoc-in db [:router :current] active-panel)
+  ;    (assoc-in db [:router :current] (active-panel)))))
 
 ;;---------------------------
 ;; FORM

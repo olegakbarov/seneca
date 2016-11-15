@@ -15,7 +15,7 @@
 
 (defn bot-img [bot]
   (let [{:keys [status path id]} bot]
-    [:a {:href (routes/url-for :bots {:params id})}
+    [:a {:href (str "/bot" {:params id})}
       [:div.bot_page_placeholder
         {:style (if path {:background-image path})}
         [bot-status status]]]))
