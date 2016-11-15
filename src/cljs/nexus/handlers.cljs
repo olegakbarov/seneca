@@ -135,9 +135,12 @@
 (reg-event-db
  :ui/create-msgs-state
  (fn [db [_]]
-  (let [msgs (subscribe [:curr-msgs])
-        tree (create-deps @msgs)
-        state {:hidden (shallow-deps @msgs)
+  (let [courses (subscribe [:courses])
+        course (subscribe [:curr-course])
+        day (subscribe [:curr-day])
+        msgs (get-in @courses [@course :days (keyword @day) :messages])
+        tree (create-deps msgs)
+        state {:hidden (shallow-deps msgs)
                :deps (reduce make-deps-map {} tree)}]
    (prn tree)
    (update-in db [:ui :msgs] merge state))))
@@ -356,8 +359,8 @@
 
 (reg-event-db
  :courses-fetch-err
- (fn [db [_ response]]
-   (js/console.log response)
+ (fn [db [_ res]]
+   (js/console.log res)
    db))
 
 ;; FETCH BOTS

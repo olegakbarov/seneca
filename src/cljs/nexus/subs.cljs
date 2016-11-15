@@ -1,5 +1,6 @@
 
 (ns nexus.subs
+  (:require-macros [reagent.ratom  :refer [reaction]])
   (:require [re-frame.core :as re-frame]
             [nexus.db :as db]
             [re-frame.core :refer [subscribe]]))
@@ -52,13 +53,14 @@
           (get-in [:courses course-id :days])
           vals))))
 
-(re-frame/reg-sub
-  :curr-msgs
-  (fn [db [_]]
-    (let [course-id (:curr-course db)
-          day-id (:curr-day db)]
-      (-> db
-          (get-in [:courses course-id :days day-id :messages])))))
+;; DYNAMIC SUBSCRIBTIONS??
+; (re-frame/reg-sub
+;   :curr-msgs
+;   (fn [db]
+;     (let [day (:curr-day db)
+;           course (subscribe [:curr-course])
+;           day (subscribe [:curr-day])]
+;        (get-in db [:courses @course :days (keyword @day) :messages]))))
 
 (re-frame/reg-sub
   :my-bots

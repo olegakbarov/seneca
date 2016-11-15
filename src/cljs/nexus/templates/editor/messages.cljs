@@ -252,22 +252,17 @@
       (if dropzone
         [:div.msg_wrapper_dropzone])]))
 
-(defn lister []
+(defn lister [msgs state]
   (r/create-class
-     {:component-will-mount
-       (fn []
-         (dispatch [:ui/create-msgs-state]))
-      :render
+     {:render
         (fn []
-          (let [msgs (subscribe [:curr-msgs])
-                state (subscribe [:ui/msgs-state])
-                processed (reduce
+          (let [processed (reduce
                             (fn [acc item]
-                             (if-not (contains? (:hidden @state) (:uid item))
+                             (if-not (contains? (:hidden state) (:uid item))
                                (conj acc item)
                                acc))
                             []
-                            @msgs)]
+                            msgs)]
             (if (= 0 (count processed))
                 [empty-day]
                 [list-component processed])))}))
