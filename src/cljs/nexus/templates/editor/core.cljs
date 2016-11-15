@@ -20,7 +20,7 @@
          courses (subscribe [:courses])
          course (subscribe [:curr-course])
          day (subscribe [:curr-day])
-         msgs (get-in @courses [@course :days (keyword @day) :messages])]
+         msgs (get-in @courses [@course :days @day :messages])]
 
      (js/console.log msgs)
 

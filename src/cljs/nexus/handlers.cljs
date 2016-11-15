@@ -33,9 +33,7 @@
 (reg-event-db
  :auth/login
  (fn [db _]
-   (let [
-         endpoint "https://dev.nadya.tech/api/v2/auth/get_token"
-        ;  endpoint "http://localhost:7777/api/v2/auth/token"
+   (let [endpoint "https://dev.nadya.tech/api/v2/auth/get_token"
          creds (subscribe [:form])
          {:keys [email password]} @creds]
      (ajax/POST endpoint
@@ -267,19 +265,35 @@
                  {}
                  days)])))
 
+;;---------------------------
+;; COURSES
+
+(defn default-course [id]
+  {:title "New course"
+   :subtitle "Course subtitle"
+   :uid id
+   :days []})
+
+(reg-event-db
+ :add-course
+ (fn [db [_]]
+   (let [id (gen-uid "course")]
+     (assoc-in db [:courses id ] (default-course id)))))
 
 ;;---------------------------
 ;; BOTS
 
-(def default-bot
+(defn default-bot [id]
   {:title "New bot"
    :description ""
-   :status "development"})
+   :status "development"
+   :uid id})
 
 (reg-event-db
  :add-bot
  (fn [db [_]]
-   (assoc-in db [:bots 333] default-bot)))
+   (let [id (gen-uid "bot")]
+     (assoc-in db [:bots id] (default-bot id)))))
 
 
 ;;---------------------------
@@ -355,6 +369,7 @@
                       (assoc-in acc [(:uid item)] item))
                     {}
                     data)]
+     (js/console.log res)
      (assoc-in db [:courses] processed))))
 
 (reg-event-db

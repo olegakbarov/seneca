@@ -10,10 +10,10 @@
                            subscribe]]))
 
 
-; (defn add-course []
-;   [:div
-;     {:on-click #(dispatch [:add-bot])}
-;     "+"])
+(defn add-course []
+  [:div
+    {:on-click #(dispatch [:add-course])}
+    [:h1 "Add course"]])
 
 (defn course-widget [item]
   (fn []
@@ -22,19 +22,19 @@
 (defn courses-templ []
   (fn []
     (let [courses (subscribe [:courses])]
-     (if @courses
        [:div
          [header]
          [:div.content
           [:div.bots_page_container
             [:div.bots_page_title "Courses"]
+            [add-course]
             [:div.bots_page_wrapper
-              (map-indexed
-                (fn [ix item]
-                   ^{:key ix}
-                   [course-widget item])
-               (vals @courses))]]]]
-       [:div "No bots yet"]))))
+              (if (> (count @courses) 0)
+                  (map-indexed
+                    (fn [ix item]
+                       ^{:key ix}
+                       [course-widget item])
+                   (vals @courses)))]]]])))
 
 (defn courses
   []

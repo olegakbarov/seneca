@@ -24,6 +24,7 @@
                 "media"])
 
 (defn render-text [uid & last]
+  (js/console.log uid)
   (let [text (subscribe [:ui/text uid])]
     ^{:key @text}
     [:div.lister_msg_item_text
@@ -241,6 +242,7 @@
 ;     (aget js/npm "react-textarea-autosize")))
 
 (defn list-component [items]
+  (js/console.log items)
   (let [dropzone (> 0 (count items))]
     [:div#msg_wrapper
       [:ul.list_messages;
