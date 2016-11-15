@@ -26,6 +26,13 @@
      (assoc-in db [:router :current] active-panel)
      (assoc-in db [:router :current] (active-panel)))))
 
+;;---------------------------
+;; FORM
+
+(reg-event-db
+ :update-form
+ (fn [db [_ cursor val]]
+   (assoc-in db [:form cursor] val)))
 
 ;;---------------------------
 ;; AUTH
@@ -265,20 +272,6 @@
                  {}
                  days)])))
 
-;;---------------------------
-;; COURSES
-
-(defn default-course [id]
-  {:title "New course"
-   :subtitle "Course subtitle"
-   :uid id
-   :days []})
-
-(reg-event-db
- :add-course
- (fn [db [_]]
-   (let [id (gen-uid "course")]
-     (assoc-in db [:courses id ] (default-course id)))))
 
 ;;---------------------------
 ;; BOTS
@@ -295,31 +288,34 @@
    (let [id (gen-uid "bot")]
      (assoc-in db [:bots id] (default-bot id)))))
 
-
 ;;---------------------------
-;; FORM
+;; COURSES
+
 
 (reg-event-db
- :update-form
- (fn [db [_ cursor val]]
-   (assoc-in db [:form cursor] val)))
-
+ :add-course
+ (fn [db [_]]))
 
 ;;---------------------------
 ;; POST DATA
 ;;---------------------------
 
+(defn default-course [id]
+  {:title "New course"
+   :subtitle "Course subtitle"
+   :uid id
+   :days []})
+
 (reg-event-db
  :course/create
  (fn [db _]
    (let [endpoint "https://dev.nadya.tech/api/v2/publisher/courses/create"
-         course-id (subscribe [:curr-course])
-         course (get-in db [:courses @course-id])
-         token (get-in db [:auth :token])]
-     (js/console.log course)
+         token (get-in db [:auth :token])
+         id (gen-uid "course")
+         course (default-course id)]
      (ajax/POST endpoint
                 {:params {:data course}
-                 :handler #(re-frame/dispatch [:course/create-success %1])
+                 :handler #(re-frame/dispatch [:course/create-success %1 course])
                  :error-handler #(re-frame/dispatch [:course/create-err %1])
                  :format (ajax/json-request-format)
                  :headers {:authorization token}
@@ -328,12 +324,12 @@
 
 (reg-event-db
  :course/create-success
- (fn [db [_ res]]
+ (fn [db [_ res course]]
+   (js/console.log course)
    (let [token (get res "token")
          page-redirect (-> db :router :redirect)
          redirect (if-not page-redirect :editor page-redirect)]
-     (js/console.log res)
-    db)))
+     (assoc-in db [:courses (:uid course)] course))))
 
 (reg-event-db
  :course/create-err

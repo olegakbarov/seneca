@@ -12,7 +12,7 @@
 
 (defn add-course []
   [:div
-    {:on-click #(dispatch [:add-course])}
+    {:on-click #(dispatch [:course/create])}
     [:h1 "Add course"]])
 
 (defn course-widget [item]
