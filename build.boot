@@ -1,3 +1,7 @@
+
+(def project
+  {:name "nexus" :version "0.0.1"})
+
 (set-env!
  :source-paths    #{"src/clj" "src/cljs" "less"}
  :resource-paths  #{"src/clj"}
@@ -31,9 +35,12 @@
 
                  [re-frame "0.8.0"]
                  [reagent "0.6.0-rc"]
-                ;  [reagent "0.6.0-rc" :exclusions [cljsjs/react cljsjs/react-dom]]
                  [reagent-utils "0.2.0"]
-                 [deraen/boot-less "0.2.1" :scope "test"]])
+                 [deraen/boot-less "0.2.1" :scope "test"]
+
+                 [secretary "1.2.3"]
+                 [venantius/accountant "0.1.7"]])
+
 
 (require
  '[adzerk.boot-cljs      :refer [cljs]]
@@ -41,9 +48,9 @@
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http    :refer [serve]]
  '[deraen.boot-less      :refer [less]]
- '[clojure.tools.namespace.repl :as repl]
- '[mount.core :as mount])
- ; '[nexus.server :refer [start!]])
+ '[clojure.tools.namespace.repl :as repl])
+ ; '[clojure.edn :as edn]
+ ; '[mount.core :as mount])
 
 
 (deftask bundle []
