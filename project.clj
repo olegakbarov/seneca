@@ -23,42 +23,32 @@
                  [re-frame "0.8.0"]
                  [reagent "0.6.0-rc"]
                  [reagent-utils "0.2.0"]
-                 [deraen/boot-less "0.2.1" :scope "test"]
 
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]]
 
-  :plugins [[lein-cljsbuild "1.1.4"]
-            [lein-less "1.7.5"]]
+  :plugins [[lein-cljsbuild "1.1.4"]]
 
   :min-lein-version "2.5.3"
 
-  :source-paths ["src/clj"]
+  :source-paths ["src/cljs"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :figwheel {:css-dirs ["resources/public/css"]
-             :ring-handler nexus.handler/dev-handler}
-
-  :less {:source-paths ["less"]
-         :target-path  "resources/static/css"
-         :source-map    true}
+  :figwheel {:css-dirs ["resources/public/css"]}
+            ;  :ring-handler nexus.handler/dev-handler}
 
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "0.8.2"]]
 
-    :plugins      [[lein-figwheel "0.5.7"]
-                   [deraen/lein-less4j "0.2.1"]]
-
-    :less  {:compression true
-            :target-path "resources/static/css"}}}
+    :plugins      [[lein-figwheel "0.5.7"]]}}
 
   :cljsbuild
   {:builds
    [{:id           "dev"
      :source-paths ["src/cljs"]
-     :figwheel     {:on-jsload "nexus.core/mount-root"}
+     :figwheel     {:on-jsload "nexus.core/init"}
      :compiler     {:main                 nexus.core
                     :output-to            "resources/public/js/compiled/app.js"
                     :output-dir           "resources/public/js/compiled/out"
@@ -72,13 +62,10 @@
      :source-paths ["src/cljs"]
      :jar true
      :compiler     {:main            nexus.core
-                    :output-to       "resources/static/js/main.js"
+                    :output-to       "www/static/js/main.js"
                     :optimizations   :advanced
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}]}
-
-
-
 
   :main nexus.server
 
@@ -86,4 +73,4 @@
 
   :uberjar-name "nexus.jar"
 
-  :prep-tasks [["cljsbuild" "once" "min"]["less4j" "once"] "compile"])
+  :prep-tasks [["cljsbuild" "once" "min"] "compile"])
