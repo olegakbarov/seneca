@@ -5,8 +5,10 @@ PROD_PATH="/app"
 
 PROD_ROOT=$PROD_HOST:$PROD_PATH
 
-lessc less/less.main.less resources/static/css/styles.css
+lessc less/less.main.less www/static/css/styles.css
 
-scp resources/static/index.html $PROD_ROOT/index.html
-scp resources/static/js/main.js $PROD_ROOT/static/js/
-scp resources/static/css/styles.css $PROD_ROOT/static/css/
+lein cljsbuild once
+
+scp www/index.html $PROD_ROOT/index.html
+scp www/static/js/main.js $PROD_ROOT/static/js/
+scp www/static/css/styles.css $PROD_ROOT/static/css/
