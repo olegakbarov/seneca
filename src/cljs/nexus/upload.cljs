@@ -1,4 +1,4 @@
-; (ns nexus.upload
+(ns nexus.upload)
 ;   (:require [goog.events :as gev]
 ;             [reagent.core :as r]
 ;             [re-frame.core :refer [dispatch]]

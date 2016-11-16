@@ -15,6 +15,15 @@
 ;; AUTH
 
 (re-frame/reg-sub
+ :user/profile
+ (fn [db _]
+  (-> db :user :profile)))
+
+
+;;-------------------------
+;; AUTH
+
+(re-frame/reg-sub
   :auth/token
   (fn [db _]
    (-> db :auth :token)))

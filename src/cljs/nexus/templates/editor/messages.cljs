@@ -4,7 +4,6 @@
   (:import [goog.events EventType])
   (:require
     [reagent.core :as r]
-    [npm-packages]
     [re-frame.core :refer [reg-event-db path reg-sub subscribe dispatch]]
     [cljs.core.async :refer [<! put! chan timeout]]
     [goog.events :as events]

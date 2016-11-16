@@ -1,7 +1,5 @@
 
 (ns nexus.routes
-  ; (:require [bidi.bidi :as bidi]
-  ;           [pushy.core :as pushy])
   (:require [secretary.core :as secretary :refer-macros [defroute]]
             [re-frame.core :refer [subscribe dispatch]]
             [goog.events :as events]
@@ -32,21 +30,19 @@
 (defn navigate! [url]
   (accountant/navigate! (context-url url)))
 
-(defn home-page-events [& events]
-  (.scrollTo js/window 0 0)
-  (run-events (into
-                [
-                ;  [:load-tags]
-                 [:set-active-page :home]]
-                events)))
+; (defn home-page-events [& events]
+;   (.scrollTo js/window 0 0)
+;   (run-events (into
+;                 [
+;                 ;  [:load-tags]
+;                  [:set-active-page :home]]
+;                 events)))
 
-; (secretary/set-config! :prefix "#")
+(secretary/defroute "/" []
+  (dispatch [:set-active-panel :editor]))
 
 (secretary/defroute "/bots" []
   (dispatch [:set-active-panel :bots]))
-
-(secretary/defroute "/editor" []
-  (dispatch [:set-active-panel :editor]))
 
 (secretary/defroute "/editor/:course-id" {:as params}
   (dispatch [:set-active-panel :editor params]))

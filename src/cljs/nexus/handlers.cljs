@@ -19,7 +19,8 @@
 
 (reg-event-db
  :set-active-panel
- (fn [db [_ active-panel]]
+ (fn [db [_ active-panel params]]
+   (js/console.log params)
    (assoc-in db [:router :current] active-panel)))
   ; ;  (js/console.log ":set-active panel handler " active-panel)
   ; ;; нехилый костыль
@@ -81,6 +82,19 @@
  (fn [db [_ token]]
    (js/console.log "SAVING TOKEN TO DB")
    (assoc-in db [:auth :token] token)))
+
+;;---------------------------
+;; CURRENTS
+
+(reg-event-db
+  :set-curr-day
+  (fn [db [_  id]]
+    (assoc-in db [:curr-day] id)))
+
+(reg-event-db
+  :set-curr-course
+  (fn [db [_  id]]
+    (assoc-in db [:curr-course] id)))
 
 
 ;;---------------------------

@@ -25,8 +25,7 @@
 
      :user {:profile {:user-id "123"
                       :email "email@adress.com"
-                      :userpic "http://s3.azazozon.com"}
-            :plan    {:current "platinum"}}
+                      :userpic "http://s3.azazozon.com"}}
 
      :team {:name "The Village"
             :users ["uuid-1" "uuid-2"]}
@@ -40,7 +39,7 @@
               :errors {:editor {:type "error" ;; warning etc
                                 :text "Can't be blank"}}}
 
-     :curr-course "crs@tiu6ywsic00018012503n3wso"
-     :curr-day "day@ciu6ymswc00018012503n3wsf"
+     :curr-course ""
+     :curr-day ""
 
      :courses {}})

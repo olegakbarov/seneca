@@ -15,8 +15,8 @@
             [nexus.config :as config]
             [nexus.routes :as routes]
             [nexus.views :as views]
-            [nexus.localstorage :as ls]
-            [npm-packages]))
+            [nexus.localstorage :as ls]))
+            ; [npm-packages]))
 
 (defn dev-setup []
   (when config/debug?
@@ -38,6 +38,7 @@
   ; (mount/start)
   (dispatch-sync [:initialize-db])
   (check-for-token!)
+  ; (load-interceptors!)
   (routes/hook-browser-navigation!)
   (dev-setup)
   (mount-root))
