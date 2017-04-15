@@ -1,3 +1,4 @@
+
 (defproject nexus "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.229"]
@@ -27,9 +28,10 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.1.7"]]
 
-  :plugins [[lein-cljsbuild "1.1.4"]]
+  :plugins [[lein-figwheel "0.5.8"]
+            [lein-cljsbuild "1.1.4" :exclusions [[org.clojure/clojure]]]]
 
-  :min-lein-version "2.5.3"
+  :min-lein-version "2.7.1"
 
   :source-paths ["src/cljs"]
 
@@ -42,13 +44,16 @@
   {:dev
    {:dependencies [[binaryage/devtools "0.8.2"]]
 
-    :plugins      [[lein-figwheel "0.5.7"]]}}
+    :plugins      [[lein-figwheel "0.5.8"]]}}
 
   :cljsbuild
   {:builds
    [{:id           "dev"
      :source-paths ["src/cljs"]
-     :figwheel     {:on-jsload "nexus.core/init"}
+     :figwheel     {:on-jsload "nexus.core/init"
+                    :open-urls ["http://localhost:3449"]}
+
+
      :compiler     {:main                 nexus.core
                     :output-to            "resources/public/js/compiled/app.js"
                     :output-dir           "resources/public/js/compiled/out"
@@ -66,11 +71,5 @@
                     :optimizations   :advanced
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}]}
-
-  :main nexus.server
-
-  :aot [nexus.server]
-
-  :uberjar-name "nexus.jar"
 
   :prep-tasks [["cljsbuild" "once" "min"] "compile"])

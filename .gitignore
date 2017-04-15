@@ -1,8 +1,12 @@
 /target
+/var
 /.nrepl-port
 /out
 snippets.cljs
 dnd.md
+figwheel_server.log
 .nrepl-history
 resources/npm
 node_modules
+www
+public

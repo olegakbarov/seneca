@@ -1,3 +1,0 @@
-{:require  [nexus.core]
- :init-fns [nexus.core/init]
- :compiler-options {:asset-path "app.out"}}

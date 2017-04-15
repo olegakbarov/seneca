@@ -39,7 +39,8 @@
                  [deraen/boot-less "0.2.1" :scope "test"]
 
                  [secretary "1.2.3"]
-                 [venantius/accountant "0.1.7"]])
+                 [venantius/accountant "0.1.7"]
+                 [selmer "1.10.0"]])
 
 
 (require
@@ -99,7 +100,7 @@
     (sift :move {#"less.css"          "css/less.css"
                  #"less.main.css.map" "css/less.main.css.map"})
     (aot)
-    (pom)
+    ; (pom)
     (uber)
     (jar)
     (target)))
