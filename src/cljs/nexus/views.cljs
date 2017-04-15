@@ -2,7 +2,7 @@
 (ns nexus.views
     (:require [re-frame.core :refer [subscribe]]
               [reagent.core :as r]
-              [nexus.routes :refer [context-url href navigate!]]
+              [nexus.routes :refer [context-url href]]
               [nexus.templates.bots.core :refer [bots]]
               [nexus.templates.editor.core :refer [editor]]
               [nexus.templates.courses.core :refer [courses]]
@@ -18,24 +18,11 @@
 (defmethod panels :profile    [] [profile])
 (defmethod panels :signup     [] [signup])
 (defmethod panels :login      [] [login])
-(defmethod panels :notfound   [] [notfound])
-(defmethod panels :default    [] [login])
+(defmethod panels :default    [] [notfound])
 
 (defn main-panel []
-  (r/with-let [active-panel (subscribe [:active-panel])
-               user        (subscribe [:user/profile])] ;; need it here?
-    (js/console.log "main panel called with " @active-panel)
+  (let [active-panel (subscribe [:active-panel])]
+    (js/console.log "[VIEWS] changing panel: " @active-panel)
     (fn []
       [:div
         (panels @active-panel)])))
-
-(defn nav-link [url title page]
-  (let [active-page (subscribe [:active-panel])]
-    [:a {:href (context-url url) :active (= page @active-page)} title]))
-
-; (defn title []
-;   (let [name (re-frame/subscribe [:name])]
-;     (fn []
-;       [re-com/title
-;        :label (str "Hello from " @name)
-;        :level :level1])))

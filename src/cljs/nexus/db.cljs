@@ -1,14 +1,11 @@
 
 (ns nexus.db)
 
-(declare initial-state)
-(declare state)
-
-(def initial-state {})
-
-(def state
-    {:router {:current ""
+(defonce state
+    {:router {:current :login
               :redirect nil} ;; store next location
+
+     :auth {:token nil}
 
      :ui {:scroll-top 0
           :is-editing-id nil
@@ -21,23 +18,16 @@
             :password ""
             :password-again ""}
 
-     :auth {:token nil}
 
      :user {:profile {:user-id "123"
                       :email "email@adress.com"
                       :userpic "http://s3.azazozon.com"}}
 
-     :team {:name "The Village"
-            :users ["uuid-1" "uuid-2"]}
-
      :bots {}
 
      :editor {:ui {:days-folded     false
                    :topbar-folded   false
-                   :saved           false}
-
-              :errors {:editor {:type "error" ;; warning etc
-                                :text "Can't be blank"}}}
+                   :saved           false}}
 
      :curr-course ""
      :curr-day ""

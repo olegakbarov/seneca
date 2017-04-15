@@ -35,10 +35,8 @@
     (.getElementById js/document "root")))
 
 (defn ^:export init []
-  ; (mount/start)
   (dispatch-sync [:initialize-db])
   (check-for-token!)
-  ; (load-interceptors!)
-  (routes/hook-browser-navigation!)
-  (dev-setup)
+  ; (routes/hook-browser-navigation!)
+  ; (dev-setup)
   (mount-root))

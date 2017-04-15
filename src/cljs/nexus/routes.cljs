@@ -15,20 +15,22 @@
   (secretary/dispatch! resource)
   (.setToken (History.) resource))
 
-(defn run-events [events]
-  (doseq [event events]
-    (if (logged-in?)
-      (dispatch event)
-      (dispatch [:add-login-event event]))))
+; (defn run-events [events]
+;   (doseq [event events]
+;     (if (logged-in?)
+;         (dispatch event)
+;         (dispatch [:add-login-event event]))))
 
 (defn context-url [url]
-  (str js/context url))
+  (let [host (-> js/window .-location .-host)
+        path (-> js/window .-location .-pathname)]
+    (str host path url)))
 
 (defn href [url]
   {:href (str js/context url)})
 
 (defn navigate! [url]
-  (accountant/navigate! (context-url url)))
+  (accountant/navigate! url))
 
 ; (defn home-page-events [& events]
 ;   (.scrollTo js/window 0 0)
@@ -39,29 +41,54 @@
 ;                 events)))
 
 (secretary/defroute "/" []
-  (dispatch [:set-active-panel :editor]))
+  (js/console.log "DISPATCHED ROUTE /")
+  (if (logged-in?)
+      (do
+        (js/console.log "NOT LOGGED IN... REDIRECTING")
+        (dispatch [:set-active-panel :login]))
+      (do
+        (js/console.log "YES LOGGED IN")
+        (dispatch [:set-active-panel :editor]))))
 
-(secretary/defroute "/bots" []
-  (dispatch [:set-active-panel :bots]))
+; (secretary/defroute "/login" []
+;   (dispatch [:set-active-panel :login]))
+  ; (navigate! "bots"))
 
-(secretary/defroute "/editor/:course-id" {:as params}
-  (dispatch [:set-active-panel :editor params]))
+; (secretary/defroute "/bots" []
+;   (if (logged-in?)
+;     (dispatch [:set-active-panel :bots])))
+    ; (redirect-to "/login")))
+  ;;  load bots by publisher)
+
+; (secretary/defroute "/bots/:bot-id" {:as params}
+;   (dispatch [:set-active-panel :bots params]))
+  ;; load bot with id
+
+; (secretary/defroute "/editor/:course-id" {:as params}
+;   (dispatch [:set-active-panel :editor params]))
+  ;; load course with id
 
 ; (secretary/defroute "*" []
-;   (redirect-to "/notfound"))
+;   (dispatch [:set-active-panel :notfound]))
 
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-      HistoryEventType/NAVIGATE
-      (fn [event]
-        (secretary/dispatch! (.-token event))))
-    (.setEnabled true))
-  (accountant/configure-navigation!
-    {:nav-handler
-     (fn [path]
-       (secretary/dispatch! path))
-     :path-exists?
-     (fn [path]
-       (secretary/locate-route path))})
-  (accountant/dispatch-current!))
+; (secretary/defroute (context-url "/edit-issue") []
+  ; (if-not (logged-in?)
+  ;   (navigate! "/")
+  ;   (dispatch [:set-active-page :edit-issue])))
+
+; (defn hook-browser-navigation! []
+;   (doto (History.)
+;     (events/listen
+;       HistoryEventType/NAVIGATE
+;       (fn [event]
+;         (secretary/dispatch! (.-token event))))
+;     (.setEnabled true)))
+;   (accountant/configure-navigation!
+;     {:nav-handler
+;      (fn [path]
+;        (js/console.log "nav handler")
+;        (secretary/dispatch! path))
+;      :path-exists?
+;      (fn [path]
+;        (secretary/locate-route path))})
+;   (accountant/dispatch-current!))
