@@ -17,7 +17,6 @@
            :on-change #(reset! value (-> % .-target .-value))}])
 
 (defn text-input
-  ;; arity overloading ~_~
   ([cursor type placeholder]
    [input cursor type placeholder])
   ([type placeholder]

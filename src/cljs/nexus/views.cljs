@@ -3,9 +3,7 @@
     (:require [re-frame.core :refer [subscribe]]
               [reagent.core :as r]
               [nexus.routes :refer [context-url href]]
-              [nexus.templates.bots.core :refer [bots]]
               [nexus.templates.editor.core :refer [editor]]
-              [nexus.templates.courses.core :refer [courses]]
               [nexus.templates.profile :refer [profile]]
               [nexus.templates.auth.signup :refer [signup]]
               [nexus.templates.auth.login :refer [login]]
@@ -13,8 +11,6 @@
 
 (defmulti panels identity)
 (defmethod panels :editor     [] [editor])
-(defmethod panels :bots       [] [bots])
-(defmethod panels :courses    [] [courses])
 (defmethod panels :profile    [] [profile])
 (defmethod panels :signup     [] [signup])
 (defmethod panels :login      [] [login])

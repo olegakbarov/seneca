@@ -7,29 +7,14 @@
 
      :auth {:token nil}
 
-     :ui {:scroll-top 0
-          :is-editing-id nil
-          :curr-thread nil
-          :msgs {:hidden #{}
-                 :deps {}
-                 :active #{}}}
+     :ui {:scroll-top 0}
 
      :form {:email ""
             :password ""
             :password-again ""}
 
 
-     :user {:profile {:user-id "123"
-                      :email "email@adress.com"
-                      :userpic "http://s3.azazozon.com"}}
+     :user {:profile {:user-id ""
+                      :email ""
+                      :userpic ""}}})
 
-     :bots {}
-
-     :editor {:ui {:days-folded     false
-                   :topbar-folded   false
-                   :saved           false}}
-
-     :curr-course ""
-     :curr-day ""
-
-     :courses {}})
